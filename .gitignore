@@ -1,41 +1,104 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# -----------------------
+# Node / Next.js / General
+# -----------------------
+node_modules/
+.next/
+dist/
+out/
+.env
+.env.*
+!.env.example
+*.local
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# -----------------------
+# Lockfiles
+# -----------------------
+package-lock.json
+yarn.lock
+!pnpm-lock.yaml
 
-# vercel
-.vercel
+# -----------------------
+# OS-generated files
+# -----------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
 
-# typescript
+# -----------------------
+# IDEs and Editors
+# -----------------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.code-workspace
+
+# -----------------------
+# Prisma
+# -----------------------
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/*/README.md
+prisma/migrations/*/migration_lock.toml
+!prisma/migrations/
+*.sqlite
+*.sqlite-journal
+
+# -----------------------
+# Docker
+# -----------------------
+docker-compose.override.yml
+**/docker-data/
+**/tmp/
+**/cache/
+
+# -----------------------
+# PostgreSQL
+# -----------------------
+*.sql
+*.dump
+*.pgsql
+*.backup
+
+# -----------------------
+# Build output / Cache
+# -----------------------
+coverage/
 *.tsbuildinfo
-next-env.d.ts
+build/
+.eslintcache
+.cache/
+.cache-loader/
+
+# -----------------------
+# Auth.js / NextAuth
+# -----------------------
+.nextauth/
+
+# -----------------------
+# Miscellaneous
+# -----------------------
+*.tgz
+*.bak
+*.tmp
+*.pid
+*.seed
+*.orig
+debug.log
+
+# -----------------------
+# Public assets (optional - uncomment if needed)
+# -----------------------
+# /public/uploads/
+# /public/images/temp/
+# /public/fonts/dev/

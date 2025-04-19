@@ -1,0 +1,16 @@
+{
+  "BRAND": "Misqui",
+  "BRAND_FIRST_PART": "Mis",
+  "BRAND_LAST_PART": "Qui",
+  "COMPANY": "Misqui Labs",
+  "SITE": "http://localhost:3000",
+  "TAGLINE": "Empowering young minds through playful skill learning",
+  "DEFAULT_LOCALE": "en-US",
+  "SUPPORTED_LANGUAGES": ["en-US", "es-ES", "fr-FR"],
+  "COPYRIGHT_START_YEAR": 2024,
+  "SUPPORT_EMAIL": "support@misqui.com",
+  "NOREPLY_EMAIL": "onboarding@resend.dev",
+  "TWITTER_HANDLE": "@misqui",
+  "GITHUB_HANDLE": "misqui",
+  "LINKEDIN_HANDLE": "misqui"
+}

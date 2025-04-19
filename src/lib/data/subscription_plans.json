@@ -1,0 +1,140 @@
+[
+  {
+    "plan": "Starter",
+    "tagline": "For casual users exploring thread creation",
+    "price": 0,
+    "features": [
+      {
+        "text": "Save up to 5 drafts",
+        "footnote": "Limited storage for your thread drafts"
+      },
+      {
+        "text": "Up to 50 tweets per thread",
+        "footnote": "Maximum number of tweets in a single thread"
+      },
+      {
+        "text": "One-click posting",
+        "footnote": "Immediate posting only, no scheduling"
+      },
+      {
+        "text": "Post scheduling",
+        "footnote": "Plan threads for future posting with flexible time options",
+        "negative": true
+      },
+      {
+        "text": "Engagement analytics",
+        "footnote": "Track performance metrics of your threads",
+        "negative": true
+      },
+      {
+        "text": "Technical support",
+        "footnote": "Get help when you need it most",
+        "negative": true
+      },
+      {
+        "text": "AI-assisted ideation",
+        "footnote": "Get AI suggestions for thread topicsGet AI suggestions for thread topics",
+        "negative": true
+      },
+      {
+        "text": "AI-assisted grammar checks",
+        "footnote": "Improve clarity and accuracy in your threads",
+        "negative": true
+      },
+      {
+        "text": "AI-assisted style check",
+        "footnote": "Optimize tone and style for better engagement",
+        "negative": true
+      }
+    ]
+  },
+  {
+    "plan": "Power Threader",
+    "tagline": "For professionals who need advanced tools",
+    "price": 9.99,
+    "features": [
+      {
+        "text": "Unlimited drafts",
+        "footnote": "Save and manage drafts without limits"
+      },
+      {
+        "text": "Unlimited thread length",
+        "footnote": "Create threads with no tweet cap"
+      },
+      {
+        "text": "One-click posting",
+        "footnote": "Immediate posting only, no scheduling"
+      },
+      {
+        "text": "Post scheduling",
+        "footnote": "Plan threads for future posting with flexible time options"
+      },
+      {
+        "text": "Engagement analytics",
+        "footnote": "Track performance metrics of your threads"
+      },
+      {
+        "text": "Technical support",
+        "footnote": "Get help when you need it most"
+      },
+      {
+        "text": "AI-assisted ideation",
+        "footnote": "Get AI suggestions for thread topicsGet AI suggestions for thread topics",
+        "negative": true
+      },
+      {
+        "text": "AI-assisted grammar checks",
+        "footnote": "Improve clarity and accuracy in your threads",
+        "negative": true
+      },
+      {
+        "text": "AI-assisted style check",
+        "footnote": "Optimize tone and style for better engagement",
+        "negative": true
+      }
+    ]
+  },
+  {
+    "plan": "Thread Guru",
+    "tagline": "For creators who want AI-powered assistance",
+    "price": 24.99,
+    "features": [
+      {
+        "text": "Unlimited drafts",
+        "footnote": "Save and manage drafts without limits"
+      },
+      {
+        "text": "Unlimited thread length",
+        "footnote": "Create threads with no tweet cap"
+      },
+      {
+        "text": "One-click posting",
+        "footnote": "Immediate posting only, no scheduling"
+      },
+      {
+        "text": "Post scheduling",
+        "footnote": "Plan threads for future posting with flexible time options"
+      },
+      {
+        "text": "Engagement analytics",
+        "footnote": "Track performance metrics of your threads"
+      },
+      {
+        "text": "Priority support",
+        "footnote": "Get personalized help when you need it most"
+      },
+      {
+        "text": "AI-assisted ideation",
+        "footnote": "Get AI suggestions for thread topicsGet AI suggestions for thread topics"
+      },
+      {
+        "text": "AI-assisted grammar checks",
+        "footnote": "Improve clarity and accuracy in your threads"
+      },
+      {
+        "text": "AI-assisted style check",
+        "footnote": "Optimize tone and style for better engagement"
+      }
+    ]
+  }
+]

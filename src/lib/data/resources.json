@@ -1,0 +1,502 @@
+[
+  {
+    "id": "1",
+    "title": "Class 10 Science Revision Notes",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "Science",
+    "type": "Revision Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "2",
+    "title": "Class 12 Math Sample Paper",
+    "board": "ICSE",
+    "grade": "12",
+    "subject": "Mathematics",
+    "type": "Sample Question Paper",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "3",
+    "title": "Class 9 History Study Guide",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "History",
+    "type": "Study Guide",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "4",
+    "title": "Class 11 Geography Exam Notes",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Geography",
+    "type": "Exam Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "5",
+    "title": "Class 8 English Grammar Worksheets",
+    "board": "CBSE",
+    "grade": "8",
+    "subject": "English",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "6",
+    "title": "Class 6 Science Chapterwise Notes",
+    "board": "ICSE",
+    "grade": "6",
+    "subject": "Science",
+    "type": "Chapter Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "7",
+    "title": "Class 10 Math Formula Sheet",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "Mathematics",
+    "type": "Formula Sheet",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "8",
+    "title": "Class 12 Physics Question Bank",
+    "board": "CBSE",
+    "grade": "12",
+    "subject": "Physics",
+    "type": "Question Bank",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "9",
+    "title": "Class 9 Civics Revision Notes",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "Civics",
+    "type": "Revision Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "10",
+    "title": "Class 11 Chemistry Practice Questions",
+    "board": "ICSE",
+    "grade": "11",
+    "subject": "Chemistry",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "11",
+    "title": "Class 7 History Timeline Chart",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "History",
+    "type": "Chart",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "12",
+    "title": "Class 8 Geography Maps Practice",
+    "board": "ICSE",
+    "grade": "8",
+    "subject": "Geography",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "13",
+    "title": "Class 10 Hindi Sample Paper",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "Hindi",
+    "type": "Sample Question Paper",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "14",
+    "title": "Class 12 Biology Lab Manual",
+    "board": "CBSE",
+    "grade": "12",
+    "subject": "Biology",
+    "type": "Lab Manual",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "15",
+    "title": "Class 6 Environmental Science Notes",
+    "board": "CBSE",
+    "grade": "6",
+    "subject": "EVS",
+    "type": "Chapter Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "16",
+    "title": "Class 9 English Literature Summary",
+    "board": "ICSE",
+    "grade": "9",
+    "subject": "English",
+    "type": "Summary Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "17",
+    "title": "Class 11 Business Studies Case Studies",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Business Studies",
+    "type": "Case Studies",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "18",
+    "title": "Class 7 Math Worksheets",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "Mathematics",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "19",
+    "title": "Class 10 Social Science Mind Maps",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "Social Science",
+    "type": "Mind Maps",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "20",
+    "title": "Class 12 Computer Science PYQs",
+    "board": "ICSE",
+    "grade": "12",
+    "subject": "Computer Science",
+    "type": "Previous Year Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "21",
+    "title": "Class 8 Sanskrit Vocabulary List",
+    "board": "CBSE",
+    "grade": "8",
+    "subject": "Sanskrit",
+    "type": "Word List",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "22",
+    "title": "Class 9 Physics Experiments Guide",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "Physics",
+    "type": "Lab Manual",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "23",
+    "title": "Class 11 Economics Revision Notes",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Economics",
+    "type": "Revision Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "24",
+    "title": "Class 6 Math Concept Maps",
+    "board": "ICSE",
+    "grade": "6",
+    "subject": "Mathematics",
+    "type": "Mind Maps",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "25",
+    "title": "Class 10 English Writing Practice",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "English",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "26",
+    "title": "Class 12 Chemistry Formula Booklet",
+    "board": "CBSE",
+    "grade": "12",
+    "subject": "Chemistry",
+    "type": "Formula Sheet",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "27",
+    "title": "Class 7 Civics Key Concepts",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "Civics",
+    "type": "Summary Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "28",
+    "title": "Class 9 Geography Worksheets",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "Geography",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "29",
+    "title": "Class 11 Accountancy Ledger Problems",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Accountancy",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "30",
+    "title": "Class 6 Hindi Grammar Sheets",
+    "board": "ICSE",
+    "grade": "6",
+    "subject": "Hindi",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "31",
+    "title": "Class 8 Math Revision Workbook",
+    "board": "CBSE",
+    "grade": "8",
+    "subject": "Mathematics",
+    "type": "Revision Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "32",
+    "title": "Class 10 Biology Diagrams",
+    "board": "ICSE",
+    "grade": "10",
+    "subject": "Biology",
+    "type": "Charts",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "33",
+    "title": "Class 12 History Thematic Guide",
+    "board": "CBSE",
+    "grade": "12",
+    "subject": "History",
+    "type": "Study Guide",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "34",
+    "title": "Class 7 English Comprehension Sheets",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "English",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "35",
+    "title": "Class 9 Math Graph Practice",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "Mathematics",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "36",
+    "title": "Class 11 Psychology Revision Notes",
+    "board": "ICSE",
+    "grade": "11",
+    "subject": "Psychology",
+    "type": "Revision Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "37",
+    "title": "Class 6 GK Quiz Sheets",
+    "board": "CBSE",
+    "grade": "6",
+    "subject": "General Knowledge",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "38",
+    "title": "Class 8 Computer Basics Handbook",
+    "board": "CBSE",
+    "grade": "8",
+    "subject": "Computer Science",
+    "type": "Study Guide",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "39",
+    "title": "Class 10 Economics Practice Sets",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "Economics",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "40",
+    "title": "Class 12 Sociology Model Paper",
+    "board": "CBSE",
+    "grade": "12",
+    "subject": "Sociology",
+    "type": "Sample Question Paper",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "41",
+    "title": "Class 7 Sanskrit Grammar Rules",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "Sanskrit",
+    "type": "Summary Notes",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "42",
+    "title": "Class 9 Chemistry Formula Chart",
+    "board": "ICSE",
+    "grade": "9",
+    "subject": "Chemistry",
+    "type": "Formula Sheet",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "43",
+    "title": "Class 11 Political Science Key Terms",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Political Science",
+    "type": "Word List",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "44",
+    "title": "Class 6 English Reading Practice",
+    "board": "CBSE",
+    "grade": "6",
+    "subject": "English",
+    "type": "Practice Questions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "45",
+    "title": "Class 8 Science Experiments",
+    "board": "ICSE",
+    "grade": "8",
+    "subject": "Science",
+    "type": "Lab Manual",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "46",
+    "title": "Class 10 History Important Events",
+    "board": "CBSE",
+    "grade": "10",
+    "subject": "History",
+    "type": "Timeline Chart",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "47",
+    "title": "Class 12 Math Theorem Guide",
+    "board": "ICSE",
+    "grade": "12",
+    "subject": "Mathematics",
+    "type": "Study Guide",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "48",
+    "title": "Class 7 Science Diagrams Pack",
+    "board": "CBSE",
+    "grade": "7",
+    "subject": "Science",
+    "type": "Charts",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  },
+  {
+    "id": "49",
+    "title": "Class 9 English Grammar Workbook",
+    "board": "CBSE",
+    "grade": "9",
+    "subject": "English",
+    "type": "Worksheets",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": false
+  },
+  {
+    "id": "50",
+    "title": "Class 11 Biology NCERT Solutions",
+    "board": "CBSE",
+    "grade": "11",
+    "subject": "Biology",
+    "type": "Solutions",
+    "thumbnail": "/pdf-placeholder.jpg",
+    "premium": true
+  }
+]
