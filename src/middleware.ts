@@ -59,6 +59,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - assets/ (local assets)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|images/|assets/).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|images/|assets/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.webp$).*)",
   ],
 }
