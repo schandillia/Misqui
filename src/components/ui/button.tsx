@@ -5,35 +5,39 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive uppercase tracking-wide",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive uppercase tracking-wide group relative overflow-hidden",
   {
     variants: {
       variant: {
         default:
-          "bg-white text-black border-slate-200 border-2 border-b-4 active:border-b-2 hover:bg-slate-100 text-slate-500",
+          "bg-yellow-300 text-yellow-900 border-yellow-400 border-2 border-b-4 active:border-b-2 hover:bg-yellow-200 hover:scale-[1.02] shadow-md",
         primary:
-          "bg-sky-400 text-primary-foreground hover:sky-400/90 border-sky-500 border-2 border-b-4 active:border-b-2",
-        primaryOutline: "bg-white text-sky-500 hover:bg-slate-100",
+          "bg-brand-400 text-white border-brand-500 border-2 border-b-4 active:border-b-2 hover:bg-brand-300 hover:scale-[1.02] shadow-md",
+        primaryOutline:
+          "bg-white text-brand-500 border-2 border-brand-200 hover:bg-brand-50 hover:scale-[1.02]",
         secondary:
-          "bg-green-500 text-primary-foreground hover:green-500/90 border-green-600 border-2 border-b-4 active:border-b-2",
-        secondaryOutline: "bg-white text-green-500 hover:bg-slate-100",
+          "bg-emerald-400 text-white border-emerald-500 border-2 border-b-4 active:border-b-2 hover:bg-emerald-300 hover:scale-[1.02] shadow-md",
+        secondaryOutline:
+          "bg-white text-emerald-500 border-2 border-emerald-200 hover:bg-emerald-50 hover:scale-[1.02]",
         danger:
-          "bg-rose-500 text-primary-foreground hover:rose-500/90 border-rose-600 border-2 border-b-4 active:border-b-2",
-        dangerOutline: "bg-white text-rose-500 hover:bg-slate-100",
+          "bg-rose-400 text-white border-rose-500 border-2 border-b-4 active:border-b-2 hover:bg-rose-300 hover:scale-[1.02] shadow-md",
+        dangerOutline:
+          "bg-white text-rose-500 border-2 border-rose-200 hover:bg-rose-50 hover:scale-[1.02]",
         super:
-          "bg-indigo-500 text-primary-foreground hover:indigo-500/90 border-indigo-600 border-2 border-b-4 active:border-b-2",
-        superOutline: "bg-white text-indigo-500 hover:bg-slate-100",
+          "bg-orange-400 text-white border-orange-500 border-2 border-b-4 active:border-b-2 hover:bg-orange-300 hover:scale-[1.02] shadow-md",
+        superOutline:
+          "bg-white text-orange-500 border-2 border-orange-200 hover:bg-orange-50 hover:scale-[1.02]",
         defaultOutline:
-          "bg-transparent text-slate-500 border-transparent border-0 hover:bg-slate-100",
+          "bg-transparent text-gray-600 border-gray-300 border-2 hover:bg-gray-100 hover:scale-[1.02]",
         sidebar:
-          "bg-transparent text-slate-500 border-transparent border-2 hover:bg-slate-100 transition-none",
+          "bg-transparent text-gray-500 border-transparent hover:bg-gray-100 transition-none",
         sidebarOutline:
-          "bg-sky-500/15 text-sky-500 border-sky-300 border-2 hover:bg-sky-500/20 transition-none",
+          "bg-cyan-100 text-cyan-600 border-cyan-300 hover:bg-cyan-200 transition-none",
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-12 px-6 has-[>svg]:px-4",
+        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5 text-xs",
+        lg: "h-12 px-6 has-[>svg]:px-4 text-base",
         icon: "size-10",
         rounded: "rounded-full",
       },
@@ -50,6 +54,7 @@ function Button({
   variant,
   size,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -62,7 +67,10 @@ function Button({
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      <div className="custom-ease absolute -left-[75px] -top-[50px] -z-10 h-[155px] w-8 rotate-[135deg] bg-white opacity-20 transition-all duration-500 group-hover:left-[120%]" />
+    </Comp>
   )
 }
 

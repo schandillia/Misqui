@@ -6,19 +6,19 @@
 
 /* Custom theme color definitions */
 @theme {
-  --color-brand: #ffbf00;
-  --color-brand-25: #fffbf0;
-  --color-brand-50: #fff9e5;
-  --color-brand-100: #fff2cc;
-  --color-brand-200: #ffe699;
-  --color-brand-300: #ffd966;
-  --color-brand-400: #ffcc33;
-  --color-brand-500: #ffbf00;
-  --color-brand-600: #d6a100;
-  --color-brand-700: #a87e00;
-  --color-brand-800: #806000;
-  --color-brand-900: #523d00;
-  --color-brand-950: #291f00;
+  --color-brand: oklch(62.7% 0.265 303.9);
+  --color-brand-25: oklch(99.1% 0.007 309.1);
+  --color-brand-50: oklch(97.7% 0.014 308.299);
+  --color-brand-100: oklch(94.6% 0.033 307.174);
+  --color-brand-200: oklch(90.2% 0.063 306.703);
+  --color-brand-300: oklch(82.7% 0.119 306.383);
+  --color-brand-400: oklch(71.4% 0.203 305.504);
+  --color-brand-500: oklch(62.7% 0.265 303.9);
+  --color-brand-600: oklch(55.8% 0.288 302.321);
+  --color-brand-700: oklch(49.6% 0.265 301.924);
+  --color-brand-800: oklch(43.8% 0.218 303.724);
+  --color-brand-900: oklch(38.1% 0.176 304.987);
+  --color-brand-950: oklch(29.1% 0.149 302.717);
 }
 
 @theme inline {

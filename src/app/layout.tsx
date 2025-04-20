@@ -1,20 +1,23 @@
-import type { Metadata } from "next";
-import meta from "@/lib/data/meta.json";
-import { bodyFont, headingFont } from "@/lib/fonts";
+import type { Metadata } from "next"
+import meta from "@/lib/data/meta.json"
+import { bodyFont, headingFont } from "@/lib/fonts"
+import { Toaster } from "sonner"
+import { auth } from "@/auth"
+import { AuthProvider } from "@/components/auth/auth-provider"
 
-import "./globals.css";
-import { cn } from "@/lib/utils";
+import "./globals.css"
+import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
   description: meta.HOME.DESCRIPTION,
-  icons: [{ rel: "icon", url: "/favicon.svg" }],
-};
+  icons: [{ rel: "icon", url: "/mascot.svg" }],
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -22,7 +25,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(bodyFont.variable, headingFont.variable)}
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
+      </body>
     </html>
-  );
+  )
 }
