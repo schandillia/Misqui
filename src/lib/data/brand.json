@@ -1,8 +1,6 @@
 {
   "BRAND": "Misqui",
-  "BRAND_FIRST_PART": "Mis",
-  "BRAND_LAST_PART": "Qui",
-  "COMPANY": "Misqui Labs",
+  "COMPANY": "Misqui, Inc.",
   "SITE": "http://localhost:3000",
   "TAGLINE": "Empowering young minds through playful skill learning",
   "DEFAULT_LOCALE": "en-US",

@@ -1,0 +1,76 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql" // Keep using postgresql provider
+  url      = env("DATABASE_URL") // Keep using your Neon URL
+  // Remove directUrl if you don't need it for migrations/local dev without pooling
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"] // Keep this for Neon adapter usage
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId]) // Add index for faster lookups
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId]) // Add index for faster lookups
+}
+
+model User {
+  id            String    @id @default(cuid()) // Use String ID (cuid or uuid recommended)
+  name          String?
+  email         String?   @unique // Email can be optional depending on provider
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// If you plan to use WebAuthn (Passkeys), add this model too:
+// model Authenticator {
+//   credentialID           String  @unique
+//   userId                 String
+//   providerAccountId      String
+//   credentialPublicKey    String
+//   counter                Int
+//   credentialDeviceType   String
+//   credentialBackedUp     Boolean
+//   transports             String?
+//
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//
+//   @@id([userId, credentialID])
+// }

@@ -1,6 +1,7 @@
 import SignIn from "@/components/auth/sign-in"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import brand from "@/lib/data/brand.json"
 
 export const Header = () => {
   return (
@@ -10,12 +11,10 @@ export const Header = () => {
         <div className="pt-8 pl-4 pb-7 gap-x-3 flex items-center">
           <Image src="/mascot.svg" alt="Mascot" width={40} height={40} />
           <h1 className="text-2xl font-extrabold text-purple-500 tracking-wide">
-            Misqui
+            {brand.BRAND}
           </h1>
         </div>
-        <Button variant="sidebar" size="lg">
-          Sign In
-        </Button>
+        <SignIn />
       </div>
     </header>
   )
