@@ -1,4 +1,4 @@
-import { Footer } from "@/app/(marketing)/footer"
+import { Footer } from "@/components/nav/footer"
 import { Navbar } from "@/components/nav/navbar"
 
 type LayoutProps = {
