@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html,
+body,
+:root {
+  @apply h-full;
+}
+
 /* Define dark variant to work with next-themes */
 @custom-variant dark (&:is(.dark *), &.dark);
 
