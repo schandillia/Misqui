@@ -28,10 +28,12 @@ const buttonVariants = cva(
           "bg-white text-orange-500 border-2 border-orange-200 hover:bg-orange-50 hover:scale-[1.02]",
         defaultOutline:
           "bg-transparent text-gray-600 border-gray-300 border-2 hover:bg-gray-100 hover:scale-[1.02]",
+        ghost:
+          "bg-transparent text-gray-500 border-transparent hover:bg-gray-100 transition-none",
         sidebar:
           "bg-transparent text-gray-500 border-transparent hover:bg-gray-100 transition-none",
         sidebarOutline:
-          "bg-cyan-100 text-cyan-600 border-cyan-300 hover:bg-cyan-200 transition-none",
+          "bg-brand-100 text-brand-600 border-2 border-brand-300 hover:bg-brand-200 transition-none",
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",

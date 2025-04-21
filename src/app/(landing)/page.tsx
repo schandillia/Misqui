@@ -3,6 +3,7 @@ import Image from "next/image"
 import brand from "@/lib/data/brand.json"
 import { auth } from "@/auth"
 import Link from "next/link"
+import { AuthButton } from "@/components/auth/auth-button"
 
 export default async function Home() {
   const session = await auth()
@@ -24,9 +25,14 @@ export default async function Home() {
               <Link href="/learn">Continue learning</Link>
             </Button>
           ) : (
-            <Button size="lg" variant="primary" className="w-full">
-              Get started
-            </Button>
+            // <Button size="lg" variant="primary" className="w-full">
+            //   Get started
+            // </Button>
+            <AuthButton
+              variant="primary"
+              className="w-full"
+              label="Get Started"
+            />
           )}
         </div>
       </div>

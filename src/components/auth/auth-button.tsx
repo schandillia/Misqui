@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
@@ -10,8 +10,25 @@ import brand from "@/lib/data/brand.json"
 
 import { signInWithGoogle } from "@/app/actions/auth"
 import { usePathname, useSearchParams } from "next/navigation"
+import type { VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
 
-export const AuthButton = () => {
+type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
+type ButtonSize = VariantProps<typeof buttonVariants>["size"]
+
+interface AuthButtonProps {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  className?: string
+  label?: string
+}
+
+export const AuthButton = ({
+  variant = "ghost",
+  size = "lg",
+  className,
+  label = "Start",
+}: AuthButtonProps) => {
   const [showModal, setShowModal] = useState(false)
 
   const onClick = () => setShowModal(true)
@@ -20,18 +37,20 @@ export const AuthButton = () => {
   const searchParams = useSearchParams()
   const intent = searchParams.get("intent")
 
-  // If the user is on the homepage ('/'), redirect to '/dashboard'
   const finalCallbackUrl = pathname === "/" ? "/learn" : pathname
-
-  // Append 'intent' to the URL if it exists
   const redirectUrl = intent
     ? `${finalCallbackUrl}?intent=${intent}`
     : finalCallbackUrl
 
   return (
     <>
-      <Button variant="sidebar" size="lg" onClick={onClick}>
-        Start
+      <Button
+        variant={variant}
+        size={size}
+        className={className}
+        onClick={onClick}
+      >
+        {label}
       </Button>
 
       {showModal && (
