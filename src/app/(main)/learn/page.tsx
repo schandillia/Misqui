@@ -10,7 +10,7 @@ const Page = () => {
       <StickyWrapper>
         <UserProgress
           activeCourse={{ title: "Chess", imgSrc: "/chess-icon.svg" }}
-          hearts={5}
+          gems={5}
           points={100}
           hasActiveSubscription={false}
         />

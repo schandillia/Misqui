@@ -5,14 +5,14 @@ import Link from "next/link"
 
 type Props = {
   activeCourse: { imgSrc: string; title: string }
-  hearts: number
+  gems: number
   points: number
   hasActiveSubscription: boolean
 }
 
 export const UserProgress = ({
   activeCourse,
-  hearts,
+  gems,
   points,
   hasActiveSubscription,
 }: Props) => {
@@ -31,29 +31,17 @@ export const UserProgress = ({
       </Link>
       <Link href="/shop">
         <Button variant="ghost" className="text-orange-500">
-          <Image
-            src="/points.svg"
-            alt="Points"
-            className="mr-2"
-            width={28}
-            height={28}
-          />
+          <Image src="/points.svg" alt="Points" width={22} height={22} />
           {points}
         </Button>
       </Link>
       <Link href="/shop">
-        <Button variant="ghost" className="text-rose-500">
-          <Image
-            src="/heart.svg"
-            alt="Hearts"
-            className="mr-2"
-            width={22}
-            height={22}
-          />
+        <Button variant="ghost" className="text-blue-500">
+          <Image src="/gem.svg" alt="Gems" width={22} height={22} />
           {hasActiveSubscription ? (
             <InfinityIcon className="size-4 stroke-3" />
           ) : (
-            hearts
+            gems
           )}
         </Button>
       </Link>
