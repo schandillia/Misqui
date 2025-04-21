@@ -1,8 +1,23 @@
+import { Header } from "@/app/(main)/learn/header"
+import { FeedWrapper } from "@/components/feed-wrapper"
+import { StickyWrapper } from "@/components/sticky-wrapper"
+import { UserProgress } from "@/components/user-progress"
+import { title } from "process"
+
 const Page = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <h1 className="text-2xl font-bold">Learn</h1>
-      <p className="mt-4 text-lg">This is the learn page.</p>
+    <div className="flex flex-row-reverse gap-[48px] px-6">
+      <StickyWrapper>
+        <UserProgress
+          activeCourse={{ title: "Chess", imgSrc: "/chess-icon.svg" }}
+          hearts={5}
+          points={100}
+          hasActiveSubscription={false}
+        />
+      </StickyWrapper>
+      <FeedWrapper>
+        <Header title="Chess" />
+      </FeedWrapper>
     </div>
   )
 }

@@ -11,6 +11,13 @@ type Props = {
   className?: string
 }
 
+const sidebarItems = [
+  { label: "Learn", iconSrc: "/learn.svg", href: "/learn" },
+  { label: "Leaderboard", iconSrc: "/leaderboard.svg", href: "/leaderboard" },
+  { label: "Quests", iconSrc: "/quests.svg", href: "/quests" },
+  { label: "Shop", iconSrc: "/shop.svg", href: "/shop" },
+]
+
 export const Sidebar = async ({ className }: Props) => {
   const session = await auth()
 
@@ -37,25 +44,18 @@ export const Sidebar = async ({ className }: Props) => {
       </Link>
 
       <div className="flex flex-col gap-y-2 flex-1">
-        <SidebarItem label="Learn" iconSrc="/learn.svg" href="/learn" />
-        <SidebarItem
-          label="Leaderboard"
-          iconSrc="/leaderboard.svg"
-          href="/leaderboard"
-        />
-        <SidebarItem label="Quests" iconSrc="/quests.svg" href="/quests" />
-        <SidebarItem label="Shop" iconSrc="/shop.svg" href="/shop" />
+        {sidebarItems.map((item) => (
+          <SidebarItem
+            key={item.href}
+            label={item.label}
+            iconSrc={item.iconSrc}
+            href={item.href}
+          />
+        ))}
       </div>
 
-      {/* profile */}
       <div className="p-4">
-        {session?.user ? (
-          <>
-            <UserNavMenu user={session.user} />
-          </>
-        ) : (
-          <AuthButton />
-        )}
+        {session?.user ? <UserNavMenu user={session.user} /> : <AuthButton />}
       </div>
     </div>
   )
