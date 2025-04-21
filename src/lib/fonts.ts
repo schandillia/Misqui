@@ -1,5 +1,5 @@
 import { Nunito as FontBody } from "next/font/google"
-import { Nunito as FontHeading } from "next/font/google"
+import { Fredoka as FontHeading } from "next/font/google"
 
 export const bodyFont = FontBody({
   subsets: ["latin"],
@@ -12,7 +12,7 @@ export const bodyFont = FontBody({
 
 export const headingFont = FontHeading({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   style: "normal",
   fallback: ["system-ui", "ui-serif", "Georgia", "serif"],

@@ -9,11 +9,19 @@ export const Navbar = async () => {
   const session = await auth()
 
   return (
-    <header className="h-20 w-full border-b-2 border-slate-200 px-4">
-      {/* <SignIn /> */}
+    <nav className="h-20 w-full border-b-2 border-slate-200 px-4">
       <div className="lg:max-w-screen-lg mx-auto flex items-center justify-between h-full">
-        <div className="pt-8 pl-4 pb-7 gap-x-3 flex items-center">
-          <Image src="/mascot.svg" alt="Mascot" width={40} height={40} />
+        {/* 👇 Removed pt-8 and pb-7, kept pl-4 for left spacing if needed */}
+        <div className="pl-4 gap-x-3 flex items-center">
+          {" "}
+          {/* ✨ CHANGE HERE */}
+          <Image
+            src="/mascot.svg"
+            alt="Mascot"
+            width={40}
+            height={40}
+            className="align-middle" // Optional: Sometimes helps ensure image aligns correctly
+          />
           <h1 className="text-2xl font-extrabold text-brand-500 tracking-wide">
             {brand.BRAND}
           </h1>
@@ -26,6 +34,6 @@ export const Navbar = async () => {
           <AuthButton />
         )}
       </div>
-    </header>
+    </nav>
   )
 }

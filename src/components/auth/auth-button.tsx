@@ -21,7 +21,7 @@ export const AuthButton = () => {
   const intent = searchParams.get("intent")
 
   // If the user is on the homepage ('/'), redirect to '/dashboard'
-  const finalCallbackUrl = pathname === "/" ? "/dashboard" : pathname
+  const finalCallbackUrl = pathname === "/" ? "/learn" : pathname
 
   // Append 'intent' to the URL if it exists
   const redirectUrl = intent
