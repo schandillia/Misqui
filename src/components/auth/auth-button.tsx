@@ -11,7 +11,6 @@ import brand from "@/lib/data/brand.json"
 import { signInWithGoogle } from "@/app/actions/auth"
 import { usePathname, useSearchParams } from "next/navigation"
 import type { VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
 
 type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
 type ButtonSize = VariantProps<typeof buttonVariants>["size"]
@@ -67,7 +66,7 @@ export const AuthButton = ({
                 className="flex items-center justify-center gap-2 h-12"
                 onClick={() => signInWithGoogle(redirectUrl)}
               >
-                <FcGoogle className="h-5 w-5" />
+                <FcGoogle className="size-5" />
                 <span>Continue with Google</span>
               </Button>
 
@@ -75,7 +74,7 @@ export const AuthButton = ({
                 variant="primaryOutline"
                 className="flex items-center justify-center gap-2 h-12"
               >
-                <FaApple className="h-5 w-5" />
+                <FaApple className="size-5 text-black" />
                 <span>Continue with Apple</span>
               </Button>
             </div>

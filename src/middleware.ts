@@ -1,64 +1,31 @@
-import { NextResponse } from "next/server"
-import NextAuth from "next-auth"
-import authConfig from "@/auth.config"
-import {
-  DEFAULT_LOGIN_REDIRECT,
-  apiRoutes,
-  authRoutes,
-  publicRoutes,
-} from "@/routes"
+/**
+ * Sets of routes for different access levels
+ * Using Sets for O(1) lookup performance
+ */
+export const publicRoutes = new Set([
+  "/",
+  "/auth/new-verification",
+  "/pricing",
+  "/terms",
+  "/privacy",
+  "/about",
+])
 
-const { auth } = NextAuth(authConfig)
+export const authRoutes = new Set([
+  "/auth/login",
+  "/auth/register",
+  "/auth/error",
+  "/auth/reset",
+  "/auth/new-password",
+])
 
-// Caching the URL constructor for better performance
-const createUrl = (path: string, url: URL) => new URL(path, url)
+/**
+ * The prefix for API authentication routes
+ * These routes will never be blocked
+ */
+export const apiRoutes = "/api/"
 
-export default auth((req) => {
-  const { nextUrl } = req
-  const isLoggedIn = !!req.auth
-
-  // Early return for API routes
-  if (nextUrl.pathname.startsWith(apiRoutes)) {
-    return NextResponse.next()
-  }
-
-  // Using Set.has() for O(1) lookup
-  const isPublicRoute = publicRoutes.has(nextUrl.pathname)
-  const isAuthRoute = authRoutes.has(nextUrl.pathname)
-
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      // Reuse URL creation
-      return Response.redirect(createUrl(DEFAULT_LOGIN_REDIRECT, nextUrl))
-    }
-    return NextResponse.next()
-  }
-
-  if (!isLoggedIn && !isPublicRoute) {
-    const callbackUrl = nextUrl.search
-      ? `${nextUrl.pathname}${nextUrl.search}`
-      : nextUrl.pathname
-
-    const encodedCallbackUrl = encodeURIComponent(callbackUrl)
-    return Response.redirect(
-      createUrl(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl)
-    )
-  }
-
-  return NextResponse.next()
-})
-
-// Optimized matcher pattern
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - assets/ (local assets)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|images/|assets/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.webp$).*)",
-  ],
-}
+/**
+ * The default redirect path after sign-in
+ */
+export const DEFAULT_LOGIN_REDIRECT = "/learn"

@@ -3,9 +3,9 @@ import meta from "@/lib/data/meta.json"
 import { bodyFont, headingFont } from "@/lib/fonts"
 import { Toaster } from "sonner"
 import { auth } from "@/auth"
-import { db } from "@/lib/prisma-edge"
+import { db, users } from "@/db/schema"
+import { eq } from "drizzle-orm"
 import { AuthProvider } from "@/components/auth/auth-provider"
-
 import "./globals.css"
 import { cn } from "@/lib/utils"
 
@@ -22,12 +22,16 @@ export default async function RootLayout({
 }>) {
   const session = await auth()
   let user = null
+  if (session) console.log("SESSION: ", session)
   if (session?.user?.id) {
     console.log("SESSION.USER.ID: ", session.user.id)
     try {
-      user = await db.user.findUnique({
-        where: { id: session.user.id },
-      })
+      const result = await db
+        .select()
+        .from(users as any)
+        .where(eq(users.id, session.user.id) as any)
+        .limit(1)
+      user = result[0] || null
     } catch (error) {
       console.error("Error fetching user:", error)
     }

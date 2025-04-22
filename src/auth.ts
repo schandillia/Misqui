@@ -1,43 +1,38 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import NextAuth from "next-auth"
-import { db } from "@/lib/prisma-edge"
-import authConfig from "@/auth.config"
-import { DefaultSession } from "next-auth"
+import Google from "next-auth/providers/google"
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { db, accounts, sessions, users, authenticators } from "@/db/schema"
 
-// Extend the Session type to include user.id
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string
-    } & DefaultSession["user"]
-  }
-}
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET,
-  ...authConfig,
-  adapter: PrismaAdapter(db),
+// Type assertion to bypass TypeScript error
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: DrizzleAdapter(db as any, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    authenticatorsTable: authenticators,
+  }),
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }
+      },
+    }),
+  ],
   session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/signin",
+    strategy: "database",
   },
   callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth
-    },
-    session: async ({ session, token }) => {
-      if (session?.user && token.sub) {
-        session.user.id = token.sub
-      }
+    async session({ session, user }) {
+      // Add user ID to session object
+      session.user.id = user.id
       return session
-    },
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.id = user.id
-      }
-      return token
     },
   },
 })
