@@ -1,31 +1,61 @@
-/**
- * Sets of routes for different access levels
- * Using Sets for O(1) lookup performance
- */
-export const publicRoutes = new Set([
-  "/",
-  "/auth/new-verification",
-  "/pricing",
-  "/terms",
-  "/privacy",
-  "/about",
-])
+import { NextResponse } from "next/server"
+import { auth } from "@/auth"
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiRoutes,
+  authRoutes,
+  publicRoutes,
+} from "@/routes"
 
-export const authRoutes = new Set([
-  "/auth/login",
-  "/auth/register",
-  "/auth/error",
-  "/auth/reset",
-  "/auth/new-password",
-])
+// Cached URL constructor for performance
+const createUrl = (path: string, url: URL) => new URL(path, url)
 
-/**
- * The prefix for API authentication routes
- * These routes will never be blocked
- */
-export const apiRoutes = "/api/"
+export default auth((req) => {
+  const { nextUrl } = req
+  const isLoggedIn = !!req.auth
 
-/**
- * The default redirect path after sign-in
- */
-export const DEFAULT_LOGIN_REDIRECT = "/learn"
+  // Early return for API routes
+  if (nextUrl.pathname.startsWith(apiRoutes)) {
+    return NextResponse.next()
+  }
+
+  // O(1) lookup for route checks
+  const isPublicRoute = publicRoutes.has(nextUrl.pathname)
+  const isAuthRoute = authRoutes.has(nextUrl.pathname)
+
+  // Handle auth routes
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(createUrl(DEFAULT_LOGIN_REDIRECT, nextUrl))
+    }
+    return NextResponse.next()
+  }
+
+  // Redirect unauthenticated users to login for protected routes
+  if (!isLoggedIn && !isPublicRoute) {
+    const callbackUrl = nextUrl.search
+      ? `${nextUrl.pathname}${nextUrl.search}`
+      : nextUrl.pathname
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl)
+    return NextResponse.redirect(
+      createUrl(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl)
+    )
+  }
+
+  return NextResponse.next()
+})
+
+export const config = {
+  matcher: [
+    /*
+     * Match all paths except:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico
+     * - assets/ (local assets)
+     * - Image/SVG files
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|assets/|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)",
+  ],
+}
