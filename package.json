@@ -10,7 +10,9 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "generate:env": "ts-node-esm scripts/generateEnvExample.mjs"
+    "generate:env": "ts-node-esm scripts/generateEnvExample.mjs",
+    "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.9.0",
