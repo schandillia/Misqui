@@ -2,7 +2,7 @@
 
 Misqui is an interactive educational platform where kids can develop essential skills through gamified learning experiences. The application offers engaging modules for mathematics, logic puzzles like Sudoku, strategy games like chess, and more—all designed to make learning fun and effective.
 
-![Misqui Logo](public/mascot.svg)
+<img src="public/mascot.svg" alt="Misqui Logo" width="200" />
 
 ## ✨ Features
 
@@ -21,7 +21,7 @@ Misqui is built with modern web technologies:
 - **Styling**: Tailwind CSS v4.1 with shadcn/ui components
 - **Authentication**: AuthJS v5
 - **Database**: Neon PostgreSQL with Drizzle ORM
-- **Deployment**: [TBA]
+- **Deployment**: [Your deployment platform]
 
 ## 📦 Installation
 
@@ -100,7 +100,7 @@ Please make sure to update tests as appropriate.
 
 ## 📄 License
 
-This project is licensed under a proprietary license - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ## 📬 Contact
 
