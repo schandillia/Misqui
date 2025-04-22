@@ -1,8 +1,6 @@
 # Misqui
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub Stars](https://img.shields.io/github/stars/schandillia/Misqui)](https://github.com/schandillia/Misqui/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/schandillia/Misqui)](https://github.com/schandillia/Misqui/network)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1-38B2AC)](https://tailwindcss.com/)
