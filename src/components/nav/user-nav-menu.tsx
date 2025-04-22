@@ -21,33 +21,69 @@ interface UserNavMenuProps {
     email?: string | null
     image?: string | null
   }
+  position?: "top" | "bottom"
 }
 
-const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
+const getInitials = (name?: string | null) =>
+  name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase() ?? "U"
+
+const UserAvatar: FC<{
+  name?: string | null
+  image?: string | null
+  className?: string
+}> = ({ name, image, className }) => (
+  <Avatar className={className}>
+    <AvatarImage src={image ?? ""} alt={name ?? ""} />
+    <AvatarFallback className="bg-gray-200 dark:bg-brand-100">
+      {getInitials(name)}
+    </AvatarFallback>
+  </Avatar>
+)
+
+const UserInfo: FC<{ name?: string | null; email?: string | null }> = ({
+  name,
+  email,
+}) => (
+  <div className="flex flex-col space-y-1 uppercase text-left">
+    <p className="text-sm font-medium leading-none text-brand-600">{name}</p>
+    <p className="text-xs leading-none text-muted-foreground">{email}</p>
+  </div>
+)
+
+const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
   const pathname = usePathname()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
-        <Avatar className="size-8 cursor-pointer">
-          <AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
-          <AvatarFallback className="bg-gray-200 dark:bg-brand-100">
-            {user.name
-              ?.split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase() ?? "U"}
-          </AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 mt-4 z-50">
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
-            </p>
+        {position === "bottom" ? (
+          <div className="flex gap-x-2 p-2 cursor-pointer w-full">
+            <UserAvatar
+              name={user.name}
+              image={user.image}
+              className="size-8 cursor-pointer"
+            />
+            <UserInfo name={user.name} email={user.email} />
           </div>
+        ) : (
+          <UserAvatar
+            name={user.name}
+            image={user.image}
+            className="size-8 cursor-pointer"
+          />
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-56 mt-4 z-50"
+        side={position}
+      >
+        <DropdownMenuLabel>
+          <UserInfo name={user.name} email={user.email} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

@@ -55,7 +55,11 @@ export const Sidebar = async ({ className }: Props) => {
       </div>
 
       <div className="p-4">
-        {session?.user ? <UserNavMenu user={session.user} /> : <AuthButton />}
+        {session?.user ? (
+          <UserNavMenu user={session.user} position="bottom" />
+        ) : (
+          <AuthButton />
+        )}
       </div>
     </div>
   )
