@@ -6,10 +6,15 @@ node_modules/
 dist/
 out/
 .env
-.env.*
+.env.local
+.env.*.local
+.env.development
+.env.production
 !.env.example
 *.local
 *.log
+*.log.*
+debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -55,6 +60,12 @@ prisma/migrations/*/migration_lock.toml
 *.sqlite-journal
 
 # -----------------------
+# Drizzle ORM
+# -----------------------
+!drizzle/
+drizzle/meta/*
+
+# -----------------------
 # Docker
 # -----------------------
 docker-compose.override.yml
@@ -94,7 +105,6 @@ build/
 *.pid
 *.seed
 *.orig
-debug.log
 
 # -----------------------
 # Public assets (optional - uncomment if needed)
