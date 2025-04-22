@@ -41,7 +41,9 @@ export const Modal = ({
       return
     }
 
-    onClose && onClose()
+    if (onClose) {
+      onClose()
+    }
 
     if (setShowModal) {
       setShowModal(false)
@@ -71,9 +73,11 @@ export const Modal = ({
     return createPortal(
       <div
         className="fixed inset-0 bg-black opacity-70 backdrop-blur z-50"
-        onClick={() =>
-          !preventDefaultClose && setShowModal && setShowModal(false)
-        }
+        onClick={() => {
+          if (!preventDefaultClose && setShowModal) {
+            setShowModal(false)
+          }
+        }}
       />,
       document.body
     )

@@ -1,7 +1,6 @@
 import { AuthButton } from "@/components/auth/auth-button"
 import Image from "next/image"
 import brand from "@/lib/data/brand.json"
-import Link from "next/link"
 import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 

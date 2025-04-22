@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import brand from "@/lib/data/brand.json"
 import { auth } from "@/auth"

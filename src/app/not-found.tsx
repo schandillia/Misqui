@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 export default function NotFound() {
   return (

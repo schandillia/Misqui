@@ -2,7 +2,6 @@ import { Header } from "@/app/(main)/learn/header"
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
-import { title } from "process"
 
 const Page = () => {
   return (

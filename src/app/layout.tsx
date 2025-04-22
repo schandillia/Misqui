@@ -21,17 +21,17 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = await auth()
-  let user = null
+  // Since we're not using the user variable, we can remove it
   if (session) console.log("SESSION: ", session)
   if (session?.user?.id) {
     console.log("SESSION.USER.ID: ", session.user.id)
     try {
-      const result = await db
+      await db
         .select()
-        .from(users as any)
-        .where(eq(users.id, session.user.id) as any)
+        .from(users)
+        .where(eq(users.id, session.user.id))
         .limit(1)
-      user = result[0] || null
+      // Not storing the result since we're not using it
     } catch (error) {
       console.error("Error fetching user:", error)
     }

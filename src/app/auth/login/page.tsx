@@ -1,6 +1,6 @@
 "use client"
 
-import { useSearchParams, usePathname } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -12,7 +12,6 @@ import brand from "@/lib/data/brand.json"
 
 const Page = () => {
   const searchParams = useSearchParams()
-  const pathname = usePathname()
   const callbackUrl = searchParams.get("callbackUrl") || "/"
   const intent = searchParams.get("intent")
 

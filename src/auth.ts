@@ -2,10 +2,13 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db, accounts, sessions, users, authenticators } from "@/db/schema"
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js"
 
-// Type assertion to bypass TypeScript error
+// Type the db connection properly
+type DbType = PostgresJsDatabase<Record<string, never>>
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db as any, {
+  adapter: DrizzleAdapter(db as unknown as DbType, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
