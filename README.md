@@ -30,7 +30,7 @@ Misqui is built with modern web technologies:
 - **Styling**: Tailwind CSS v4.1 with shadcn/ui components
 - **Authentication**: AuthJS v5
 - **Database**: Neon PostgreSQL with Drizzle ORM
-- **Deployment**: [Your deployment platform]
+- **Deployment**: Vercel
 
 ## 📦 Installation
 
