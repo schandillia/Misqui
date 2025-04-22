@@ -38,7 +38,7 @@ const UserAvatar: FC<{
 }> = ({ name, image, className }) => (
   <Avatar className={className}>
     <AvatarImage src={image ?? ""} alt={name ?? ""} />
-    <AvatarFallback className="bg-gray-200 dark:bg-brand-100">
+    <AvatarFallback className="bg-gradient-to-br from-brand-100 to-brand-200 text-brand-600">
       {getInitials(name)}
     </AvatarFallback>
   </Avatar>
