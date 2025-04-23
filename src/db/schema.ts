@@ -1,5 +1,6 @@
 // Contains all the database table schema definitions for Drizzle ORM.
 
+import { relations } from "drizzle-orm"
 import {
   boolean,
   timestamp,
@@ -22,7 +23,7 @@ export const users = pgTable("user", {
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),
+  image: text("image").notNull().default("/mascot.svg"),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 })
@@ -105,16 +106,44 @@ export const authenticators = pgTable(
 
 /**
  * Courses table definition.
- * Stores course information for the learning app (e.g., "Math Basics", "Spanish 101").
+ * Stores course information for the learning app (e.g., "Chess", "Sudoku").
  */
 export const courses = pgTable(
   "course",
   {
     id: serial("id").primaryKey().notNull(),
     title: text("title").notNull(),
-    image: text("image").notNull(), // URL or path to course image
+    image: text("image").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (course) => [index("title_index").on(course.title)] // Index for faster title searches
 )
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+  userProgress: many(userProgress),
+}))
+
+/**
+ * User progress table definition.
+ * Stores user progress in courses.
+ */
+export const userProgress = pgTable("userProgress", {
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  activeCourseId: integer("activeCourseId").references(() => courses.id, {
+    onDelete: "cascade",
+  }),
+  gems: integer("gems").notNull().default(5),
+  points: integer("points").notNull().default(0),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const userProgressRelations = relations(userProgress, ({ one }) => ({
+  activeCourse: one(courses, {
+    fields: [userProgress.activeCourseId],
+    references: [courses.id],
+  }),
+}))
