@@ -112,7 +112,7 @@ export const courses = pgTable(
   {
     id: serial("id").primaryKey().notNull(),
     title: text("title").notNull(),
-    image: text("image"), // URL or path to course image
+    image: text("image").notNull(), // URL or path to course image
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
