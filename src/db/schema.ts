@@ -30,6 +30,8 @@ export const users = pgTable(
     email: text("email").notNull(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (users) => [index("googleId_index").on(users.googleId)]
 )
@@ -50,6 +52,8 @@ export const accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (account) => [
     primaryKey({ columns: [account.provider, account.providerAccountId] }),
@@ -65,6 +69,7 @@ export const sessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   },
   (session) => [index("expires_index").on(session.expires)]
 )
@@ -82,6 +87,8 @@ export const authenticators = pgTable(
     credentialDeviceType: text("credentialDeviceType").notNull(),
     credentialBackedUp: boolean("credentialBackedUp").notNull(),
     transports: text("transports"),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (authenticator) => [
     primaryKey({ columns: [authenticator.userId, authenticator.credentialID] }),
