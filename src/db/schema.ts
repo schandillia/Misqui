@@ -29,7 +29,7 @@ export const users = pgTable("user", {
 /**
  * Accounts table definition.
  * Stores linked accounts for users (e.g., OAuth providers).
- * Based on NextAuth.js adapter schema.
+ * Based on Auth.js adapter schema.
  */
 export const accounts = pgTable(
   "account",
@@ -60,7 +60,7 @@ export const accounts = pgTable(
 /**
  * Sessions table definition.
  * Stores user session information for authentication.
- * Based on NextAuth.js adapter schema.
+ * Based on Auth.js adapter schema.
  */
 export const sessions = pgTable(
   "session",
@@ -79,7 +79,7 @@ export const sessions = pgTable(
 /**
  * Authenticators table definition.
  * Stores authenticator information for WebAuthn.
- * Based on NextAuth.js adapter schema.
+ * Based on Auth.js adapter schema.
  */
 export const authenticators = pgTable(
   "authenticator",
@@ -88,7 +88,7 @@ export const authenticators = pgTable(
     userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    providerAccountId: text("providerAccountId").notNull(), // Link to the account? Check NextAuth docs if this is needed/correct
+    providerAccountId: text("providerAccountId").notNull(), // Link to the account? Check Auth docs if this is needed/correct
     credentialPublicKey: text("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),
     credentialDeviceType: text("credentialDeviceType").notNull(),
