@@ -5,7 +5,6 @@ import { db } from "@/db/drizzle"
 import { getCourseById, getUserProgress } from "@/db/queries"
 import { userProgress } from "@/db/schema"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 
 export const upsertUserProgress = async (courseId: number) => {
   const session = await auth()
