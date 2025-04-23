@@ -1,3 +1,5 @@
+// Contains all the database table schema definitions for Drizzle ORM.
+
 import {
   boolean,
   timestamp,
@@ -8,19 +10,12 @@ import {
   uuid,
   index,
 } from "drizzle-orm/pg-core"
-import { drizzle, NeonHttpDatabase } from "drizzle-orm/neon-http"
-import { neon } from "@neondatabase/serverless"
 import type { AdapterAccountType } from "next-auth/adapters"
 
-// Define the database connection
-const connectionString = process.env.AUTH_DRIZZLE_URL!
-if (!connectionString) {
-  throw new Error("AUTH_DRIZZLE_URL environment variable is not set")
-}
-
-const sql = neon(connectionString)
-
-// Define tables
+/**
+ * Users table definition.
+ * Stores user profile information.
+ */
 export const users = pgTable("user", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: text("name"),
@@ -31,6 +26,11 @@ export const users = pgTable("user", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 })
 
+/**
+ * Accounts table definition.
+ * Stores linked accounts for users (e.g., OAuth providers).
+ * Based on NextAuth.js adapter schema.
+ */
 export const accounts = pgTable(
   "account",
   {
@@ -52,10 +52,16 @@ export const accounts = pgTable(
   },
   (account) => [
     primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    // Add index for faster lookups on providerAccountId
     index("providerAccountId_index").on(account.providerAccountId),
   ]
 )
 
+/**
+ * Sessions table definition.
+ * Stores user session information for authentication.
+ * Based on NextAuth.js adapter schema.
+ */
 export const sessions = pgTable(
   "session",
   {
@@ -66,9 +72,15 @@ export const sessions = pgTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   },
+  // Add index for faster lookups on expires
   (session) => [index("expires_index").on(session.expires)]
 )
 
+/**
+ * Authenticators table definition.
+ * Stores authenticator information for WebAuthn.
+ * Based on NextAuth.js adapter schema.
+ */
 export const authenticators = pgTable(
   "authenticator",
   {
@@ -76,12 +88,12 @@ export const authenticators = pgTable(
     userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    providerAccountId: text("providerAccountId").notNull(),
+    providerAccountId: text("providerAccountId").notNull(), // Link to the account? Check NextAuth docs if this is needed/correct
     credentialPublicKey: text("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),
     credentialDeviceType: text("credentialDeviceType").notNull(),
     credentialBackedUp: boolean("credentialBackedUp").notNull(),
-    transports: text("transports"),
+    transports: text("transports"), // e.g. "internal,hybrid"
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
   },
@@ -89,14 +101,3 @@ export const authenticators = pgTable(
     primaryKey({ columns: [authenticator.userId, authenticator.credentialID] }),
   ]
 )
-
-// Combine schema
-export const schema = {
-  users,
-  accounts,
-  sessions,
-  authenticators,
-}
-
-// Initialize Drizzle with Neon HTTP driver
-export const db: NeonHttpDatabase<typeof schema> = drizzle(sql, { schema })
