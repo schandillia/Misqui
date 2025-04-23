@@ -33,7 +33,7 @@ export const upsertUserProgress = async (courseId: number) => {
 
     revalidatePath("/learn")
     revalidatePath("/courses")
-    redirect("/learn")
+    return { success: true }
   }
 
   await db.insert(userProgress).values({
@@ -43,5 +43,5 @@ export const upsertUserProgress = async (courseId: number) => {
 
   revalidatePath("/learn")
   revalidatePath("/courses")
-  redirect("/learn")
+  return { success: true }
 }

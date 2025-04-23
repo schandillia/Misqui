@@ -23,10 +23,17 @@ export const List = ({ courses, activeCourseId }: Props) => {
       return router.push("/learn")
     }
 
-    startTransition(() => {
-      upsertUserProgress(id).catch((error) =>
-        toast.error("Something went wrong!")
-      )
+    startTransition(async () => {
+      try {
+        await upsertUserProgress(id)
+        router.push("/learn")
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("An unknown error occurred.")
+        }
+      }
     })
   }
 
