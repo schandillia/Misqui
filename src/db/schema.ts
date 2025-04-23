@@ -9,6 +9,7 @@ import {
   integer,
   uuid,
   index,
+  serial,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
@@ -100,4 +101,20 @@ export const authenticators = pgTable(
   (authenticator) => [
     primaryKey({ columns: [authenticator.userId, authenticator.credentialID] }),
   ]
+)
+
+/**
+ * Courses table definition.
+ * Stores course information for the learning app (e.g., "Math Basics", "Spanish 101").
+ */
+export const courses = pgTable(
+  "course",
+  {
+    id: serial("id").primaryKey().notNull(),
+    title: text("title").notNull(),
+    image: text("image"), // URL or path to course image
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (course) => [index("title_index").on(course.title)] // Index for faster title searches
 )
