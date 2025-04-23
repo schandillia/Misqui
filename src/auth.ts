@@ -20,6 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
       profile(profile) {
         return {
+          id: profile.sub,
           googleId: profile.sub,
           name: profile.name,
           email: profile.email,
