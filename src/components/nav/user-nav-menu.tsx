@@ -50,7 +50,9 @@ const UserInfo: FC<{ name?: string | null; email?: string | null }> = ({
 }) => (
   <div className="flex flex-col space-y-1 uppercase text-left">
     <p className="text-sm font-medium leading-none text-brand-600">{name}</p>
-    <p className="text-xs leading-none text-muted-foreground">{email}</p>
+    <p className="text-xs leading-none text-muted-foreground font-bold">
+      {email}
+    </p>
   </div>
 )
 
