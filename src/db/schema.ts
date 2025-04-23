@@ -20,7 +20,7 @@ import type { AdapterAccountType } from "next-auth/adapters"
  */
 export const users = pgTable("user", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
-  name: text("name"),
+  name: text("name").notNull().default("Student"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image").notNull().default("/mascot.svg"),
