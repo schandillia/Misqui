@@ -5,6 +5,8 @@ import {
   text,
   primaryKey,
   integer,
+  uuid,
+  index,
 } from "drizzle-orm/pg-core"
 import { drizzle, NeonHttpDatabase } from "drizzle-orm/neon-http"
 import { neon } from "@neondatabase/serverless"
@@ -19,18 +21,23 @@ if (!connectionString) {
 const sql = neon(connectionString)
 
 // Define tables
-export const users = pgTable("user", {
-  id: text("id").primaryKey().notNull(),
-  name: text("name"),
-  email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),
-})
+export const users = pgTable(
+  "user",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    googleId: text("googleId").notNull().unique(),
+    name: text("name"),
+    email: text("email").notNull(),
+    emailVerified: timestamp("emailVerified", { mode: "date" }),
+    image: text("image"),
+  },
+  (users) => [index("googleId_index").on(users.googleId)]
+)
 
 export const accounts = pgTable(
   "account",
   {
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
@@ -46,22 +53,27 @@ export const accounts = pgTable(
   },
   (account) => [
     primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    index("providerAccountId_index").on(account.providerAccountId),
   ]
 )
 
-export const sessions = pgTable("session", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
-})
+export const sessions = pgTable(
+  "session",
+  {
+    sessionToken: text("sessionToken").primaryKey(),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (session) => [index("expires_index").on(session.expires)]
+)
 
 export const authenticators = pgTable(
   "authenticator",
   {
     credentialID: text("credentialID").notNull().unique(),
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     providerAccountId: text("providerAccountId").notNull(),

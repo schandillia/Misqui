@@ -15,6 +15,34 @@
       "when": 1745306253143,
       "tag": "0001_mushy_vulture",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745378994792,
+      "tag": "0002_colorful_jazinda",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745379216960,
+      "tag": "0003_curved_thing",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745387168764,
+      "tag": "0004_married_spot",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745387439478,
+      "tag": "0005_big_prism",
+      "breakpoints": true
     }
   ]
 }
