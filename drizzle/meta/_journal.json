@@ -50,6 +50,13 @@
       "when": 1745388095166,
       "tag": "0006_smooth_earthquake",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745391171413,
+      "tag": "0007_friendly_redwing",
+      "breakpoints": true
     }
   ]
 }

@@ -21,20 +21,15 @@ if (!connectionString) {
 const sql = neon(connectionString)
 
 // Define tables
-export const users = pgTable(
-  "user",
-  {
-    id: uuid("id").primaryKey().notNull().defaultRandom(),
-    googleId: text("googleId").notNull().unique(),
-    name: text("name"),
-    email: text("email").notNull(),
-    emailVerified: timestamp("emailVerified", { mode: "date" }),
-    image: text("image"),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
-  },
-  (users) => [index("googleId_index").on(users.googleId)]
-)
+export const users = pgTable("user", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name"),
+  email: text("email").notNull(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
 
 export const accounts = pgTable(
   "account",
