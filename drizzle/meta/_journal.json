@@ -113,6 +113,41 @@
       "when": 1745472625658,
       "tag": "0015_even_spiral",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1745475389681,
+      "tag": "0016_military_mother_askani",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1745475795994,
+      "tag": "0017_fair_silver_samurai",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1745476111545,
+      "tag": "0018_exotic_the_enforcers",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1745476581899,
+      "tag": "0019_thankful_argent",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1745477312245,
+      "tag": "0020_daily_patriot",
+      "breakpoints": true
     }
   ]
 }

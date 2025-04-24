@@ -19,14 +19,14 @@ import type { AdapterAccountType } from "next-auth/adapters"
  * Users table definition.
  * Stores user profile information.
  */
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: text("name").notNull().default("Student"),
-  email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  email: text("email").notNull().unique(),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image").notNull().default("/mascot.svg"),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 /**
@@ -35,14 +35,14 @@ export const users = pgTable("user", {
  * Based on Auth.js adapter schema.
  */
 export const accounts = pgTable(
-  "account",
+  "accounts",
   {
-    userId: uuid("userId")
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
@@ -50,8 +50,8 @@ export const accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
   (account) => [
     primaryKey({ columns: [account.provider, account.providerAccountId] }),
@@ -66,14 +66,14 @@ export const accounts = pgTable(
  * Based on Auth.js adapter schema.
  */
 export const sessions = pgTable(
-  "session",
+  "sessions",
   {
-    sessionToken: text("sessionToken").primaryKey(),
-    userId: uuid("userId")
+    sessionToken: text("session_token").primaryKey(),
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    expires: timestamp("expires_at", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   },
   // Add index for faster lookups on expires
   (session) => [index("expires_index").on(session.expires)]
@@ -87,18 +87,18 @@ export const sessions = pgTable(
 export const authenticators = pgTable(
   "authenticator",
   {
-    credentialID: text("credentialID").notNull().unique(),
-    userId: uuid("userId")
+    credentialID: text("credential_id").notNull().unique(),
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    providerAccountId: text("providerAccountId").notNull(), // Link to the account? Check Auth docs if this is needed/correct
-    credentialPublicKey: text("credentialPublicKey").notNull(),
+    providerAccountId: text("provider_account_id").notNull(), // Link to the account? Check Auth docs if this is needed/correct
+    credentialPublicKey: text("credential_public_key").notNull(),
     counter: integer("counter").notNull(),
-    credentialDeviceType: text("credentialDeviceType").notNull(),
-    credentialBackedUp: boolean("credentialBackedUp").notNull(),
+    credentialDeviceType: text("credential_device_type").notNull(),
+    credentialBackedUp: boolean("credential_backed_up").notNull(),
     transports: text("transports"), // e.g. "internal,hybrid"
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
   (authenticator) => [
     primaryKey({ columns: [authenticator.userId, authenticator.credentialID] }),
@@ -110,14 +110,14 @@ export const authenticators = pgTable(
  * Stores course information for the learning app (e.g., "Chess", "Sudoku").
  */
 export const courses = pgTable(
-  "course",
+  "courses",
   {
     id: serial("id").primaryKey().notNull(),
     title: text("title").notNull(),
     description: text("description").notNull(),
     image: text("image").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
   (course) => [index("title_index").on(course.title)] // Index for faster title searches
 )
@@ -139,8 +139,8 @@ export const units = pgTable("units", {
     .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
   order: integer("order").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const unitsRelations = relations(units, ({ many, one }) => ({
@@ -162,8 +162,8 @@ export const lessons = pgTable("lessons", {
     .references(() => units.id, { onDelete: "cascade" })
     .notNull(),
   order: integer("order").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
@@ -178,18 +178,18 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
  * Challenges table definition.
  * Stores challenge information for the learning app (e.g., "Challenge 1", "Challenge 2").
  */
-export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"])
+export const challengeTypeEnum = pgEnum("type", ["SELECT", "ASSIST"])
 
 export const challenges = pgTable("challenges", {
   id: serial("id").primaryKey(),
   lessonId: integer("lesson_id")
     .references(() => lessons.id, { onDelete: "cascade" })
     .notNull(),
-  type: challengesEnum("type").notNull(),
+  challengeType: challengeTypeEnum("challenge_type").notNull(),
   question: text("question").notNull(),
   order: integer("order").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const challengesRelations = relations(challenges, ({ one, many }) => ({
@@ -214,8 +214,8 @@ export const challengeOptions = pgTable("challenge_options", {
   correct: boolean("correct").notNull(),
   image: text("image"),
   audio: text("audio"),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const challengeOptionsRelations = relations(
@@ -234,13 +234,13 @@ export const challengeOptionsRelations = relations(
  */
 export const challengeProgress = pgTable("challenge_progress", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(), // TODO: Confirm this doesn't break
+  userId: uuid("user_id").notNull(), // TODO: Confirm this doesn't break
   challengeId: integer("challenge_id")
     .references(() => challenges.id, { onDelete: "cascade" })
     .notNull(),
   completed: boolean("completed").notNull().default(false),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const challengeProgressRelations = relations(
@@ -257,17 +257,18 @@ export const challengeProgressRelations = relations(
  * User progress table definition.
  * Stores user progress in courses.
  */
-export const userProgress = pgTable("userProgress", {
-  userId: uuid("userId")
+export const userProgress = pgTable("user_progress", {
+  userId: uuid("user_id")
+    .primaryKey()
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  activeCourseId: integer("activeCourseId").references(() => courses.id, {
+  activeCourseId: integer("active_course_id").references(() => courses.id, {
     onDelete: "cascade",
   }),
   gems: integer("gems").notNull().default(5),
   points: integer("points").notNull().default(0),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
