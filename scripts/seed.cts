@@ -30,6 +30,11 @@ const main = async () => {
 
     await db.delete(schema.courses)
     await db.delete(schema.userProgress)
+    await db.delete(schema.units)
+    await db.delete(schema.lessons)
+    await db.delete(schema.challenges)
+    await db.delete(schema.challengeProgress)
+    await db.delete(schema.challengeOptions)
 
     await db.insert(schema.courses).values([
       {
@@ -49,6 +54,61 @@ const main = async () => {
         title: "Math",
         description: "Learn the basics of math.",
         image: "/math-icon.svg",
+      },
+    ])
+
+    await db.insert(schema.units).values([
+      {
+        id: 1,
+        courseId: 1,
+        title: "Unit 1",
+        description: "Learn the basics of chess",
+        order: 1,
+      },
+    ])
+
+    await db.insert(schema.lessons).values([
+      {
+        id: 1,
+        unitId: 1,
+        order: 1,
+        title: "Grid",
+      },
+    ])
+
+    await db.insert(schema.challenges).values([
+      {
+        id: 1,
+        lessonId: 1,
+        challengeType: "SELECT",
+        order: 1,
+        question: "How many boxes are there on a chess board?",
+      },
+    ])
+    await db.insert(schema.challengeOptions).values([
+      {
+        id: 1,
+        challengeId: 1,
+        image: "/board.svg",
+        audio: "/board.mp3",
+        correct: true,
+        text: "64",
+      },
+      {
+        id: 2,
+        challengeId: 1,
+        image: "/board.svg",
+        audio: "/board.mp3",
+        correct: false,
+        text: "54",
+      },
+      {
+        id: 3,
+        challengeId: 1,
+        image: "/board.svg",
+        audio: "/board.mp3",
+        correct: false,
+        text: "72",
       },
     ])
 
