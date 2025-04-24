@@ -2,7 +2,7 @@ import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq } from "drizzle-orm"
-import { challenges, courses, units, userProgress } from "@/db/schema"
+import { courses, units, userProgress } from "@/db/schema"
 
 export const getUserProgress = cache(async () => {
   const session = await auth()

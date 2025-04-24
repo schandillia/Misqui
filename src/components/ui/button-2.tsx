@@ -63,11 +63,21 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
-  const content = (
-    <>
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
-      <div className="custom-ease absolute -left-[75px] -top-[50px] -z-10 h-[155px] w-8 rotate-[135deg] bg-white opacity-20 transition-all duration-500 group-hover:left-[120%]" />
-    </>
+  // Wrap children in a span if asChild is true and multiple children are passed
+  const buttonChildren = asChild ? (
+    React.Children.count(children) > 1 ? (
+      <span className="inline-flex items-center gap-2">{children}</span>
+    ) : (
+      children
+    )
+  ) : (
+    <span className="relative inline-flex items-center gap-2">
+      {children}
+      {/* Shine effect as pseudo-element */}
+      <span className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <span className="custom-ease absolute -left-[75px] -top-[50px] h-[155px] w-8 rotate-[135deg] bg-white opacity-10 transition-all duration-500 group-hover:left-[120%]" />
+      </span>
+    </span>
   )
 
   return (
@@ -76,7 +86,7 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      {asChild ? children : content}
+      {buttonChildren}
     </Comp>
   )
 }

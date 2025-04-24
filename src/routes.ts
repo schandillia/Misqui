@@ -9,6 +9,7 @@ export const publicRoutes = new Set([
   "/terms",
   "/privacy",
   "/about",
+  "/component-list",
 ])
 
 export const authRoutes = new Set([
