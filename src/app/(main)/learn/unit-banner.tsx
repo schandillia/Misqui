@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { lessons, units } from "@/db/schema"
 import { NotebookText } from "lucide-react"
 import Link from "next/link"
 
