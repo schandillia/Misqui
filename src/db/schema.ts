@@ -11,6 +11,7 @@ import {
   uuid,
   index,
   serial,
+  pgEnum,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
@@ -113,6 +114,7 @@ export const courses = pgTable(
   {
     id: serial("id").primaryKey().notNull(),
     title: text("title").notNull(),
+    description: text("description").notNull(),
     image: text("image").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
@@ -122,7 +124,134 @@ export const courses = pgTable(
 
 export const coursesRelations = relations(courses, ({ many }) => ({
   userProgress: many(userProgress),
+  units: many(units),
 }))
+
+/**
+ * Units table definition.
+ * Stores unit information for the learning app (e.g., "Unit 1", "Unit 2").
+ */
+export const units = pgTable("units", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(), // Unit 1
+  description: text("description").notNull(), // Learn the basics of chess
+  courseId: integer("course_id")
+    .references(() => courses.id, { onDelete: "cascade" })
+    .notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const unitsRelations = relations(units, ({ many, one }) => ({
+  course: one(courses, {
+    fields: [units.courseId],
+    references: [courses.id],
+  }),
+  lessons: many(lessons),
+}))
+
+/**
+ * Lessons table definition.
+ * Stores lesson information for the learning app (e.g., "Lesson 1", "Lesson 2").
+ */
+export const lessons = pgTable("lessons", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  unitId: integer("unit_id")
+    .references(() => units.id, { onDelete: "cascade" })
+    .notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+  unit: one(units, {
+    fields: [lessons.unitId],
+    references: [units.id],
+  }),
+  challenges: many(challenges),
+}))
+
+/**
+ * Challenges table definition.
+ * Stores challenge information for the learning app (e.g., "Challenge 1", "Challenge 2").
+ */
+export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"])
+
+export const challenges = pgTable("challenges", {
+  id: serial("id").primaryKey(),
+  lessonId: integer("lesson_id")
+    .references(() => lessons.id, { onDelete: "cascade" })
+    .notNull(),
+  type: challengesEnum("type").notNull(),
+  question: text("question").notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const challengesRelations = relations(challenges, ({ one, many }) => ({
+  lesson: one(lessons, {
+    fields: [challenges.lessonId],
+    references: [lessons.id],
+  }),
+  challengeOptions: many(challengeOptions),
+  challengeProgress: many(challengeProgress),
+}))
+
+/**
+ * Challenge options table definition.
+ * Stores options for each challenge.
+ */
+export const challengeOptions = pgTable("challenge_options", {
+  id: serial("id").primaryKey(),
+  challengeId: integer("challenge_id")
+    .references(() => challenges.id, { onDelete: "cascade" })
+    .notNull(),
+  text: text("text").notNull(),
+  correct: boolean("correct").notNull(),
+  image: text("image"),
+  audio: text("audio"),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const challengeOptionsRelations = relations(
+  challengeOptions,
+  ({ one }) => ({
+    challenge: one(challenges, {
+      fields: [challengeOptions.challengeId],
+      references: [challenges.id],
+    }),
+  })
+)
+
+/**
+ * Challenge progress table definition.
+ * Stores user progress in challenges.
+ */
+export const challengeProgress = pgTable("challenge_progress", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(), // TODO: Confirm this doesn't break
+  challengeId: integer("challenge_id")
+    .references(() => challenges.id, { onDelete: "cascade" })
+    .notNull(),
+  completed: boolean("completed").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
+
+export const challengeProgressRelations = relations(
+  challengeProgress,
+  ({ one }) => ({
+    challenge: one(challenges, {
+      fields: [challengeProgress.challengeId],
+      references: [challenges.id],
+    }),
+  })
+)
 
 /**
  * User progress table definition.

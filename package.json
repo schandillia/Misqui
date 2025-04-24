@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "generate:env": "ts-node-esm scripts/generateEnvExample.mjs",
+    "db:seed": "tsx scripts/seed.cts",
+    "generate:env": "tsx scripts/generateEnvExample.mjs",
     "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
     "type-check": "tsc --noEmit"
   },
@@ -49,6 +50,7 @@
     "eslint-config-next": "15.3.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   }
 }
