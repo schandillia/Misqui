@@ -23,7 +23,7 @@ export const LessonHeader = ({
         className="text-slate-500 hover:opacity-75 transition cursor-pointer"
       />
       <Progress value={percentage} />
-      <div className="text-rose-500 flex items-center font-bold">
+      <div className="text-blue-500 flex items-center font-bold">
         <Image
           src="/gem.svg"
           height={28}

@@ -4,6 +4,7 @@ import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges } from "@/db/schema"
 import { useState } from "react"
+import { Challenge } from "@/app/lesson/challenge"
 
 type Props = {
   initialLessonId: number
@@ -38,6 +39,7 @@ export const Quiz = ({
   })
 
   const challenge = challenges[activeIndex]
+  const options = challenge?.challengeOptions ?? []
 
   const title =
     challenge.challengeType === "ASSIST"
@@ -61,6 +63,14 @@ export const Quiz = ({
               {challenge.challengeType === "ASSIST" && (
                 <QuestionBubble question={challenge.question} />
               )}
+              <Challenge
+                options={options}
+                onSelect={() => {}}
+                status="none"
+                selectedOption={undefined}
+                disabled={false}
+                challengeType={challenge.challengeType}
+              />
             </div>
           </div>
         </div>
