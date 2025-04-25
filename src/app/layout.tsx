@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import "./globals.css"
 import { cn } from "@/lib/utils"
+import { ExitModal } from "@/components/modals/exit-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -50,6 +51,7 @@ export default async function RootLayout({
         <AuthProvider>
           {children}
           <Toaster />
+          <ExitModal />
         </AuthProvider>
       </body>
     </html>
