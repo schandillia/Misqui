@@ -16,13 +16,16 @@ type Props = {
 }
 
 export const ChallengeCard = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  audio,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onClick,
   text,
   image,
-  audio,
   shortcut,
   selected,
-  onClick,
   status,
   disabled,
   challengeType,
@@ -31,7 +34,7 @@ export const ChallengeCard = ({
     <div
       onClick={() => {}}
       className={cn(
-        "h-full border-2 rounded-3xl border-b-4 hover:bg-black/5 p-4 lg:p-6 cursor-pointer active:border-b-2",
+        "h-full border-2 rounded-3xl hover:bg-black/5 p-4 lg:p-6 cursor-pointer",
         selected && "border-sky-300 bg-sky-100 hover:bg-sky-100",
         selected &&
           status === "correct" &&
