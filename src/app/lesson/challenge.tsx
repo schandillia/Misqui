@@ -25,7 +25,7 @@ export const Challenge = ({
         "grid gap-2",
         challengeType === "ASSIST" && "grid-cols-1",
         challengeType === "SELECT" &&
-          "grid-cols-2 lg:grid-cols-repeat-[repeat(auto-fit,minmax(0,1fr))]"
+          "grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
       )}
     >
       {options.map((option, i) => (
