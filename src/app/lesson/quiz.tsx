@@ -12,6 +12,7 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userSubscription: any
 }
 
@@ -22,7 +23,9 @@ export const Quiz = ({
   // initialLessonChallenges,
   userSubscription,
 }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [gems, setGems] = useState(initialGems)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [percentage, setPercentage] = useState(initialPercentage)
 
   return (
