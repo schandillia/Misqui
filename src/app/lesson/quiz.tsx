@@ -3,9 +3,11 @@
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges } from "@/db/schema"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
+import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
+import { toast } from "sonner"
 
 type Props = {
   initialLessonId: number
@@ -26,12 +28,12 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line
+  const [pending, startTransition] = useTransition()
+
   const [gems, setGems] = useState(initialGems)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [percentage, setPercentage] = useState(initialPercentage)
   const [challenges] = useState(initialLessonChallenges)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeIndex, setActiveIndex] = useState(() => {
     const incompleteIndex = challenges.findIndex(
       (challenge) => !challenge.completed
@@ -40,11 +42,7 @@ export const Quiz = ({
   })
 
   const [selectedOption, setSelectedOption] = useState<number>()
-  const [
-    status,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setStatus,
-  ] = useState<"correct" | "wrong" | "none">("none")
+  const [status, setStatus] = useState<"correct" | "wrong" | "none">("none")
 
   const challenge = challenges[activeIndex]
   const options = challenge?.challengeOptions ?? []
@@ -80,7 +78,23 @@ export const Quiz = ({
     if (!correctOption) return
 
     if (correctOption && correctOption.id === selectedOption) {
-      console.log("CORRECT!")
+      startTransition(() => {
+        upsertChallengeProgress(challenge.id)
+          .then((response) => {
+            if (response?.error === "gems") {
+              console.error("Missing gems")
+              return
+            }
+
+            setStatus("correct")
+            setPercentage((prev) => prev + 100 / challenges.length)
+
+            if (initialPercentage === 100) {
+              setGems((prev) => Math.min(prev + 1, 5))
+            }
+          })
+          .catch(() => toast.error("Something went wrong. Please try again."))
+      })
     } else {
       console.error("INCORRECT")
     }
