@@ -8,6 +8,7 @@ import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
+import { reduceGems } from "@/app/actions/user-progress"
 
 type Props = {
   initialLessonId: number
@@ -28,7 +29,6 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
-  // eslint-disable-next-line
   const [pending, startTransition] = useTransition()
 
   const [gems, setGems] = useState(initialGems)
@@ -96,7 +96,22 @@ export const Quiz = ({
           .catch(() => toast.error("Something went wrong. Please try again."))
       })
     } else {
-      console.error("INCORRECT")
+      startTransition(() => {
+        reduceGems(challenge.id)
+          .then((response) => {
+            if (response?.error === "gems") {
+              console.error("Missing gems")
+              return
+            }
+
+            setStatus("wrong")
+
+            if (!response?.error) {
+              setGems((prev) => Math.max(prev - 1, 0))
+            }
+          })
+          .catch(() => toast.error("Something went wrong. Please try again."))
+      })
     }
   }
 
@@ -127,14 +142,18 @@ export const Quiz = ({
                 onSelect={onSelect}
                 status={status}
                 selectedOption={selectedOption}
-                disabled={false}
+                disabled={pending}
                 challengeType={challenge.challengeType}
               />
             </div>
           </div>
         </div>
       </div>
-      <Footer disabled={!selectedOption} status={status} onCheck={onContinue} />
+      <Footer
+        disabled={pending || !selectedOption}
+        status={status}
+        onCheck={onContinue}
+      />
     </>
   )
 }
