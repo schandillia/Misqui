@@ -1,6 +1,8 @@
 import { challenges } from "@/db/schema"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { useCallback } from "react"
+import { useAudio, useKey } from "react-use"
 
 type Props = {
   id: number
@@ -18,9 +20,7 @@ type Props = {
 export const ChallengeCard = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  audio,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  audio: audioSrc,
   onClick,
   text,
   image,
@@ -30,9 +30,25 @@ export const ChallengeCard = ({
   disabled,
   challengeType,
 }: Props) => {
+  const [
+    audio,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _,
+    controls,
+  ] = useAudio({ src: audioSrc || "" })
+
+  const handleClick = useCallback(() => {
+    if (disabled) return
+
+    controls.play()
+    onClick()
+  }, [disabled, onClick, controls])
+
+  useKey(shortcut, handleClick, {}, [handleClick])
+
   return (
     <div
-      onClick={() => {}}
+      onClick={handleClick}
       className={cn(
         "h-full border-2 rounded-3xl hover:bg-black/5 p-4 lg:p-6 cursor-pointer",
         selected && "border-sky-300 bg-sky-100 hover:bg-sky-100",
@@ -46,6 +62,7 @@ export const ChallengeCard = ({
         challengeType === "ASSIST" && "lg:p-3 w-full"
       )}
     >
+      {audio}
       {image && (
         <div className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full">
           <Image src={image} alt={text} fill />
