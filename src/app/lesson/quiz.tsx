@@ -9,6 +9,7 @@ import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
+import { useAudio } from "react-use"
 
 type Props = {
   initialLessonId: number
@@ -29,6 +30,20 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
+  const [
+    correctAudio,
+    // eslint-disable-next-line
+    _c,
+    correctControls,
+  ] = useAudio({ src: "/correct.wav" })
+
+  const [
+    incorrectAudio,
+    // eslint-disable-next-line
+    _i,
+    incorrectControls,
+  ] = useAudio({ src: "/incorrect.wav" })
+
   const [pending, startTransition] = useTransition()
 
   const [gems, setGems] = useState(initialGems)
@@ -77,7 +92,7 @@ export const Quiz = ({
 
     if (!correctOption) return
 
-    if (correctOption && correctOption.id === selectedOption) {
+    if (correctOption.id === selectedOption) {
       startTransition(() => {
         upsertChallengeProgress(challenge.id)
           .then((response) => {
@@ -86,6 +101,7 @@ export const Quiz = ({
               return
             }
 
+            correctControls.play()
             setStatus("correct")
             setPercentage((prev) => prev + 100 / challenges.length)
 
@@ -104,6 +120,7 @@ export const Quiz = ({
               return
             }
 
+            incorrectControls.play()
             setStatus("wrong")
 
             if (!response?.error) {
@@ -122,6 +139,8 @@ export const Quiz = ({
 
   return (
     <>
+      {correctAudio}
+      {incorrectAudio}
       <LessonHeader
         gems={gems}
         percentage={percentage}
