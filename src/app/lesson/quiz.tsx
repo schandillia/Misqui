@@ -9,9 +9,11 @@ import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
-import { useAudio } from "react-use"
+import { useAudio, useWindowSize } from "react-use"
 import Image from "next/image"
 import { ResultCard } from "@/app/lesson/result-card"
+import { useRouter } from "next/navigation"
+import ReactConfetti from "react-confetti"
 
 type Props = {
   initialLessonId: number
@@ -21,33 +23,27 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  userSubscription: any
+  userSubscription: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const Quiz = ({
-  // initialLessonId,
+  initialLessonId,
   initialGems,
   initialPercentage,
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
-  const [
-    correctAudio,
-    // eslint-disable-next-line
-    _c,
-    correctControls,
-  ] = useAudio({ src: "/correct.wav" })
+  const { width, height } = useWindowSize()
+  const router = useRouter()
 
-  const [
-    incorrectAudio,
-    // eslint-disable-next-line
-    _i,
-    incorrectControls,
-  ] = useAudio({ src: "/incorrect.wav" })
+  const [finishAudioEl, , finishControls] = useAudio({ src: "/finish.mp3" })
+  const [correctAudioEl, , correctControls] = useAudio({ src: "/correct.wav" })
+  const [incorrectAudioEl, , incorrectControls] = useAudio({
+    src: "/incorrect.wav",
+  })
 
   const [pending, startTransition] = useTransition()
-
+  const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
   const [percentage, setPercentage] = useState(initialPercentage)
   const [challenges] = useState(initialLessonChallenges)
@@ -70,7 +66,6 @@ export const Quiz = ({
 
   const onSelect = (id: number) => {
     if (status !== "none") return
-
     setSelectedOption(id)
   }
 
@@ -91,7 +86,6 @@ export const Quiz = ({
     }
 
     const correctOption = options.find((option) => option.correct)
-
     if (!correctOption) return
 
     if (correctOption.id === selectedOption) {
@@ -102,7 +96,6 @@ export const Quiz = ({
               console.error("Missing gems")
               return
             }
-
             correctControls.play()
             setStatus("correct")
             setPercentage((prev) => prev + 100 / challenges.length)
@@ -121,7 +114,6 @@ export const Quiz = ({
               console.error("Missing gems")
               return
             }
-
             incorrectControls.play()
             setStatus("wrong")
 
@@ -134,9 +126,21 @@ export const Quiz = ({
     }
   }
 
-  if (true || !challenge) {
+  if (!challenge) {
+    finishControls.play()
+
     return (
       <>
+        {finishAudioEl}
+        {correctAudioEl}
+        {incorrectAudioEl}
+        <ReactConfetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          tweenDuration={10000}
+        />
         <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center justify-center items-center h-full">
           <Image
             src="/finish.svg"
@@ -162,6 +166,11 @@ export const Quiz = ({
             <ResultCard variant="gems" value={gems} />
           </div>
         </div>
+        <Footer
+          lessonId={lessonId}
+          status="completed"
+          onCheck={() => router.push("/learn")}
+        />
       </>
     )
   }
@@ -173,8 +182,9 @@ export const Quiz = ({
 
   return (
     <>
-      {correctAudio}
-      {incorrectAudio}
+      {finishAudioEl}
+      {correctAudioEl}
+      {incorrectAudioEl}
       <LessonHeader
         gems={gems}
         percentage={percentage}

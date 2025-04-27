@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 type Props = {
   value: number
@@ -6,6 +7,8 @@ type Props = {
 }
 
 export const ResultCard = ({ value, variant }: Props) => {
+  const imageSrc = variant === "gems" ? "/gem.svg" : "/points.svg"
+
   return (
     <div
       className={cn(
@@ -30,6 +33,13 @@ export const ResultCard = ({ value, variant }: Props) => {
           variant === "gems" && "text-blue-500"
         )}
       >
+        <Image
+          alt="Icon"
+          src={imageSrc}
+          height={30}
+          width={30}
+          className="mr-1.5"
+        />
         {value}
       </div>
     </div>
