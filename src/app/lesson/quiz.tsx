@@ -10,6 +10,8 @@ import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
 import { useAudio } from "react-use"
+import Image from "next/image"
+import { ResultCard } from "@/app/lesson/result-card"
 
 type Props = {
   initialLessonId: number
@@ -130,6 +132,38 @@ export const Quiz = ({
           .catch(() => toast.error("Something went wrong. Please try again."))
       })
     }
+  }
+
+  if (true || !challenge) {
+    return (
+      <>
+        <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center justify-center items-center h-full">
+          <Image
+            src="/finish.svg"
+            height={100}
+            width={100}
+            alt="Finish"
+            className="hidden lg:block"
+          />
+          <Image
+            src="/finish.svg"
+            height={50}
+            width={50}
+            alt="Finish"
+            className="block lg:hidden"
+          />
+          <h1 className="text-xl lg:text-3xl font-bold text-neutral-700">
+            Great job!
+            <br />
+            You’ve completed the lesson.
+          </h1>
+          <div className="flex items-center gap-x-4 w-full">
+            <ResultCard variant="points" value={challenges.length * 10} />
+            <ResultCard variant="gems" value={gems} />
+          </div>
+        </div>
+      </>
+    )
   }
 
   const title =
