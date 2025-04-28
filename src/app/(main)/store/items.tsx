@@ -14,6 +14,7 @@ type Props = {
   hasActiveSubscription: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
   const [pending, startTransition] = useTransition()
 

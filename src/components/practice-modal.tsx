@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import { Button } from "@/components/ui/button"
@@ -15,7 +14,6 @@ import {
 import Image from "next/image"
 
 export const PracticeModal = () => {
-  const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const { isOpen, close } = usePracticeModal()
 
