@@ -9,11 +9,13 @@ import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
-import { useAudio, useWindowSize } from "react-use"
+import { useAudio, useWindowSize, useMount } from "react-use"
 import Image from "next/image"
 import { ResultCard } from "@/app/lesson/result-card"
 import { useRouter } from "next/navigation"
 import ReactConfetti from "react-confetti"
+import { useGemsModal } from "@/store/use-gems-modal"
+import { usePracticeModal } from "@/store/use-practice-modal"
 
 type Props = {
   initialLessonId: number
@@ -33,7 +35,17 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
+  const { open: openGemsModal } = useGemsModal()
+  const { open: openPracticeModal } = usePracticeModal()
+
+  useMount(() => {
+    if (initialPercentage === 100) {
+      openPracticeModal()
+    }
+  })
+
   const { width, height } = useWindowSize()
+
   const router = useRouter()
 
   const [finishAudioEl, , finishControls] = useAudio({ src: "/finish.mp3" })
@@ -45,7 +57,9 @@ export const Quiz = ({
   const [pending, startTransition] = useTransition()
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
-  const [percentage, setPercentage] = useState(initialPercentage)
+  const [percentage, setPercentage] = useState(() => {
+    return initialPercentage === 100 ? 0 : initialPercentage
+  })
   const [challenges] = useState(initialLessonChallenges)
   const [activeIndex, setActiveIndex] = useState(() => {
     const incompleteIndex = challenges.findIndex(
@@ -93,7 +107,7 @@ export const Quiz = ({
         upsertChallengeProgress(challenge.id)
           .then((response) => {
             if (response?.error === "gems") {
-              console.error("Missing gems")
+              openGemsModal()
               return
             }
             correctControls.play()
@@ -111,7 +125,7 @@ export const Quiz = ({
         reduceGems(challenge.id)
           .then((response) => {
             if (response?.error === "gems") {
-              console.error("Missing gems")
+              openGemsModal()
               return
             }
             incorrectControls.play()

@@ -10,6 +10,8 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ExitModal } from "@/components/exit-modal"
+import { GemsModal } from "@/components/gems-modal"
+import { PracticeModal } from "@/components/practice-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -52,6 +54,8 @@ export default async function RootLayout({
           {children}
           <Toaster />
           <ExitModal />
+          <GemsModal />
+          <PracticeModal />
         </AuthProvider>
       </body>
     </html>
