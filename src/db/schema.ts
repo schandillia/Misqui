@@ -283,6 +283,8 @@ export const userSubscription = pgTable("user_subscription", {
   userId: uuid("user_id").notNull().unique(),
   stripeCustomerId: text("stripe_customer_id").notNull().unique(),
   stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
-  strilePriceId: text("stripe_price_id").notNull(),
-  stripeCurrentPeriodEnd: text("stripe_current_period_end").notNull(),
+  stripePriceId: text("stripe_price_id").notNull(),
+  stripeCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
