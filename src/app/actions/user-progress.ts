@@ -7,6 +7,8 @@ import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
+const POINTS_TO_REFILL = 10
+
 export const upsertUserProgress = async (courseId: number) => {
   const session = await auth()
   if (!session?.user?.id) {
@@ -82,10 +84,33 @@ export const reduceGems = async (challengeId: number) => {
     })
     .where(eq(userProgress.userId, session.user.id))
 
-  revalidatePath("/shop")
+  revalidatePath("/store")
   revalidatePath("/learn")
   revalidatePath("/quests")
   revalidatePath("/leaderboard")
   revalidatePath(`/lesson/${lessonId}`)
-  revalidatePath("/shop")
+}
+
+export const refillGems = async () => {
+  const currentUserProgress = await getUserProgress()
+
+  if (!currentUserProgress) throw new Error("User progress not found")
+
+  if (currentUserProgress.gems === 5) throw new Error("Gems are already full")
+
+  if (currentUserProgress.points < POINTS_TO_REFILL)
+    throw new Error("Not enough points")
+
+  await db
+    .update(userProgress)
+    .set({
+      gems: 5,
+      points: currentUserProgress.points - POINTS_TO_REFILL,
+    })
+    .where(eq(userProgress.userId, currentUserProgress.userId))
+
+  revalidatePath("/store")
+  revalidatePath("/learn")
+  revalidatePath("/quests")
+  revalidatePath("/leaderboard")
 }

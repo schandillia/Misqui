@@ -30,13 +30,13 @@ export const UserProgress = ({
           />
         </Button>
       </Link>
-      <Link href="/shop">
+      <Link href="/store">
         <Button variant="ghost" className="text-orange-500">
           <Image src="/points.svg" alt="Points" width={22} height={22} />
           {points}
         </Button>
       </Link>
-      <Link href="/shop">
+      <Link href="/store">
         <Button variant="ghost" className="text-blue-500">
           <Image src="/gem.svg" alt="Gems" width={22} height={22} />
           {hasActiveSubscription ? (

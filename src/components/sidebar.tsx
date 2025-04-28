@@ -15,7 +15,7 @@ const sidebarItems = [
   { label: "Learn", iconSrc: "/learn.svg", href: "/learn" },
   { label: "Leaderboard", iconSrc: "/leaderboard.svg", href: "/leaderboard" },
   { label: "Quests", iconSrc: "/quests.svg", href: "/quests" },
-  { label: "Shop", iconSrc: "/shop.svg", href: "/shop" },
+  { label: "Store", iconSrc: "/store.svg", href: "/store" },
 ]
 
 export const Sidebar = async ({ className }: Props) => {
