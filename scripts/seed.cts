@@ -159,28 +159,24 @@ const main = async () => {
     await db.insert(schema.challengeOptions).values([
       {
         challengeId: 2,
-        image: "/pawn.svg",
         audio: "/pawn.mp3",
         correct: true,
         text: "Moves one or two squares forward on its first move, one square thereafter",
       },
       {
         challengeId: 2,
-        image: "/pawn.svg",
         audio: "/pawn.mp3",
         correct: false,
         text: "Moves diagonally only",
       },
       {
         challengeId: 2,
-        image: "/pawn.svg",
         audio: "/pawn.mp3",
         correct: false,
         text: "Moves in an L-shape",
       },
       {
         challengeId: 2,
-        image: "/pawn.svg",
         audio: "/pawn.mp3",
         correct: false,
         text: "Moves any number of squares horizontally or vertically",
@@ -190,28 +186,24 @@ const main = async () => {
     await db.insert(schema.challengeOptions).values([
       {
         challengeId: 3,
-        image: "/bishop.svg",
         audio: "/bishop.mp3",
         correct: true,
         text: "Moves diagonally any number of squares",
       },
       {
         challengeId: 3,
-        image: "/rook.svg",
         audio: "/rook.mp3",
         correct: false,
         text: "Moves horizontally or vertically any number of squares",
       },
       {
         challengeId: 3,
-        image: "/knight.svg",
         audio: "/knight.mp3",
         correct: false,
         text: "Moves in an L-shape",
       },
       {
         challengeId: 3,
-        image: "/queen.svg",
         audio: "/queen.mp3",
         correct: false,
         text: "Moves any number of squares in any direction",
