@@ -73,10 +73,10 @@ export const LessonButton = ({
               value={Number.isNaN(percentage) ? 0 : percentage}
               styles={{
                 path: {
-                  stroke: "#4ade80",
+                  stroke: "var(--color-brand-500)",
                 },
                 trail: {
-                  stroke: "#e5e7eb",
+                  stroke: "var(--color-gray-300)",
                 },
               }}
             >
