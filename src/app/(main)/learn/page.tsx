@@ -1,6 +1,7 @@
 import { Header } from "@/app/(main)/learn/header"
 import { Unit } from "@/app/(main)/learn/unit"
 import { FeedWrapper } from "@/components/feed-wrapper"
+import { Promo } from "@/components/promo"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
 import {
@@ -41,6 +42,8 @@ const Page = async () => {
     redirect("/courses")
   }
 
+  const isPro = !!userSubsctiption?.isActive
+
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
@@ -48,8 +51,9 @@ const Page = async () => {
           activeCourse={userProgress.activeCourse}
           gems={userProgress.gems}
           points={userProgress.points}
-          hasActiveSubscription={!!userSubsctiption?.isActive}
+          hasActiveSubscription={isPro}
         />
+        {!isPro && <Promo />}
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
