@@ -18,7 +18,7 @@ Misqui is an interactive educational platform where kids can develop essential s
 - **Interactive Learning Games** — Engaging educational content for mathematics, puzzles, and strategic thinking
 - **Progress Tracking** — Monitor learning achievements and skill development over time
 - **Kid-Friendly Interface** — Intuitive design optimized for young learners
-- **Adaptive Learning Paths** — Content that adjusts to each child’s skill level and progress
+- **Adaptive Learning Paths** — Content that adjusts to each child's skill level and progress
 - **Dark/Light Mode** — Comfortable viewing experience in any environment
 - **Authentication** — Secure accounts for students and parents
 
@@ -30,6 +30,7 @@ Misqui is built with modern web technologies:
 - **Styling**: Tailwind CSS v4.1 with shadcn/ui components
 - **Authentication**: AuthJS v5
 - **Database**: Neon PostgreSQL with Drizzle ORM
+- **Payments**: Stripe
 - **Deployment**: Vercel
 
 ## 📦 Installation
@@ -37,36 +38,44 @@ Misqui is built with modern web technologies:
 To set up the development environment:
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/schandillia/Misqui.git
    ```
-
 2. Navigate to the project directory:
-
    ```bash
    cd misqui
    ```
-
 3. Install dependencies:
-
    ```bash
    pnpm install
    ```
-
 4. Set up environment variables:
-
    ```bash
    cp .env.example .env.local
    ```
-
    Then edit `.env.local` with your specific configuration values.
-
 5. Set up the database:
    ```bash
    pnpm db:generate
    pnpm db:push
    ```
+
+## 💳 Stripe Setup
+
+To test the payment integration with Stripe:
+
+1. Run the Stripe CLI webhook listener in a terminal:
+
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+
+2. While keeping the first terminal running, open a separate terminal and trigger a test payment event:
+   ```bash
+   stripe trigger payment_intent.succeeded
+   ```
+
+These commands will help you verify that your Stripe payment processing is correctly configured.
 
 ## ▶️ Development
 
