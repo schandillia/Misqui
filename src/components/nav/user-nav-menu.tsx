@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import Link from "next/link"
 import { LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu"
 import { logOut } from "@/app/actions/auth"
@@ -23,26 +23,6 @@ interface UserNavMenuProps {
   }
   position?: "top" | "bottom"
 }
-
-const getInitials = (name?: string | null) =>
-  name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase() ?? "U"
-
-const UserAvatar: FC<{
-  name?: string | null
-  image?: string | null
-  className?: string
-}> = ({ name, image, className }) => (
-  <Avatar className={className}>
-    <AvatarImage src={image ?? ""} alt={name ?? ""} />
-    <AvatarFallback className="bg-gradient-to-br from-brand-100 to-brand-200 text-brand-600">
-      {getInitials(name)}
-    </AvatarFallback>
-  </Avatar>
-)
 
 const UserInfo: FC<{ name?: string | null; email?: string | null }> = ({
   name,

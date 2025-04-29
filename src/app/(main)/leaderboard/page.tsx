@@ -2,8 +2,8 @@ import { FeedWrapper } from "@/components/feed-wrapper"
 import { Promo } from "@/components/promo"
 import { Quests } from "@/components/quests"
 import { StickyWrapper } from "@/components/sticky-wrapper"
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import { UserAvatar } from "@/components/user-avatar"
 import { UserProgress } from "@/components/user-progress"
 import {
   getTopTenUsers,
@@ -61,12 +61,11 @@ const Page = async () => {
               className="flex items-center w-full p-2 px-4 rounded-xl hover:bg-gray-200/50"
             >
               <p className="font-bold text-lime-700 mr-4">{index + 1}</p>
-              <Avatar className="border bg-brand-500 size-12 mr-6 ml-3">
-                <AvatarImage
-                  className="object-cover"
-                  src={userProgress.image}
-                />
-              </Avatar>
+              <UserAvatar
+                name={userProgress.name}
+                image={userProgress.image}
+                className="size-12 cursor-pointer mr-6 ml-3"
+              />
               <p className="text-natural-800 font-bold flex-1">
                 {userProgress.name}
               </p>
