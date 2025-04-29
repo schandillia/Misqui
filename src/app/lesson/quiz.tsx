@@ -2,7 +2,7 @@
 
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
-import { challengeOptions, challenges } from "@/db/schema"
+import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 import { useState, useTransition } from "react"
 import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
@@ -26,7 +26,11 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
-  userSubscription: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  userSubscription:
+    | (typeof userSubscription.$inferSelect & {
+        isActive: boolean
+      })
+    | null
 }
 
 export const Quiz = ({
@@ -49,7 +53,7 @@ export const Quiz = ({
 
   const router = useRouter()
 
-  const [finishAudioEl, , finishControls] = useAudio({ src: "/finish.mp3" })
+  const [finishAudioEl, , finishControls] = useAudio({ src: "/finish.wav" })
   const [correctAudioEl, , correctControls] = useAudio({ src: "/correct.wav" })
   const [incorrectAudioEl, , incorrectControls] = useAudio({
     src: "/incorrect.wav",

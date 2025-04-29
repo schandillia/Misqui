@@ -73,8 +73,8 @@ export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
             Unlimited gems
           </p>
         </div>
-        <Button disabled={pending || hasActiveSubscription} onClick={onUpgrade}>
-          {hasActiveSubscription ? "active" : "upgrade"}
+        <Button disabled={pending} onClick={onUpgrade}>
+          {hasActiveSubscription ? "settings" : "upgrade"}
         </Button>
       </div>
     </ul>
