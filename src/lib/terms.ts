@@ -2,6 +2,7 @@ import fs from "fs"
 import path from "path"
 import { marked } from "marked"
 import brand from "@/lib/data/brand.json"
+import { logger } from "@/lib/logger"
 
 // Configuration for dynamic values
 const config = {
@@ -13,10 +14,8 @@ const config = {
 const renderer = new marked.Renderer()
 renderer.heading = ({ text, depth }: { text: string; depth: number }) => {
   if (depth === 2) {
-    // Apply font-bold and text-gray-700 to level 2 headings (##)
     return `<h2 class="font-bold text-neutral-700 my-2 mt-4 text-xl">${text}</h2>`
   }
-  // Default rendering for other heading levels
   return `<h${depth}>${text}</h${depth}>`
 }
 
@@ -44,7 +43,12 @@ export async function getTermsContent(): Promise<string> {
 
     return htmlContent
   } catch (error) {
-    console.error("Error processing terms:", error)
+    // Log error using Winston
+    logger.error("Error processing terms: %O", {
+      error,
+      filePath: path.join(process.cwd(), "src", "lib", "data", "TERMS.md"),
+      timestamp: new Date().toISOString(),
+    })
     return "<p>Error loading terms and conditions.</p>"
   }
 }

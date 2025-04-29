@@ -7,6 +7,7 @@ import { db } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { AuthProvider } from "@/components/auth/auth-provider"
+import { logger } from "@/lib/logger"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ExitModal } from "@/components/exit-modal"
@@ -25,10 +26,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = await auth()
-  // Since we're not using the user variable, we can remove it
-  if (session) console.log("SESSION: ", session)
+  // Logging the session data
+  if (session) logger.info("SESSION: %O", session)
+
   if (session?.user?.id) {
-    console.log("SESSION.USER.ID: ", session.user.id)
+    logger.info("SESSION.USER.ID: %s", session.user.id)
     try {
       await db
         .select()
@@ -37,10 +39,12 @@ export default async function RootLayout({
         .limit(1)
       // Not storing the result since we're not using it
     } catch (error) {
-      console.error("Error fetching user:", error)
+      // Log errors using Winston
+      logger.error("Error fetching user: %O", error)
     }
   } else {
-    console.log("No user session or ID found.")
+    // Log when no user session is found
+    logger.warn("No user session or ID found.")
   }
 
   return (

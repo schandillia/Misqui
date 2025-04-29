@@ -1,8 +1,10 @@
+// seed.cts
 import fs from "fs"
 import path from "path"
 import { drizzle } from "drizzle-orm/neon-http"
 import { neon } from "@neondatabase/serverless"
 import * as schema from "../src/db/schema"
+import { logger } from "@/lib/logger"
 
 // Load .env manually
 const envPath = path.resolve(__dirname, "../.env")
@@ -26,7 +28,7 @@ const db = drizzle(sql, { schema })
 
 const main = async () => {
   try {
-    console.log("Seeding database")
+    logger.info("Starting database seeding")
 
     await db.delete(schema.courses)
     await db.delete(schema.userProgress)
@@ -36,6 +38,7 @@ const main = async () => {
     await db.delete(schema.challengeOptions)
     await db.delete(schema.challengeProgress)
     await db.delete(schema.userSubscription)
+    logger.debug("Cleared existing data from all tables")
 
     await db.insert(schema.courses).values([
       {
@@ -57,6 +60,7 @@ const main = async () => {
         image: "/math-icon.svg",
       },
     ])
+    logger.debug("Inserted courses")
 
     await db.insert(schema.units).values([
       {
@@ -67,39 +71,41 @@ const main = async () => {
         order: 1,
       },
     ])
+    logger.debug("Inserted units")
 
     await db.insert(schema.lessons).values([
       {
         id: 1,
-        unitId: 1, // Unit 1 (Learn the basics...)
+        unitId: 1,
         order: 1,
         title: "Grid",
       },
       {
         id: 2,
-        unitId: 1, // Unit 1 (Learn the basics...)
+        unitId: 1,
         order: 2,
         title: "Pieces",
       },
       {
         id: 3,
-        unitId: 1, // Unit 1 (Learn the basics...)
+        unitId: 1,
         order: 3,
         title: "Opening",
       },
       {
         id: 4,
-        unitId: 1, // Unit 1 (Learn the basics...)
+        unitId: 1,
         order: 4,
         title: "Pawn",
       },
       {
         id: 5,
-        unitId: 1, // Unit 1 (Learn the basics...)
+        unitId: 1,
         order: 5,
         title: "Rook",
       },
     ])
+    logger.debug("Inserted lessons")
 
     await db.insert(schema.challenges).values([
       {
@@ -124,6 +130,7 @@ const main = async () => {
         question: "Which of these is the bishop?",
       },
     ])
+    logger.debug("Inserted initial challenges")
 
     await db.insert(schema.challengeOptions).values([
       {
@@ -155,6 +162,7 @@ const main = async () => {
         text: "36",
       },
     ])
+    logger.debug("Inserted challenge options for challenge 1")
 
     await db.insert(schema.challengeOptions).values([
       {
@@ -182,6 +190,7 @@ const main = async () => {
         text: "Moves any number of squares horizontally or vertically",
       },
     ])
+    logger.debug("Inserted challenge options for challenge 2")
 
     await db.insert(schema.challengeOptions).values([
       {
@@ -209,6 +218,7 @@ const main = async () => {
         text: "Moves any number of squares in any direction",
       },
     ])
+    logger.debug("Inserted challenge options for challenge 3")
 
     await db.insert(schema.challenges).values([
       {
@@ -234,10 +244,20 @@ const main = async () => {
         question: "The knight",
       },
     ])
-    console.log("Seeding finished")
+    logger.debug("Inserted additional challenges")
+
+    logger.info("Database seeding completed successfully")
   } catch (error) {
-    console.error(error)
-    throw new Error("Failed to seed the database")
+    logger.error("Failed to seed database: %O", {
+      error,
+      timestamp: new Date().toISOString(),
+      operation: "database seeding",
+    })
+    throw new Error(
+      `Failed to seed database: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    )
   }
 }
 

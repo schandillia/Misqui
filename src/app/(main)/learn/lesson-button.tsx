@@ -81,7 +81,6 @@ export const LessonButton = ({
               }}
             >
               <Button
-                // size="rounded"
                 variant={locked ? "locked" : "secondary"}
                 className="size-[70px] border-4 rounded-3xl"
               >

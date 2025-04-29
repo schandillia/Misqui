@@ -1,5 +1,6 @@
 import fs from "fs"
 import path from "path"
+import { logger } from "@/lib/logger.ts"
 
 const envFilePath = path.resolve(process.cwd(), ".env")
 const exampleFilePath = path.resolve(process.cwd(), ".env.example")
@@ -23,9 +24,14 @@ function generateEnvExample() {
 
     // Write to .env.example
     fs.writeFileSync(exampleFilePath, exampleLines.join("\n"), "utf-8")
-    console.log(".env.example file generated successfully")
+    logger.info(".env.example file generated successfully")
   } catch (error) {
-    console.error("Error generating .env.example:", error)
+    logger.error("Error generating .env.example: %O", {
+      error,
+      envFilePath,
+      exampleFilePath,
+      timestamp: new Date().toISOString(),
+    })
     process.exit(1)
   }
 }
