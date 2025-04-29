@@ -4,7 +4,7 @@ import { auth } from "@/auth"
 import { stripe } from "@/lib/stripe"
 import { absoluteUrl } from "@/lib/utils"
 import { getUserSubscription } from "@/db/queries"
-import brand from "@/lib/data/brand.json"
+import subscription from "@/lib/data/subscription.json"
 
 const returnUrl = absoluteUrl("/store")
 
@@ -33,14 +33,14 @@ export const createStripeUrl = async () => {
       {
         quantity: 1,
         price_data: {
-          currency: brand.SUBSCRIPTION_CURRENCY,
+          currency: subscription.SUBSCRIPTION_CURRENCY,
           product_data: {
-            name: brand.SUBSCRIPTION_PRODUCT,
-            description: brand.SUBSCRIPTION_DESCRIPTION,
+            name: subscription.SUBSCRIPTION_PRODUCT,
+            description: subscription.SUBSCRIPTION_DESCRIPTION,
           },
-          unit_amount: Number(brand.SUBSCRIPTION_AMOUNT),
+          unit_amount: Number(subscription.SUBSCRIPTION_AMOUNT),
           recurring: {
-            interval: brand.SUBSCRIPTION_FREQUENCY as
+            interval: subscription.SUBSCRIPTION_FREQUENCY as
               | "day"
               | "week"
               | "month"
