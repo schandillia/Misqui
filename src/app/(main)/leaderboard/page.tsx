@@ -37,7 +37,7 @@ const Page = async () => {
         />
       </StickyWrapper>
       <FeedWrapper>
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center cursor-default">
           <Image
             src="/leaderboard.svg"
             alt="Leaderboard"
@@ -57,7 +57,7 @@ const Page = async () => {
               className="flex items-center w-full p-2 px-4 rounded-xl hover:bg-gray-200/50"
             >
               <p className="font-bold text-lime-700 mr-4">{index + 1}</p>
-              <Avatar className="border bg-green-500 size-12 mr-6 ml-3">
+              <Avatar className="border bg-brand-500 size-12 mr-6 ml-3">
                 <AvatarImage
                   className="object-cover"
                   src={userProgress.image}
