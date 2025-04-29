@@ -76,14 +76,14 @@ export const LessonButton = ({
                   stroke: "var(--color-brand-500)",
                 },
                 trail: {
-                  stroke: "var(--color-gray-300)",
+                  stroke: "var(--color-neutral-300)",
                 },
               }}
             >
               <Button
-                size="rounded"
+                // size="rounded"
                 variant={locked ? "locked" : "secondary"}
-                className="size-[70px] border-4"
+                className="size-[70px] border-4 rounded-3xl"
               >
                 <Icon
                   className={cn(
@@ -99,9 +99,9 @@ export const LessonButton = ({
           </div>
         ) : (
           <Button
-            size="rounded"
+            // size="lg"
             variant={locked ? "locked" : "secondary"}
-            className="size-[70px] border-4"
+            className="size-[70px] border-4 rounded-3xl"
           >
             <Icon
               className={cn(
