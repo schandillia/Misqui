@@ -1,13 +1,14 @@
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import {
   challengeProgress,
   courses,
   lessons,
   units,
   userProgress,
+  users,
   userSubscription,
 } from "@/db/schema"
 
@@ -238,4 +239,27 @@ export const getUserSubscription = cache(async () => {
     ...data,
     isActive: !!isActive,
   }
+})
+
+export const getTopTenUsers = cache(async () => {
+  const session = await auth()
+  if (!session?.user?.id) return []
+  // Make sure you have the necessary imports at the top of your file:
+  // import { eq, desc } from "drizzle-orm"
+  // import { users, userProgress } from "@/db/schema"
+
+  // Most reliable approach using explicit SQL joins
+  const data = await db
+    .select({
+      userId: userProgress.userId,
+      points: userProgress.points,
+      name: users.name,
+      image: users.image,
+    })
+    .from(userProgress)
+    .innerJoin(users, eq(userProgress.userId, users.id))
+    .orderBy(desc(userProgress.points))
+    .limit(10)
+
+  return data
 })

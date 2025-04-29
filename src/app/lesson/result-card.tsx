@@ -24,7 +24,7 @@ export const ResultCard = ({ value, variant }: Props) => {
           variant === "gems" && "bg-blue-400"
         )}
       >
-        {variant === "gems" ? "Gems Left" : "Total XP"}
+        {variant === "gems" ? "Gems Left" : "Total Points"}
       </div>
       <div
         className={cn(
