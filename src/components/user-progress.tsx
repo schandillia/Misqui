@@ -38,7 +38,12 @@ export const UserProgress = ({
       </Link>
       <Link href="/store">
         <Button variant="ghost" className="text-blue-500">
-          <Image src="/gem.svg" alt="Gems" width={22} height={22} />
+          <Image
+            src={hasActiveSubscription ? "/gems_unlimited.svg" : "gem.svg"}
+            alt="Gems"
+            width={22}
+            height={22}
+          />
           {hasActiveSubscription ? (
             <InfinityIcon className="size-4 stroke-3" />
           ) : (

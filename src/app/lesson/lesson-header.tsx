@@ -25,7 +25,7 @@ export const LessonHeader = ({
       <Progress value={percentage} />
       <div className="text-blue-500 flex items-center font-bold">
         <Image
-          src="/gem.svg"
+          src={hasActiveSubscription ? "/gems_unlimited.svg" : "gem.svg"}
           height={28}
           width={28}
           alt="Gem"
