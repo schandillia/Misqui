@@ -2,6 +2,7 @@ import { Header } from "@/app/(main)/learn/header"
 import { Unit } from "@/app/(main)/learn/unit"
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { Promo } from "@/components/promo"
+import { Quests } from "@/components/quests"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
 import {
@@ -54,6 +55,7 @@ const Page = async () => {
           hasActiveSubscription={isPro}
         />
         {!isPro && <Promo />}
+        <Quests points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />

@@ -6,29 +6,9 @@ import { UserProgress } from "@/components/user-progress"
 import { getUserProgress, getUserSubscription } from "@/db/queries"
 import Image from "next/image"
 import { redirect } from "next/navigation"
+import app from "@/lib/data/app.json"
 
-const quests = [
-  {
-    title: "Earn 20 points",
-    value: 20,
-  },
-  {
-    title: "Earn 50 points",
-    value: 50,
-  },
-  {
-    title: "Earn 100 points",
-    value: 100,
-  },
-  {
-    title: "Earn 500 points",
-    value: 500,
-  },
-  {
-    title: "Earn 1000 points",
-    value: 1000,
-  },
-]
+const quests = app.QUESTS
 
 const Page = async () => {
   const userProgressData = getUserProgress()
@@ -65,10 +45,10 @@ const Page = async () => {
           </p>
           <ul className="w-full">
             {quests.map((quest) => {
-              const progress = (userProgress.points / quest.value) * 100
+              const progress = (userProgress.points / quest.VALUE) * 100
               return (
                 <div
-                  key={quest.title}
+                  key={quest.TITLE}
                   className="flex items-center w-full p-4 gap-x-4 border-t-2"
                 >
                   <Image
@@ -79,7 +59,7 @@ const Page = async () => {
                   />
                   <div className="flex flex-col w-full gap-y-2">
                     <p className="text-neutral-700 font-bold text-xl">
-                      {quest.title}
+                      {quest.TITLE}
                     </p>
                     <Progress value={progress} className="h-3" />
                   </div>

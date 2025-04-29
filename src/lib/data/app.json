@@ -1,4 +1,26 @@
 {
   "GEMS_LIMIT": 5,
-  "POINTS_TO_REFILL": 10
+  "POINTS_TO_REFILL": 10,
+  "QUESTS": [
+    {
+      "TITLE": "Earn 20 points",
+      "VALUE": 20
+    },
+    {
+      "TITLE": "Earn 50 points",
+      "VALUE": 50
+    },
+    {
+      "TITLE": "Earn 100 points",
+      "VALUE": 100
+    },
+    {
+      "TITLE": "Earn 500 points",
+      "VALUE": 500
+    },
+    {
+      "TITLE": "Earn 1000 points",
+      "VALUE": 1000
+    }
+  ]
 }
