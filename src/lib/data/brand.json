@@ -10,5 +10,10 @@
   "NOREPLY_EMAIL": "onboarding@resend.dev",
   "TWITTER_HANDLE": "@misqui",
   "GITHUB_HANDLE": "misqui",
-  "LINKEDIN_HANDLE": "misqui"
+  "LINKEDIN_HANDLE": "misqui",
+  "SUBSCRIPTION_PRODUCT": "Misqui Pro",
+  "SUBSCRIPTION_DESCRIPTION": "Unlimited gems",
+  "SUBSCRIPTION_CURRENCY": "INR",
+  "SUBSCRIPTION_FREQUENCY": "month",
+  "SUBSCRIPTION_AMOUNT": "20000"
 }

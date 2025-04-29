@@ -11,7 +11,7 @@ const buttonVariants = cva(
         locked:
           "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-400",
         default:
-          "bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-full hover:scale-105 hover:from-purple-300 hover:to-pink-300 active:scale-95",
+          "rounded-full bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95",
         primary:
           "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 hover:from-purple-500 hover:to-indigo-500 active:scale-95",
         primaryOutline:
