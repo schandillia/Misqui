@@ -35,7 +35,7 @@ export async function getTermsContent(): Promise<string> {
     const markdown = fs.readFileSync(filePath, "utf-8")
 
     // Replace placeholders with dynamic values
-    let processedMarkdown = markdown
+    const processedMarkdown = markdown
       .replace(/{{BRAND_NAME}}/g, config.brandName)
       .replace(/{{LAST_REVISED_DATE}}/g, config.lastRevisedDate)
 
