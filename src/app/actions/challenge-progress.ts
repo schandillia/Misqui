@@ -6,6 +6,7 @@ import { getUserProgress } from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import app from "@/lib/data/app.json"
 
 export const upsertChallengeProgress = async (challengeId: number) => {
   const session = await auth()
@@ -54,7 +55,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     await db
       .update(userProgress)
       .set({
-        gems: Math.min(currentUserProgress.gems + 1, 5),
+        gems: Math.min(currentUserProgress.gems + 1, app.GEMS_LIMIT),
         points: currentUserProgress.points + 10,
       })
       .where(eq(userProgress.userId, session.user.id))

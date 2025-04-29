@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
+import app from "@/lib/data/app.json"
 
 type Props = {
   initialLessonId: number
@@ -115,7 +116,7 @@ export const Quiz = ({
             setPercentage((prev) => prev + 100 / challenges.length)
 
             if (initialPercentage === 100) {
-              setGems((prev) => Math.min(prev + 1, 5))
+              setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
           })
           .catch(() => toast.error("Something went wrong. Please try again."))

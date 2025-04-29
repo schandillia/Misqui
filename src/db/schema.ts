@@ -14,6 +14,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
+import app from "@/lib/data/app.json"
 
 /**
  * Users table definition.
@@ -265,7 +266,7 @@ export const userProgress = pgTable("user_progress", {
   activeCourseId: integer("active_course_id").references(() => courses.id, {
     onDelete: "cascade",
   }),
-  gems: integer("gems").notNull().default(5),
+  gems: integer("gems").notNull().default(app.GEMS_LIMIT),
   points: integer("points").notNull().default(0),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),

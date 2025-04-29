@@ -11,31 +11,31 @@ const buttonVariants = cva(
         locked:
           "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-400",
         default:
-          "rounded-full bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95",
+          "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95",
         primary:
-          "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 hover:from-purple-500 hover:to-indigo-500 active:scale-95",
+          "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-purple-500 hover:to-indigo-500 active:scale-95",
         primaryOutline:
-          "bg-white text-purple-600 border-2 border-purple-300 rounded-full hover:bg-purple-50 hover:scale-105 active:scale-95",
+          "bg-white text-purple-600 border-2 border-purple-300 rounded-3xl hover:bg-purple-50 hover:scale-105 active:scale-95",
         secondary:
-          "bg-gradient-to-r from-teal-400 to-cyan-400 text-white rounded-full hover:scale-105 hover:from-teal-300 hover:to-cyan-300 active:scale-95",
+          "bg-gradient-to-r from-teal-400 to-cyan-400 text-white rounded-3xl hover:scale-105 hover:from-teal-300 hover:to-cyan-300 active:scale-95",
         secondaryOutline:
-          "bg-white text-teal-600 border-2 border-teal-300 rounded-full hover:bg-teal-50 hover:scale-105 active:scale-95",
+          "bg-white text-teal-600 border-2 border-teal-300 rounded-3xl hover:bg-teal-50 hover:scale-105 active:scale-95",
         danger:
-          "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95",
+          "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-3xl hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95",
         dangerOutline:
-          "bg-white text-red-600 border-2 border-red-300 rounded-full hover:bg-red-50 hover:scale-105 active:scale-95",
+          "bg-white text-red-600 border-2 border-red-300 rounded-3xl hover:bg-red-50 hover:scale-105 active:scale-95",
         super:
-          "bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full hover:scale-105 hover:from-yellow-300 hover:to-orange-300 active:scale-95",
+          "bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-3xl hover:scale-105 hover:from-yellow-300 hover:to-orange-300 active:scale-95",
         superOutline:
-          "bg-white text-yellow-600 border-2 border-yellow-300 rounded-full hover:bg-yellow-50 hover:scale-105 active:scale-95",
+          "bg-white text-yellow-600 border-2 border-yellow-300 rounded-3xl hover:bg-yellow-50 hover:scale-105 active:scale-95",
         defaultOutline:
-          "bg-transparent text-gray-600 border-2 border-gray-300 rounded-full hover:bg-gray-50 hover:scale-105 active:scale-95",
+          "bg-transparent text-gray-600 border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:scale-105 active:scale-95",
         ghost:
-          "bg-transparent text-gray-600 border-transparent rounded-full hover:bg-purple-100/50",
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-purple-100/50",
         sidebar:
-          "bg-transparent text-gray-600 border-transparent rounded-full hover:bg-purple-100/50",
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-purple-100/50",
         sidebarOutline:
-          "bg-purple-100 text-purple-600 border-2 border-purple-200 rounded-full hover:bg-purple-200 hover:scale-105 active:scale-95",
+          "bg-purple-100 text-purple-600 border-2 border-purple-200 rounded-3xl hover:bg-purple-200 hover:scale-105 active:scale-95",
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",

@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"
-
-const POINTS_TO_REFILL = 10
+import app from "@/lib/data/app.json"
 
 type Props = {
   gems: number
@@ -19,7 +18,8 @@ export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
   const [pending, startTransition] = useTransition()
 
   const onRefillGems = () => {
-    if (pending || gems === 5 || points < POINTS_TO_REFILL) return
+    if (pending || gems === app.GEMS_LIMIT || points < app.POINTS_TO_REFILL)
+      return
 
     startTransition(() => {
       refillGems().catch(() => toast.error("Something went wrong"))
@@ -47,14 +47,16 @@ export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
         </div>
         <Button
           onClick={onRefillGems}
-          disabled={pending || gems === 5 || points < POINTS_TO_REFILL}
+          disabled={
+            pending || gems === app.GEMS_LIMIT || points < app.POINTS_TO_REFILL
+          }
         >
-          {gems === 5 ? (
+          {gems === app.GEMS_LIMIT ? (
             "full"
           ) : (
             <div className="flex items-center">
               <Image src="/points.svg" alt="Points" height={20} width={20} />
-              <p>{POINTS_TO_REFILL}</p>
+              <p>{app.POINTS_TO_REFILL}</p>
             </div>
           )}
         </Button>
