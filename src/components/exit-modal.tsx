@@ -13,11 +13,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import Image from "next/image"
+import exitMessages from "@/lib/data/exit-messages.json"
 
 export const ExitModal = () => {
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const { isOpen, close } = useExitModal()
+  const [randomMessage, setRandomMessage] = useState({
+    title: "",
+    description: "",
+  })
+
+  // Update random message when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const message =
+        exitMessages[Math.floor(Math.random() * exitMessages.length)]
+      setRandomMessage({
+        title: message.title,
+        description: message.description,
+      })
+    }
+  }, [isOpen])
 
   useEffect(() => setIsClient(true), [])
 
@@ -31,10 +48,10 @@ export const ExitModal = () => {
             <Image src="/mascot-sad.svg" alt="Mascot" height={80} width={80} />
           </div>
           <DialogTitle className="text-center text-2xl font-bold">
-            Wait, don’t go!
+            {randomMessage.title}
           </DialogTitle>
           <DialogDescription className="text-center text-base">
-            You’re about to leave the lesson. Are you sure?
+            {randomMessage.description}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mb-4">
