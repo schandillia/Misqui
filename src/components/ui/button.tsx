@@ -17,9 +17,9 @@ const buttonVariants = cva(
         primaryOutline:
           "bg-white text-purple-600 border-2 border-purple-300 rounded-3xl hover:bg-purple-50 hover:scale-105 active:scale-95",
         secondary:
-          "bg-gradient-to-r from-teal-400 to-cyan-400 text-white rounded-3xl hover:scale-105 hover:from-teal-300 hover:to-cyan-300 active:scale-95",
+          "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95",
         secondaryOutline:
-          "bg-white text-teal-600 border-2 border-teal-300 rounded-3xl hover:bg-teal-50 hover:scale-105 active:scale-95",
+          "bg-white text-teal-600 border-2 border-emerald-300 rounded-3xl hover:bg-emerald-50 hover:scale-105 active:scale-95",
         danger:
           "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-3xl hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95",
         dangerOutline:
