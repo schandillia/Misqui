@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress"
 
 const quests = app.QUESTS
 
+const questsToDisplay = 3
+
 type Props = {
   points: number
 }
@@ -22,23 +24,26 @@ export const Quests = ({ points }: Props) => {
         </Link>
       </div>
       <ul className="w-full space-y-4">
-        {quests.map((quest) => {
-          const progress = (points / quest.VALUE) * 100
-          return (
-            <div
-              key={quest.TITLE}
-              className="flex items-center w-full pb-4 gap-x-3"
-            >
-              <Image src="/points.svg" width={40} height={40} alt="Points" />
-              <div className="flex flex-col w-full gap-y-2">
-                <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
-                  {quest.TITLE}
-                </p>
-                <Progress value={progress} className="h-2" />
+        {quests
+          .filter((quest) => (points / quest.VALUE) * 100 < 100) // Filter incomplete quests
+          .slice(0, questsToDisplay)
+          .map((quest) => {
+            const progress = (points / quest.VALUE) * 100
+            return (
+              <div
+                key={quest.TITLE}
+                className="flex items-center w-full pb-4 gap-x-3"
+              >
+                <Image src="/points.svg" width={40} height={40} alt="Points" />
+                <div className="flex flex-col w-full gap-y-2">
+                  <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
+                    {quest.TITLE}
+                  </p>
+                  <Progress value={progress} className="h-2" />
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
       </ul>
     </div>
   )

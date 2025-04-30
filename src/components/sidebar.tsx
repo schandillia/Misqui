@@ -6,7 +6,7 @@ import { SidebarItem } from "@/components/sidebar-item"
 import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import { AuthButton } from "@/components/auth/auth-button"
-import ThemeToggle from "@/components/theme-toggle" // Import ThemeToggle
+import ThemeToggle from "@/components/theme-toggle"
 
 type Props = {
   className?: string
@@ -34,8 +34,8 @@ export const Sidebar = async ({ className }: Props) => {
           <Image
             src="/mascot.svg"
             alt="Mascot"
-            width={25}
-            height={25}
+            width={35}
+            height={35}
             className="align-middle"
           />
           <h1 className="text-2xl font-extrabold tracking-wide text-brand-500">

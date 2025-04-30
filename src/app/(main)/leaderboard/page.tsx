@@ -53,11 +53,33 @@ const Page = async () => {
               key={userProgress.userId}
               className="flex items-center w-full p-2 px-4 rounded-2xl hover:bg-brand-200/50 dark:hover:bg-brand-500/10"
             >
-              <p className="font-bold text-lime-700 mr-4">{index + 1}</p>
+              {index < 3 ? (
+                <span
+                  className={`flex items-center justify-center size-8 rounded-full border-2 ${
+                    index === 0
+                      ? "bg-yellow-500 border-yellow-200"
+                      : index === 1
+                      ? "bg-gray-300 border-gray-100"
+                      : "bg-orange-500 border-orange-300"
+                  }`}
+                >
+                  <p
+                    className={`font-bold text-sm ${
+                      index === 2 ? "text-neutral-300" : "text-neutral-700"
+                    }`}
+                  >
+                    {index + 1}
+                  </p>
+                </span>
+              ) : (
+                <p className="font-bold text-neutral-500 dark:text-neutral-400 text-xl w-8 text-center">
+                  {index + 1}
+                </p>
+              )}
               <UserAvatar
-                name={userProgress.name}
                 image={userProgress.image}
-                className="size-12 cursor-pointer mr-6 ml-3"
+                name={userProgress.name}
+                className="size-12 cursor-pointer mr-6 ml-5"
               />
               <p className="text-natural-800 font-bold flex-1">
                 {userProgress.name}
