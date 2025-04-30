@@ -24,14 +24,34 @@ Misqui is an interactive educational platform where kids can develop essential s
 
 ## 🛠️ Tech Stack
 
-Misqui is built with modern web technologies:
+Misqui is built with modern web technologies, organized by category:
 
-- **Frontend**: Next.js 15 with React 19
-- **Styling**: Tailwind CSS v4.1 with shadcn/ui components
-- **Authentication**: AuthJS v5
-- **Database**: Neon PostgreSQL with Drizzle ORM
-- **Payments**: Stripe
-- **Deployment**: Vercel
+- **Frontend**:
+  - Next.js 15 with React 19
+  - Zustand (state management)
+- **Styling & UI**:
+  - Tailwind CSS v4 with shadcn/ui
+  - Radix UI (primitives)
+  - Vaul (drawers)
+  - Sonner (toasts)
+  - Lucide React & React Icons (icons)
+  - React Circular Progressbar (progress visualization)
+  - React Confetti (celebratory effects)
+  - Tailwind CSS animations
+- **Authentication**:
+  - AuthJS v5
+- **Database**:
+  - Neon PostgreSQL with Drizzle ORM
+- **Payments**:
+  - Stripe
+- **Logging**:
+  - Winston
+- **Markdown Processing**:
+  - Marked
+- **Type Safety**:
+  - TypeScript
+- **Deployment**:
+  - Vercel
 
 ## 📦 Installation
 
