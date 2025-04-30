@@ -1,10 +1,9 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils" // Assuming you have this utility
+import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  // Base styles: Added dark mode for focus ring and invalid border
   "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-300 dark:focus-visible:ring-purple-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal group relative overflow-hidden",
   {
     variants: {
