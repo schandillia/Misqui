@@ -58,7 +58,7 @@ const Page = async () => {
                     alt="Points"
                   />
                   <div className="flex flex-col w-full gap-y-2">
-                    <p className="text-neutral-700 font-bold text-xl">
+                    <p className="text-neutral-700 dark:text-neutral-300 font-bold text-xl">
                       {quest.TITLE}
                     </p>
                     <Progress value={progress} className="h-3" />
