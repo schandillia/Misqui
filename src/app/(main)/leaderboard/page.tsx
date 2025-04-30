@@ -51,7 +51,7 @@ const Page = async () => {
           {leaderboard.map((userProgress, index) => (
             <div
               key={userProgress.userId}
-              className="flex items-center w-full p-2 px-4 rounded-xl hover:bg-gray-200/50"
+              className="flex items-center w-full p-2 px-4 rounded-2xl hover:bg-brand-200/50 dark:hover:bg-brand-500/10"
             >
               <p className="font-bold text-lime-700 mr-4">{index + 1}</p>
               <UserAvatar

@@ -75,7 +75,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
       <Button
         variant="default"
         size="icon"
-        className="rounded-full dark:bg-brand-800 hover:bg-brand-200 dark:hover:bg-brand-700 cursor-pointer"
+        className="rounded-full dark:bg-brand-200/10 hover:bg-brand-200 dark:hover:bg-brand-950/90 cursor-pointer"
         onClick={cycleTheme}
         aria-label="Toggle theme"
       >
@@ -90,12 +90,12 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
 
   return (
     <div
-      className="relative inline-flex items-center gap-x-1.5 rounded-full border border-brand-200 dark:border-brand-700 p-1.5 bg-brand-50 dark:bg-brand-800 shrink-0 w-max"
+      className="relative inline-flex items-center gap-x-1.5 rounded-full border border-brand-200 dark:border-neutral-700 p-1.5 bg-brand-50 dark:bg-neutral-800 shrink-0 w-max"
       role="group"
       aria-label="Theme toggle"
     >
       <div
-        className="absolute top-1.5 left-1.5 h-8 w-8 rounded-full bg-brand-200 dark:bg-brand-500 transition-transform duration-300 ease-in-out"
+        className="absolute top-1.5 left-1.5 h-8 w-8 rounded-full bg-brand-200 dark:bg-brand-900/80 transition-transform duration-300 ease-in-out"
         style={{ transform: `translateX(${activeIndex * 38}px)` }}
       />
       {THEMES.map(({ name, icon: Icon, label }, index) => (
@@ -107,7 +107,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
           className={`relative p-1.5 rounded-full transition-colors z-10 flex items-center justify-center h-8 w-8 ${
             currentTheme === name
               ? "text-brand-800 dark:text-brand-200"
-              : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-600"
+              : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-950/60"
           }`}
           aria-label={label}
         >
