@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { ExitModal } from "@/components/exit-modal"
 import { GemsModal } from "@/components/gems-modal"
 import { PracticeModal } from "@/components/practice-modal"
+import { ThemeProvider } from "next-themes"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -55,11 +56,18 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         <AuthProvider>
-          {children}
-          <Toaster />
-          <ExitModal />
-          <GemsModal />
-          <PracticeModal />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+            <ExitModal />
+            <GemsModal />
+            <PracticeModal />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

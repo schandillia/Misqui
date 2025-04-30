@@ -6,6 +6,7 @@ import { SidebarItem } from "@/components/sidebar-item"
 import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import { AuthButton } from "@/components/auth/auth-button"
+import ThemeToggle from "@/components/theme-toggle" // Import ThemeToggle
 
 type Props = {
   className?: string
@@ -53,8 +54,10 @@ export const Sidebar = async ({ className }: Props) => {
           />
         ))}
       </div>
-
-      <div className="p-4">
+      <div className="flex justify-center py-2">
+        <ThemeToggle />
+      </div>
+      <div className="p-4 flex flex-col items-center gap-y-2">
         {session?.user ? (
           <UserNavMenu user={session.user} position="bottom" />
         ) : (
