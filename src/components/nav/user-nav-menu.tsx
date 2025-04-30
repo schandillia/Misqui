@@ -29,7 +29,9 @@ const UserInfo: FC<{ name?: string | null; email?: string | null }> = ({
   email,
 }) => (
   <div className="flex flex-col space-y-1 uppercase text-left">
-    <p className="text-sm font-medium leading-none text-brand-600">{name}</p>
+    <p className="text-sm font-medium leading-none text-brand-600 dark:text-brand-400">
+      {name}
+    </p>
     <p className="text-xs leading-none text-muted-foreground font-bold">
       {email}
     </p>
@@ -82,7 +84,8 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="cursor-pointer text-red-600 focus:text-red-600"
+          variant="destructive"
+          className="cursor-pointer"
           onSelect={() => logOut(pathname)}
         >
           <LuLogOut className="mr-2 size-4" />

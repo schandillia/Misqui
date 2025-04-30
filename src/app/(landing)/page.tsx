@@ -15,7 +15,7 @@ export default async function Home() {
       </div>
 
       <div className="flex flex-col items-center gap-8 max-w-[480px] w-full">
-        <h1 className="text-xl lg:text-3xl font-bold text-neutral-600 text-center">
+        <h1 className="text-xl lg:text-3xl font-bold text-neutral-600 dark:text-neutral-300 text-center">
           Learn, practice, and master new skills with {brand.BRAND}
         </h1>
 

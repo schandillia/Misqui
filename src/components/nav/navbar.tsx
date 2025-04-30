@@ -9,7 +9,7 @@ export const Navbar = async () => {
   const session = await auth()
 
   return (
-    <nav className="h-20 w-full border-b-2 border-slate-200 px-4">
+    <nav className="h-20 w-full border-b-2 border-neutral-200 dark:border-neutral-800 px-4">
       <div className="lg:max-w-screen-lg mx-auto flex items-center justify-between h-full">
         <div className="pl-4 gap-x-3 flex items-center">
           <Image

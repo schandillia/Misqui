@@ -42,9 +42,10 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          "bg-white text-brand-900 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          "bg-white dark:bg-black",
+          "text-brand-900 dark:text-brand-400 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto",
-          "rounded-2xl border-2 border-brand-200 p-2 shadow-md",
+          "rounded-2xl border-2 border-brand-200 dark:border-neutral-800 p-2 shadow-md",
           "transition-all duration-300 ease-in-out",
           className
         )}
@@ -77,9 +78,9 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "relative flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm font-medium outline-hidden select-none",
-        "hover:bg-brand-100 hover:text-brand-900 hover:scale-[1.02] transition-all duration-200",
-        "data-[variant=destructive]:text-rose-500 data-[variant=destructive]:hover:bg-rose-50",
+        "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-medium outline-hidden select-none",
+        "hover:bg-brand-100 hover:text-brand-900 dark:hover:bg-neutral-800 dark:hover:text-brand-500 hover:scale-[1.02] transition-all duration-200",
+        "data-[variant=destructive]:text-rose-500 data-[variant=destructive]:hover:bg-rose-50 data-[variant=destructive]:dark:hover:text-rose-500",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
@@ -184,7 +185,10 @@ function DropdownMenuSeparator({
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn("-mx-1 my-1.5 h-0.5 rounded-full bg-brand-100", className)}
+      className={cn(
+        "-mx-1 my-1.5 h-0.5 rounded-full bg-brand-100 dark:bg-neutral-800",
+        className
+      )}
       {...props}
     />
   )
