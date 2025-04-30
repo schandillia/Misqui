@@ -80,7 +80,7 @@ function DropdownMenuItem({
       className={cn(
         "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-medium outline-hidden select-none",
         "hover:bg-brand-100 hover:text-brand-900 dark:hover:bg-neutral-800 dark:hover:text-brand-500 hover:scale-[1.02] transition-all duration-200",
-        "data-[variant=destructive]:text-rose-500 data-[variant=destructive]:hover:bg-rose-50 data-[variant=destructive]:dark:hover:text-rose-500",
+        "data-[variant=destructive]:text-rose-500 dark:data-[variant=destructive]:text-rose-400 data-[variant=destructive]:hover:bg-rose-50 data-[variant=destructive]:dark:hover:text-rose-500",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className

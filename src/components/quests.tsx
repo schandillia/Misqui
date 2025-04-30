@@ -14,7 +14,7 @@ export const Quests = ({ points }: Props) => {
   return (
     <div className="rounded-xl p-4 border-2 space-y-4">
       <div className="flex items-center justify-between w-full space-y-2">
-        <h3 className="font-bold text-lg">Quests</h3>
+        <h3 className="font-bold text-lg dark:text-neutral-300">Quests</h3>
         <Link href="/quests">
           <Button size="sm" variant="primaryOutline">
             View all
@@ -31,7 +31,7 @@ export const Quests = ({ points }: Props) => {
             >
               <Image src="/points.svg" width={40} height={40} alt="Points" />
               <div className="flex flex-col w-full gap-y-2">
-                <p className="text-neutral-700 font-bold text-sm">
+                <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
                   {quest.TITLE}
                 </p>
                 <Progress value={progress} className="h-2" />
