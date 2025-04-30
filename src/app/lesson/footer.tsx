@@ -18,13 +18,15 @@ export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
     <footer
       className={cn(
         "lg:-h[140px] h-[100px] border-t-2",
-        status === "correct" && "border-transparent bg-green-100",
-        status === "wrong" && "border-transparent bg-rose-100"
+        status === "correct" &&
+          "border-transparent bg-emerald-100 dark:bg-emerald-950/90",
+        status === "wrong" &&
+          "border-transparent bg-rose-100  dark:bg-rose-950/90"
       )}
     >
       <div className="max-w-[1140px] h-full mx-auto flex items-center justify-between px-6 lg:px-10">
         {status === "correct" && (
-          <div className="text-green-500 font-bold text-base lg:text-2xl flex items-center">
+          <div className="text-emerald-500 font-bold text-base lg:text-2xl flex items-center">
             <CheckCircle className="size-6 lg:size-10 mr-4" />
             Nicely done!
           </div>

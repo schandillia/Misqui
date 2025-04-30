@@ -175,7 +175,7 @@ export const Quiz = ({
             alt="Finish"
             className="block lg:hidden"
           />
-          <h1 className="text-xl lg:text-3xl font-bold text-neutral-700">
+          <h1 className="text-xl lg:text-3xl font-bold text-neutral-700 dark:text-neutral-300">
             Great job!
             <br />
             You’ve completed the lesson.
@@ -212,7 +212,7 @@ export const Quiz = ({
       <div className="flex-1">
         <div className="h-full items-center justify-center flex">
           <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
-            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700">
+            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700 dark:text-neutral-300">
               {title}
             </h1>
             <div>
