@@ -27,6 +27,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
   const currentTheme = theme ?? "system"
   const activeIndex = THEMES.findIndex((t) => t.name === currentTheme)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleThemeChange = (newTheme: string, index: number) => {
     setTheme(newTheme)
     // Note: localStorage may not be needed if next-themes handles persistence
@@ -54,9 +55,15 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
     return (
       <div className="inline-flex items-center gap-x-1.5 rounded-full border border-brand-200 dark:border-brand-700 p-1.5">
         {THEMES.map(({ icon: Icon }) => (
-          <button key={Icon.name} className="p-1.5 rounded-full">
+          <Button
+            key={Icon.name}
+            variant="ghost"
+            size="icon"
+            className="p-1.5 rounded-full h-8 w-8"
+            aria-label="Toggle theme"
+          >
             <Icon className="size-5 text-brand-400" strokeWidth={1.5} />
-          </button>
+          </Button>
         ))}
       </div>
     )
@@ -66,14 +73,14 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
     const Icon = THEMES[activeIndex].icon
     return (
       <Button
-        className="rounded-full hover:bg-brand-200 dark:hover:bg-brand-700 cursor-pointer"
         variant="default"
         size="icon"
+        className="rounded-full dark:bg-brand-800 hover:bg-brand-200 dark:hover:bg-brand-700 cursor-pointer"
         onClick={cycleTheme}
         aria-label="Toggle theme"
       >
         <Icon
-          className="size-4 text-brand-600 dark:text-brand-400"
+          className="size-4 text-brand-600 dark:text-brand-300"
           strokeWidth={1.5}
         />
         <span className="sr-only">Toggle theme</span>
@@ -92,18 +99,20 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
         style={{ transform: `translateX(${activeIndex * 38}px)` }}
       />
       {THEMES.map(({ name, icon: Icon, label }, index) => (
-        <button
+        <Button
           key={name}
+          variant="ghost"
+          size="icon"
           onClick={() => handleThemeChange(name, index)}
           className={`relative p-1.5 rounded-full transition-colors z-10 flex items-center justify-center h-8 w-8 ${
             currentTheme === name
               ? "text-brand-800 dark:text-brand-200"
-              : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-700"
+              : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-600"
           }`}
           aria-label={label}
         >
           <Icon className="size-5" strokeWidth={1.5} />
-        </button>
+        </Button>
       ))}
     </div>
   )
