@@ -18,7 +18,7 @@ const buttonVariants = cva(
         primaryOutline:
           "bg-white text-purple-600 border-2 border-purple-300 rounded-3xl hover:bg-purple-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-purple-400 dark:border-purple-500 dark:hover:bg-purple-900/50", // Adjusted for dark mode outline
         secondary:
-          "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95 dark:hover:from-teal-600 dark:hover:to-emerald-500", // Adjusted hover for dark
+          "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95 dark:from-teal-700 dark:to-emerald-600 dark:hover:from-teal-600 dark:hover:to-emerald-500",
         secondaryOutline:
           "bg-white text-teal-600 border-2 border-emerald-300 rounded-3xl hover:bg-emerald-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-teal-400 dark:border-emerald-500 dark:hover:bg-emerald-900/50", // Adjusted for dark mode outline
         danger:

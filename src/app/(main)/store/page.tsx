@@ -1,11 +1,11 @@
 import { Items } from "@/app/(main)/store/items"
 import { FeedWrapper } from "@/components/feed-wrapper"
+import { HeaderSection } from "@/components/header-section"
 import { Promo } from "@/components/promo"
 import { Quests } from "@/components/quests"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
 import { getUserProgress, getUserSubscription } from "@/db/queries"
-import Image from "next/image"
 import { redirect } from "next/navigation"
 
 const Page = async () => {
@@ -35,13 +35,12 @@ const Page = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center">
-          <Image src="/store.svg" alt="Store" height={90} width={90} />
-          <h1 className="text-center font-bold text-neutral-800 text-2xl my-6">
-            Store
-          </h1>
-          <p className="text-muted-foreground text-center text-lg mb-6">
-            Spend your points on cool stuff.
-          </p>
+          <HeaderSection
+            imageSrc="/store.svg"
+            imageAlt="Store"
+            title="Store"
+            description="Spend your points on cool stuff"
+          />
           <Items
             gems={userProgress.gems}
             points={userProgress.points}

@@ -7,6 +7,7 @@ import { getUserProgress, getUserSubscription } from "@/db/queries"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
+import { HeaderSection } from "@/components/header-section"
 
 const quests = app.QUESTS
 
@@ -36,13 +37,12 @@ const Page = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">
-          <Image src="/quests.svg" alt="Quests" height={90} width={90} />
-          <h1 className="text-center font-bold text-neutral-800 text-2xl my-6">
-            Quests
-          </h1>
-          <p className="text-muted-foreground text-center text-lg mb-6">
-            Complete quests by earning points
-          </p>
+          <HeaderSection
+            imageSrc="/quests.svg"
+            imageAlt="Quests"
+            title="Quests"
+            description="Complete quests by earning points"
+          />
           <ul className="w-full">
             {quests.map((quest) => {
               const progress = (userProgress.points / quest.VALUE) * 100

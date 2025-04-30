@@ -1,8 +1,8 @@
 import { FeedWrapper } from "@/components/feed-wrapper"
+import { HeaderSection } from "@/components/header-section"
 import { Promo } from "@/components/promo"
 import { Quests } from "@/components/quests"
 import { StickyWrapper } from "@/components/sticky-wrapper"
-import { Separator } from "@/components/ui/separator"
 import { UserAvatar } from "@/components/user-avatar"
 import { UserProgress } from "@/components/user-progress"
 import {
@@ -10,7 +10,6 @@ import {
   getUserProgress,
   getUserSubscription,
 } from "@/db/queries"
-import Image from "next/image"
 import { redirect } from "next/navigation"
 
 const Page = async () => {
@@ -42,19 +41,13 @@ const Page = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">
-          <Image
-            src="/leaderboard.svg"
-            alt="Leaderboard"
-            height={90}
-            width={90}
+          <HeaderSection
+            imageSrc="/leaderboard.svg"
+            imageAlt="Leaderboard"
+            title="Leaderboard"
+            description="See where you stand among your peers"
+            separator
           />
-          <h1 className="text-center font-bold text-neutral-800 text-2xl my-6">
-            Leaderboard
-          </h1>
-          <p className="text-muted-foreground text-center text-lg mb-6">
-            See where you stand among your peers.
-          </p>
-          <Separator className="mb-4 h-0.5 rounded-full" />
           {leaderboard.map((userProgress, index) => (
             <div
               key={userProgress.userId}
