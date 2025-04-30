@@ -96,7 +96,7 @@ pnpm start
 
 ## 📱 Screenshots
 
-[Consider adding screenshots of your application here]
+[To be added later]
 
 ## 🧪 Testing
 
