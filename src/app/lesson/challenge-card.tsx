@@ -1,8 +1,8 @@
 import { challenges } from "@/db/schema"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { useCallback } from "react"
-import { useAudio, useKey } from "react-use"
+import { useCallback, useRef } from "react"
+import { useKey } from "react-use"
 
 type Props = {
   id: number
@@ -18,7 +18,6 @@ type Props = {
 }
 
 export const ChallengeCard = ({
-  id,
   audio: audioSrc,
   onClick,
   text,
@@ -29,19 +28,18 @@ export const ChallengeCard = ({
   disabled,
   challengeType,
 }: Props) => {
-  // Only use useAudio if audioSrc is a valid string
-  const [audio, , controls] = audioSrc
-    ? useAudio({ src: audioSrc, autoPlay: false })
-    : [null, null, { play: () => {} }]
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const handleClick = useCallback(() => {
     if (disabled) return
 
-    if (audioSrc) {
-      controls.play()
+    if (audioSrc && audioRef.current) {
+      audioRef.current
+        .play()
+        .catch((err) => console.error("Audio playback failed:", err))
     }
     onClick()
-  }, [disabled, onClick, controls, audioSrc])
+  }, [disabled, onClick, audioSrc])
 
   useKey(shortcut, handleClick, {}, [handleClick])
 
@@ -62,7 +60,7 @@ export const ChallengeCard = ({
         challengeType === "ASSIST" && "lg:p-3 w-full"
       )}
     >
-      {audio}
+      {audioSrc && <audio ref={audioRef} src={audioSrc} />}
       {image && (
         <div className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full">
           <Image src={image} alt={text} fill />
