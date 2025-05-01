@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-300 dark:focus-visible:ring-purple-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal group relative overflow-hidden",
+  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal group relative overflow-hidden",
   {
     variants: {
       variant: {
@@ -13,9 +13,9 @@ const buttonVariants = cva(
         default:
           "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700", // Adjusted for dark mode
         primary:
-          "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-purple-500 hover:to-indigo-500 active:scale-95 dark:hover:from-purple-700 dark:hover:to-indigo-700", // Adjusted hover for dark
+          "bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-brand-500 hover:to-indigo-500 active:scale-95 dark:hover:from-brand-700 dark:hover:to-indigo-700", // Adjusted hover for dark
         primaryOutline:
-          "bg-white text-purple-600 border-2 border-purple-300 rounded-3xl hover:bg-purple-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-purple-400 dark:border-purple-500 dark:hover:bg-purple-900/50", // Adjusted for dark mode outline
+          "bg-white text-brand-600 border-2 border-brand-300 rounded-3xl hover:bg-brand-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-brand-400 dark:border-brand-500 dark:hover:bg-brand-900/50", // Adjusted for dark mode outline
         secondary:
           "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95 dark:from-teal-700 dark:to-emerald-600 dark:hover:from-teal-600 dark:hover:to-emerald-500",
         secondaryOutline:
@@ -31,12 +31,12 @@ const buttonVariants = cva(
         defaultOutline:
           "bg-transparent text-gray-600 border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:scale-105 active:scale-95 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-800", // Adjusted for dark mode outline
         ghost:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-purple-100/50 dark:text-gray-300 dark:hover:bg-purple-900/40", // Adjusted for dark mode
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40", // Adjusted for dark mode
         // Assuming similar to ghost
         sidebar:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-purple-100/50 dark:text-gray-300 dark:hover:bg-purple-900/40", // Adjusted for dark mode
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40", // Adjusted for dark mode
         sidebarOutline:
-          "bg-purple-100 text-purple-600 border-2 border-purple-200 rounded-3xl hover:bg-purple-200 hover:scale-105 active:scale-95 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-800 dark:hover:bg-purple-900/70", // Adjusted for dark mode
+          "bg-brand-100 text-brand-600 border-2 border-brand-200 rounded-3xl hover:bg-brand-200 hover:scale-105 active:scale-95 dark:bg-brand-900/50 dark:text-brand-300 dark:border-brand-800 dark:hover:bg-brand-900/70", // Adjusted for dark mode
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",

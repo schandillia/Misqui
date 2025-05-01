@@ -23,7 +23,7 @@ const Page = () => {
   }, [callbackUrl, intent])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 text-center px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950 text-center px-6">
       <Image
         src="/mascot.svg"
         alt="Mascot"
@@ -31,8 +31,10 @@ const Page = () => {
         height={160}
         className="mb-6 animate-bounce"
       />
-      <h1 className="text-4xl font-bold text-brand-700 mb-2">Welcome Back!</h1>
-      <p className="text-lg text-brand-600 mb-6">
+      <h1 className="text-4xl font-bold text-brand-700 dark:text-brand-100 mb-2">
+        Welcome Back!
+      </h1>
+      <p className="text-lg text-brand-600 dark:text-brand-200 mb-6">
         Choose a method to sign in and continue to your destination.
       </p>
 
@@ -50,19 +52,25 @@ const Page = () => {
           variant="primaryOutline"
           className="flex items-center justify-center gap-2 h-12 w-full"
         >
-          <FaApple className="size-5 text-black" />
+          <FaApple className="size-5 text-brand-950 dark:text-brand-100" />
           <span>Continue with Apple</span>
         </Button>
       </div>
 
-      <div className="text-center text-xs text-muted-foreground pt-6 max-w-xs">
+      <div className="text-center text-xs text-brand-600 dark:text-brand-300 pt-6 max-w-xs">
         <p>
           By continuing, you agree to {brand.BRAND}{" "}
-          <Link href="/terms" className="font-medium text-brand-500">
+          <Link
+            href="/terms"
+            className="font-medium text-brand-500 dark:text-brand-400"
+          >
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className="font-medium text-brand-500">
+          <Link
+            href="/privacy"
+            className="font-medium text-brand-500 dark:text-brand-400"
+          >
             Privacy Policy
           </Link>
           .

@@ -4,7 +4,7 @@ import { buttonVariants } from "@/components/ui/button"
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 text-center p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950 text-center p-6">
       <Image
         src="/mascot.svg"
         alt="Mascot"
@@ -12,8 +12,10 @@ export default function NotFound() {
         height={160}
         className="mb-6 animate-bounce"
       />
-      <h2 className="text-4xl font-bold text-brand-700 mb-2">Oopsie Daisy!</h2>
-      <p className="text-lg text-brand-600 mb-6">
+      <h2 className="text-4xl font-bold text-brand-700 dark:text-brand-100 mb-2">
+        Oopsie Daisy!
+      </h2>
+      <p className="text-lg text-brand-600 dark:text-brand-200 mb-6">
         We couldn’t find what you were looking for.
       </p>
       <Link href="/" className={buttonVariants({ variant: "primary" })}>
