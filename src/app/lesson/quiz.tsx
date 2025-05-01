@@ -50,14 +50,29 @@ export const Quiz = ({
   })
 
   const { width, height } = useWindowSize()
-
   const router = useRouter()
 
-  const [finishAudioEl, , finishControls] = useAudio({ src: "/finish.wav" })
-  const [correctAudioEl, , correctControls] = useAudio({ src: "/correct.wav" })
+  const [finishAudioEl, , finishControls] = useAudio({
+    src: "/finish.wav",
+    autoPlay: false,
+  })
+  const [correctAudioEl, , correctControls] = useAudio({
+    src: "/correct.wav",
+    autoPlay: false,
+  })
   const [incorrectAudioEl, , incorrectControls] = useAudio({
     src: "/incorrect.wav",
+    autoPlay: false,
   })
+
+  // Function to conditionally render audio elements
+  const renderAudioElements = () => (
+    <>
+      {finishAudioEl && finishAudioEl}
+      {correctAudioEl && correctAudioEl}
+      {incorrectAudioEl && incorrectAudioEl}
+    </>
+  )
 
   const [pending, startTransition] = useTransition()
   const [lessonId] = useState(initialLessonId)
@@ -150,9 +165,7 @@ export const Quiz = ({
 
     return (
       <>
-        {finishAudioEl}
-        {correctAudioEl}
-        {incorrectAudioEl}
+        {renderAudioElements()}
         <ReactConfetti
           width={width}
           height={height}
@@ -201,9 +214,7 @@ export const Quiz = ({
 
   return (
     <>
-      {finishAudioEl}
-      {correctAudioEl}
-      {incorrectAudioEl}
+      {renderAudioElements()}
       <LessonHeader
         gems={gems}
         percentage={percentage}

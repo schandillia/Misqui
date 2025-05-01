@@ -18,7 +18,6 @@ type Props = {
 }
 
 export const ChallengeCard = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id,
   audio: audioSrc,
   onClick,
@@ -30,19 +29,19 @@ export const ChallengeCard = ({
   disabled,
   challengeType,
 }: Props) => {
-  const [
-    audio,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _,
-    controls,
-  ] = useAudio({ src: audioSrc || "" })
+  // Only use useAudio if audioSrc is a valid string
+  const [audio, , controls] = audioSrc
+    ? useAudio({ src: audioSrc, autoPlay: false })
+    : [null, null, { play: () => {} }]
 
   const handleClick = useCallback(() => {
     if (disabled) return
 
-    controls.play()
+    if (audioSrc) {
+      controls.play()
+    }
     onClick()
-  }, [disabled, onClick, controls])
+  }, [disabled, onClick, controls, audioSrc])
 
   useKey(shortcut, handleClick, {}, [handleClick])
 
