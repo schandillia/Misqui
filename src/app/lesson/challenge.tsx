@@ -20,14 +20,7 @@ export const Challenge = ({
   challengeType,
 }: Props) => {
   return (
-    <div
-      className={cn(
-        "grid gap-2",
-        challengeType === "ASSIST" && "grid-cols-1",
-        challengeType === "SELECT" &&
-          "grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
-      )}
-    >
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
       {options.map((option, i) => (
         <ChallengeCard
           key={option.id}
@@ -40,7 +33,7 @@ export const Challenge = ({
           onClick={() => onSelect(option.id)}
           status={status}
           disabled={disabled}
-          challengeType={challengeType}
+          challengeType={challengeType} // Add this prop back
         />
       ))}
     </div>

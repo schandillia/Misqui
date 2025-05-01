@@ -26,7 +26,6 @@ export const ChallengeCard = ({
   selected,
   status,
   disabled,
-  challengeType,
 }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -47,7 +46,7 @@ export const ChallengeCard = ({
     <div
       onClick={handleClick}
       className={cn(
-        "h-full border-2 rounded-3xl hover:bg-black/5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer",
+        "relative h-full border-2 rounded-3xl hover:bg-black/5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer min-h-[100px] lg:min-h-[120px]", // Added relative for positioning
         selected &&
           "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:bg-sky-950/90 dark:border-sky-900",
         selected &&
@@ -56,8 +55,7 @@ export const ChallengeCard = ({
         selected &&
           status === "wrong" &&
           "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:bg-rose-950/90 dark:border-rose-900",
-        disabled && "pointer-events-none hover:bg-white",
-        challengeType === "ASSIST" && "lg:p-3 w-full"
+        disabled && "pointer-events-none hover:bg-white"
       )}
     >
       {audioSrc && <audio ref={audioRef} src={audioSrc} />}
@@ -66,16 +64,10 @@ export const ChallengeCard = ({
           <Image src={image} alt={text} fill />
         </div>
       )}
-      <div
-        className={cn(
-          "flex items-center justify-between",
-          challengeType === "ASSIST" && "flex-row-reverse"
-        )}
-      >
-        {challengeType === "ASSIST" && <div />}
+      <div className="flex items-center">
         <p
           className={cn(
-            "text-neutral-600 dark:text-neutral-400 text-sm lg:text-base font-semibold",
+            "text-neutral-600 dark:text-neutral-400 text-sm lg:text-base font-semibold flex-1 text-left leading-relaxed lg:leading-relaxed pr-10 lg:pr-12", // Added padding-right to avoid overlap with shortcut
             selected && "text-sky-500 dark:text-sky-500",
             selected &&
               status === "correct" &&
@@ -85,18 +77,18 @@ export const ChallengeCard = ({
         >
           {text}
         </p>
-        <div
-          className={cn(
-            "lg:w-[30px] lg:h-[30px] h-[20px] w-[20px] border-2 flex items-center justify-center rounded-full text-neutral-400 lg:text-[15px] text-xs font-semibold",
-            selected && "border-sky-300 text-sky-500",
-            selected &&
-              status === "correct" &&
-              "border-emerald-300 text-emerald-500",
-            selected && status === "wrong" && "border-rose-300 text-rose-500"
-          )}
-        >
-          {shortcut}
-        </div>
+      </div>
+      <div
+        className={cn(
+          "absolute bottom-4 right-4 lg:w-[36px] lg:h-[36px] h-[24px] w-[24px] border-2 flex items-center justify-center rounded-full text-neutral-400 lg:text-base text-sm font-semibold box-border aspect-square", // Positioned at bottom-right
+          selected && "border-sky-300 text-sky-500",
+          selected &&
+            status === "correct" &&
+            "border-emerald-300 text-emerald-500",
+          selected && status === "wrong" && "border-rose-300 text-rose-500"
+        )}
+      >
+        {shortcut}
       </div>
     </div>
   )
