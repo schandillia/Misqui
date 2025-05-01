@@ -1,6 +1,5 @@
 import { ChallengeCard } from "@/app/lesson/challenge-card"
 import { challengeOptions, challenges } from "@/db/schema"
-import { cn } from "@/lib/utils"
 
 type Props = {
   options: (typeof challengeOptions.$inferSelect)[]

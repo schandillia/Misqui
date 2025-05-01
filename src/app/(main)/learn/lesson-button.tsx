@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 import "react-circular-progressbar/dist/styles.css"
+import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
 
 type Props = {
   id: number
@@ -25,29 +26,10 @@ export const LessonButton = ({
   current,
   percentage,
 }: Props) => {
-  const cycleLength = 8
-  const cycleIndex = index % cycleLength
-
-  let indentationLevel
-
-  if (cycleIndex <= 2) {
-    indentationLevel = cycleIndex
-  } else if (cycleIndex <= 4) {
-    indentationLevel = 4 - cycleIndex
-  } else if (cycleIndex <= 6) {
-    indentationLevel = 4 - cycleIndex
-  } else {
-    indentationLevel = cycleIndex - 8
-  }
-
-  const rightPosition = indentationLevel * 40
-
-  const isFirst = index === 0
   const isLast = index === totalCount
   const isCompleted = !current && !locked
 
   const Icon = isCompleted ? Check : isLast ? Crown : Star
-
   const href = isCompleted ? `/lesson/${id}` : "/lesson"
 
   return (
@@ -56,12 +38,10 @@ export const LessonButton = ({
       aria-disabled={locked}
       style={{ pointerEvents: locked ? "none" : "auto" }}
     >
-      <div
-        className="relative"
-        style={{
-          right: `${rightPosition}px`,
-          marginTop: isFirst && !isCompleted ? 60 : 24,
-        }}
+      <LessonButtonWrapper
+        index={index}
+        totalCount={totalCount}
+        isCompleted={isCompleted}
       >
         {current ? (
           <div className="h-[102px] w-[102px] relative">
@@ -117,7 +97,7 @@ export const LessonButton = ({
             />
           </Button>
         )}
-      </div>
+      </LessonButtonWrapper>
     </Link>
   )
 }
