@@ -70,6 +70,20 @@ const main = async () => {
         description: "Learn the basics of Chess",
         order: 1,
       },
+      {
+        id: 2,
+        courseId: 1, // Chess
+        title: "Unit 2",
+        description: "Explore chess openings",
+        order: 2,
+      },
+      {
+        id: 3,
+        courseId: 1, // Chess
+        title: "Unit 3",
+        description: "Master endgame techniques",
+        order: 3,
+      },
     ])
     logger.debug("Inserted units")
 
@@ -103,6 +117,75 @@ const main = async () => {
         unitId: 1,
         order: 5,
         title: "Rook",
+      },
+      // New lessons for Unit 1
+      {
+        id: 6,
+        unitId: 1,
+        order: 6,
+        title: "Knight",
+      },
+      {
+        id: 7,
+        unitId: 1,
+        order: 7,
+        title: "Bishop",
+      },
+      {
+        id: 8,
+        unitId: 1,
+        order: 8,
+        title: "Queen",
+      },
+      {
+        id: 9,
+        unitId: 1,
+        order: 9,
+        title: "King",
+      },
+      {
+        id: 10,
+        unitId: 1,
+        order: 10,
+        title: "Check",
+      },
+      {
+        id: 11,
+        unitId: 1,
+        order: 11,
+        title: "Checkmate",
+      },
+      {
+        id: 12,
+        unitId: 1,
+        order: 12,
+        title: "Stalemate",
+      },
+      {
+        id: 13,
+        unitId: 1,
+        order: 13,
+        title: "Castling",
+      },
+      {
+        id: 14,
+        unitId: 1,
+        order: 14,
+        title: "Basic Tactics",
+      },
+      // Lesson for Unit 2
+      {
+        id: 15,
+        unitId: 2,
+        order: 1,
+        title: "Common Openings",
+      },
+      // Lesson for Unit 3
+      {
+        id: 16,
+        unitId: 3,
+        order: 1,
+        title: "Endgame Basics",
       },
     ])
     logger.debug("Inserted lessons")
@@ -319,7 +402,6 @@ const main = async () => {
         question: "What is the term for a game ending in a draw?",
       },
     ])
-
     logger.debug("Inserted initial challenges")
 
     await db.insert(schema.challengeOptions).values([
@@ -367,7 +449,7 @@ const main = async () => {
         text: "Moves any number of squares horizontally or vertically",
       },
 
-      // Challenge 3: Which of these is the bishop?
+      // Challenge 3: Which-trade these is the bishop?
       {
         challengeId: 3,
         correct: true,
@@ -983,7 +1065,6 @@ const main = async () => {
         text: "Promotion",
       },
     ])
-
     logger.debug("Inserted challenge options for all challenges")
 
     logger.info("Database seeding completed successfully")
