@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { Check, Crown, Star } from "lucide-react"
+import { Check, Crown } from "lucide-react"
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 import "react-circular-progressbar/dist/styles.css"
 import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
+import { FaLock, FaLockOpen } from "react-icons/fa"
 
 type Props = {
   id: number
@@ -29,7 +30,13 @@ export const LessonButton = ({
   const isLast = index === totalCount
   const isCompleted = !current && !locked
 
-  const Icon = isCompleted ? Check : isLast ? Crown : Star
+  const Icon = isCompleted
+    ? Check
+    : isLast
+    ? Crown
+    : locked
+    ? FaLock
+    : FaLockOpen
   const href = isCompleted ? `/lesson/${id}` : "/lesson"
 
   return (
