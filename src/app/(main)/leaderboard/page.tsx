@@ -1,7 +1,7 @@
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { HeaderSection } from "@/components/header-section"
 import { Promo } from "@/components/promo"
-import { Quests } from "@/components/quests"
+import { Missions } from "@/components/missions"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserAvatar } from "@/components/user-avatar"
 import { UserProgress } from "@/components/user-progress"

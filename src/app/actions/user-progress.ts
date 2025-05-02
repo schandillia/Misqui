@@ -90,7 +90,7 @@ export const reduceGems = async (challengeId: number) => {
 
   revalidatePath("/store")
   revalidatePath("/learn")
-  revalidatePath("/quests")
+  revalidatePath("/missions")
   revalidatePath("/leaderboard")
   revalidatePath(`/lesson/${lessonId}`)
 }
@@ -116,6 +116,6 @@ export const refillGems = async () => {
 
   revalidatePath("/store")
   revalidatePath("/learn")
-  revalidatePath("/quests")
+  revalidatePath("/missions")
   revalidatePath("/leaderboard")
 }

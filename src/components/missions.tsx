@@ -4,7 +4,7 @@ import Link from "next/link"
 import app from "@/lib/data/app.json"
 import { Progress } from "@/components/ui/progress"
 
-const quests = app.QUESTS
+const missions = app.QUESTS
 
 const questsToDisplay = 3
 
@@ -12,20 +12,20 @@ type Props = {
   points: number
 }
 
-export const Quests = ({ points }: Props) => {
+export const Missions = ({ points }: Props) => {
   return (
     <div className="rounded-xl p-4 border-2 space-y-4">
       <div className="flex items-center justify-between w-full space-y-2">
-        <h3 className="font-bold text-lg dark:text-neutral-300">Quests</h3>
-        <Link href="/quests">
+        <h3 className="font-bold text-lg dark:text-neutral-300">Missions</h3>
+        <Link href="/missions">
           <Button size="sm" variant="primaryOutline">
             View all
           </Button>
         </Link>
       </div>
       <ul className="w-full space-y-4">
-        {quests
-          .filter((quest) => (points / quest.VALUE) * 100 < 100) // Filter incomplete quests
+        {missions
+          .filter((quest) => (points / quest.VALUE) * 100 < 100) // Filter incomplete missions
           .slice(0, questsToDisplay)
           .map((quest) => {
             const progress = (points / quest.VALUE) * 100

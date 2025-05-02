@@ -9,7 +9,7 @@ import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 import { HeaderSection } from "@/components/header-section"
 
-const quests = app.QUESTS
+const missions = app.QUESTS
 
 const Page = async () => {
   const userProgressData = getUserProgress()
@@ -38,13 +38,13 @@ const Page = async () => {
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">
           <HeaderSection
-            imageSrc="/quests.svg"
-            imageAlt="Quests"
-            title="Quests"
-            description="Complete quests by earning points"
+            imageSrc="/missions.svg"
+            imageAlt="Missions"
+            title="Missions"
+            description="Complete missions by earning points"
           />
           <ul className="w-full">
-            {quests.map((quest) => {
+            {missions.map((quest) => {
               const progress = (userProgress.points / quest.VALUE) * 100
               return (
                 <div

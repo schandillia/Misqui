@@ -2,7 +2,7 @@ import { Items } from "@/app/(main)/store/items"
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { HeaderSection } from "@/components/header-section"
 import { Promo } from "@/components/promo"
-import { Quests } from "@/components/quests"
+import { Missions } from "@/components/missions"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
 import { getUserProgress, getUserSubscription } from "@/db/queries"
@@ -31,7 +31,7 @@ const Page = async () => {
           hasActiveSubscription={isPro}
         />
         {!isPro && <Promo />}
-        <Quests points={userProgress.points} />
+        <Missions points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center">
