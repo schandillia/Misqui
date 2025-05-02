@@ -12,7 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.cts",
-    "generate:env": "tsx scripts/generateEnvExample.mjs",
+    "generate:env": "tsx scripts/generate-env-example.mjs",
     "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
     "type-check": "tsc --noEmit"
   },
