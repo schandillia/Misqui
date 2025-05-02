@@ -7,10 +7,10 @@ import {
   text,
   integer,
   serial,
-  uuid, // Add this import
+  uuid,
 } from "drizzle-orm/pg-core"
-import { challengeTypeEnum } from "./types"
-import { lessons } from "./courses"
+import { challengeTypeEnum } from "@/db/schema/types"
+import { lessons } from "@/db/schema/courses"
 
 export const challenges = pgTable("challenges", {
   id: serial("id").primaryKey(),

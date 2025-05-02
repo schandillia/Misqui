@@ -11,7 +11,7 @@ import {
   index,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
-import { userProgress } from "./progress" // Add this import
+import { userProgress } from "@/db/schema/progress"
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),

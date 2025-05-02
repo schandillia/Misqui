@@ -8,8 +8,8 @@ import {
   serial,
   index,
 } from "drizzle-orm/pg-core"
-import { userProgress } from "./progress" // Add this import
-import { challenges } from "./challenges" // Add this import
+import { userProgress } from "@/db/schema/progress"
+import { challenges } from "@/db/schema/challenges"
 
 export const courses = pgTable(
   "courses",
@@ -66,5 +66,5 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     fields: [lessons.unitId],
     references: [units.id],
   }),
-  challenges: many(challenges), // Now references the imported challenges
+  challenges: many(challenges),
 }))

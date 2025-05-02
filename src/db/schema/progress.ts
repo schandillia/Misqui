@@ -2,8 +2,8 @@
 import { relations } from "drizzle-orm"
 import { timestamp, pgTable, integer, uuid } from "drizzle-orm/pg-core"
 import app from "@/lib/data/app.json"
-import { courses } from "./courses"
-import { users } from "./auth"
+import { courses } from "@/db/schema/courses"
+import { users } from "@/db/schema/auth"
 
 export const userProgress = pgTable("user_progress", {
   userId: uuid("user_id")
