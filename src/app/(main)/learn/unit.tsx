@@ -26,7 +26,9 @@ type Props = {
 }
 
 export const Unit = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   order,
   title,
   description,
