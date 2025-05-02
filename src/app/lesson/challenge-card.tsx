@@ -1,6 +1,7 @@
 import { challenges } from "@/db/schema"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { Volume2 } from "lucide-react"
 import { useCallback, useRef } from "react"
 import { useKey } from "react-use"
 
@@ -46,28 +47,38 @@ export const ChallengeCard = ({
     <div
       onClick={handleClick}
       className={cn(
-        "relative h-full border-2 rounded-3xl hover:bg-black/5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer min-h-[100px] lg:min-h-[120px]", // Added relative for positioning
+        "relative h-full border-2 rounded-3xl hover:bg-black🤷‍♂️5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer min-h-[100px] lg:min-h-[120px]",
         selected &&
-          "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:bg-sky-950/90 dark:border-sky-900",
+          "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:bg-sky-950🤷‍♂️90 dark:border-sky-900",
         selected &&
           status === "correct" &&
-          "border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:bg-emerald-950/90 dark:border-emerald-900",
+          "border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:bg-emerald-950🤷‍♂️90 dark:border-emerald-900",
         selected &&
           status === "wrong" &&
-          "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:bg-rose-950/90 dark:border-rose-900",
+          "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:bg-rose-950🤷‍♂️90 dark:border-rose-900",
         disabled && "pointer-events-none hover:bg-white"
       )}
     >
       {audioSrc && <audio ref={audioRef} src={audioSrc} />}
+      {audioSrc && image && (
+        <Volume2
+          className={cn(
+            "absolute top-4 right-4 h-5 w-5 text-neutral-400",
+            selected && "text-sky-500",
+            selected && status === "correct" && "text-emerald-500",
+            selected && status === "wrong" && "text-rose-500"
+          )}
+        />
+      )}
       {image && (
         <div className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full">
           <Image src={image} alt={text} fill />
         </div>
       )}
-      <div className="flex items-center">
+      <div className="relative flex items-center">
         <p
           className={cn(
-            "text-neutral-600 dark:text-neutral-400 text-sm lg:text-base font-semibold flex-1 text-left leading-relaxed lg:leading-relaxed pr-10 lg:pr-12", // Added padding-right to avoid overlap with shortcut
+            "text-neutral-600 dark:text-neutral-400 text-sm lg:text-base font-semibold flex-1 text-left leading-relaxed lg:leading-relaxed pr-10 lg:pr-12",
             selected && "text-sky-500 dark:text-sky-500",
             selected &&
               status === "correct" &&
@@ -77,10 +88,20 @@ export const ChallengeCard = ({
         >
           {text}
         </p>
+        {audioSrc && !image && (
+          <Volume2
+            className={cn(
+              "h-5 w-5 text-neutral-400 ml-2",
+              selected && "text-sky-500",
+              selected && status === "correct" && "text-emerald-500",
+              selected && status === "wrong" && "text-rose-500"
+            )}
+          />
+        )}
       </div>
       <div
         className={cn(
-          "absolute bottom-4 right-4 lg:w-[36px] lg:h-[36px] h-[24px] w-[24px] border-2 flex items-center justify-center rounded-full text-neutral-400 lg:text-base text-sm font-semibold box-border aspect-square", // Positioned at bottom-right
+          "absolute bottom-4 right-4 lg:w-[36px] lg:h-[36px] h-[24px] w-[24px] border-2 flex items-center justify-center rounded-full text-neutral-400 lg:text-base text-sm font-semibold box-border aspect-square",
           selected && "border-sky-300 text-sky-500",
           selected &&
             status === "correct" &&
