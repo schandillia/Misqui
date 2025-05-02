@@ -1,7 +1,7 @@
 {
   "GEMS_LIMIT": 5,
   "POINTS_TO_REFILL": 10,
-  "QUESTS": [
+  "MISSIONS": [
     {
       "TITLE": "Earn 20 points",
       "VALUE": 20

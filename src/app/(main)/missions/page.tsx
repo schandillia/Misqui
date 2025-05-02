@@ -9,7 +9,7 @@ import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 import { HeaderSection } from "@/components/header-section"
 
-const missions = app.QUESTS
+const missions = app.MISSIONS
 
 const Page = async () => {
   const userProgressData = getUserProgress()
@@ -44,11 +44,11 @@ const Page = async () => {
             description="Complete missions by earning points"
           />
           <ul className="w-full">
-            {missions.map((quest) => {
-              const progress = (userProgress.points / quest.VALUE) * 100
+            {missions.map((mission) => {
+              const progress = (userProgress.points / mission.VALUE) * 100
               return (
                 <div
-                  key={quest.TITLE}
+                  key={mission.TITLE}
                   className="flex items-center w-full p-4 gap-x-4 border-t-2"
                 >
                   <Image
@@ -59,7 +59,7 @@ const Page = async () => {
                   />
                   <div className="flex flex-col w-full gap-y-2">
                     <p className="text-neutral-700 dark:text-neutral-300 font-bold text-xl">
-                      {quest.TITLE}
+                      {mission.TITLE}
                     </p>
                     <Progress value={progress} className="h-3" />
                   </div>

@@ -1,7 +1,7 @@
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { HeaderSection } from "@/components/header-section"
-import { Promo } from "@/components/promo"
 import { Missions } from "@/components/missions"
+import { Promo } from "@/components/promo"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserAvatar } from "@/components/user-avatar"
 import { UserProgress } from "@/components/user-progress"
@@ -37,7 +37,7 @@ const Page = async () => {
           hasActiveSubscription={isPro}
         />
         {!isPro && <Promo />}
-        <Quests points={userProgress.points} />
+        <Missions points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">

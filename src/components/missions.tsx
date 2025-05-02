@@ -4,9 +4,9 @@ import Link from "next/link"
 import app from "@/lib/data/app.json"
 import { Progress } from "@/components/ui/progress"
 
-const missions = app.QUESTS
+const missions = app.MISSIONS
 
-const questsToDisplay = 3
+const missionsToDisplay = 3
 
 type Props = {
   points: number
@@ -25,19 +25,19 @@ export const Missions = ({ points }: Props) => {
       </div>
       <ul className="w-full space-y-4">
         {missions
-          .filter((quest) => (points / quest.VALUE) * 100 < 100) // Filter incomplete missions
-          .slice(0, questsToDisplay)
-          .map((quest) => {
-            const progress = (points / quest.VALUE) * 100
+          .filter((mission) => (points / mission.VALUE) * 100 < 100) // Filter incomplete missions
+          .slice(0, missionsToDisplay)
+          .map((mission) => {
+            const progress = (points / mission.VALUE) * 100
             return (
               <div
-                key={quest.TITLE}
+                key={mission.TITLE}
                 className="flex items-center w-full pb-4 gap-x-3"
               >
                 <Image src="/points.svg" width={40} height={40} alt="Points" />
                 <div className="flex flex-col w-full gap-y-2">
                   <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
-                    {quest.TITLE}
+                    {mission.TITLE}
                   </p>
                   <Progress value={progress} className="h-2" />
                 </div>
