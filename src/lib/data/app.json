@@ -1,6 +1,7 @@
 {
   "GEMS_LIMIT": 5,
   "POINTS_TO_REFILL": 10,
+  "CHALLENGES_PER_LESSON": 3,
   "MISSIONS": [
     {
       "TITLE": "Earn 20 points",

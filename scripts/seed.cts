@@ -23,23 +23,26 @@ if (fs.existsSync(envPath)) {
 }
 
 const sql = neon(process.env.AUTH_DRIZZLE_URL!)
-
 const db = drizzle(sql, { schema })
 
 const main = async () => {
   try {
     logger.info("Starting database seeding")
 
-    await db.delete(schema.courses)
-    await db.delete(schema.userProgress)
-    await db.delete(schema.units)
-    await db.delete(schema.lessons)
-    await db.delete(schema.challenges)
-    await db.delete(schema.challengeOptions)
-    await db.delete(schema.challengeProgress)
-    await db.delete(schema.userSubscription)
+    // Clear existing data
+    await Promise.all([
+      db.delete(schema.courses),
+      db.delete(schema.userProgress),
+      db.delete(schema.units),
+      db.delete(schema.lessons),
+      db.delete(schema.challenges),
+      db.delete(schema.challengeOptions),
+      db.delete(schema.challengeProgress),
+      db.delete(schema.userSubscription),
+    ])
     logger.debug("Cleared existing data from all tables")
 
+    // Insert courses
     await db.insert(schema.courses).values([
       {
         id: 1,
@@ -62,6 +65,7 @@ const main = async () => {
     ])
     logger.debug("Inserted courses")
 
+    // Insert units
     await db.insert(schema.units).values([
       {
         id: 1,
@@ -73,6 +77,7 @@ const main = async () => {
     ])
     logger.debug("Inserted units")
 
+    // Insert lessons
     await db.insert(schema.lessons).values([
       {
         id: 1,
@@ -107,7 +112,9 @@ const main = async () => {
     ])
     logger.debug("Inserted lessons")
 
+    // Insert all challenges
     await db.insert(schema.challenges).values([
+      // Lesson 1: Grid
       {
         id: 1,
         lessonId: 1,
@@ -129,94 +136,28 @@ const main = async () => {
         order: 3,
         question: "Which of these is the bishop?",
       },
-    ])
-    logger.debug("Inserted initial challenges")
-
-    await db.insert(schema.challengeOptions).values([
       {
-        challengeId: 1,
-        image: "/board.svg",
-        audio: "/board.mp3",
-        correct: true,
-        text: "64",
+        id: 7,
+        lessonId: 1,
+        challengeType: "ASSIST",
+        order: 4,
+        question: "What is a rank on a chessboard?",
       },
       {
-        challengeId: 1,
-        image: "/board.svg",
-        audio: "/board.mp3",
-        correct: false,
-        text: "54",
+        id: 8,
+        lessonId: 1,
+        challengeType: "ASSIST",
+        order: 5,
+        question: "What is a file on a chessboard?",
       },
       {
-        challengeId: 1,
-        image: "/board.svg",
-        audio: "/board.mp3",
-        correct: false,
-        text: "72",
+        id: 9,
+        lessonId: 1,
+        challengeType: "ASSIST",
+        order: 6,
+        question: "What is a diagonal on a chessboard?",
       },
-      {
-        challengeId: 1,
-        image: "/board.svg",
-        audio: "/board.mp3",
-        correct: false,
-        text: "36",
-      },
-    ])
-    logger.debug("Inserted challenge options for challenge 1")
-
-    await db.insert(schema.challengeOptions).values([
-      {
-        challengeId: 2,
-        audio: "/board.mp3",
-        correct: true,
-        text: "Moves one or two squares forward on its first move, one square thereafter",
-      },
-      {
-        challengeId: 2,
-        audio: "/board.mp3",
-        correct: false,
-        text: "Moves diagonally only",
-      },
-      {
-        challengeId: 2,
-        audio: "/board.mp3",
-        correct: false,
-        text: "Moves in an L-shape",
-      },
-      {
-        challengeId: 2,
-        audio: "/board.mp3",
-        correct: false,
-        text: "Moves any number of squares horizontally or vertically",
-      },
-    ])
-    logger.debug("Inserted challenge options for challenge 2")
-
-    await db.insert(schema.challengeOptions).values([
-      {
-        challengeId: 3,
-        correct: true,
-        text: "Moves diagonally any number of squares",
-      },
-      {
-        challengeId: 3,
-        correct: false,
-        text: "Moves horizontally or vertically any number of squares",
-      },
-      {
-        challengeId: 3,
-        correct: false,
-        text: "Moves in an L-shape",
-      },
-      {
-        challengeId: 3,
-        correct: false,
-        text: "Moves any number of squares in any direction",
-      },
-    ])
-    logger.debug("Inserted challenge options for challenge 3")
-
-    await db.insert(schema.challenges).values([
+      // Lesson 2: Pieces
       {
         id: 4,
         lessonId: 2,
@@ -240,7 +181,125 @@ const main = async () => {
         question: "The knight",
       },
     ])
-    logger.debug("Inserted additional challenges")
+    logger.debug("Inserted all challenges")
+
+    // Insert all challenge options
+    await db.insert(schema.challengeOptions).values([
+      // Lesson 1: Challenge 1
+      { challengeId: 1, correct: true, text: "64" },
+      { challengeId: 1, correct: false, text: "54" },
+      { challengeId: 1, correct: false, text: "72" },
+      { challengeId: 1, correct: false, text: "36" },
+      // Lesson 1: Challenge 2
+      {
+        challengeId: 2,
+        correct: true,
+        text: "Moves one or two squares forward on its first move, one square thereafter",
+      },
+      { challengeId: 2, correct: false, text: "Moves diagonally only" },
+      { challengeId: 2, correct: false, text: "Moves in an L-shape" },
+      {
+        challengeId: 2,
+        correct: false,
+        text: "Moves any number of squares horizontally or vertically",
+      },
+      // Lesson 1: Challenge 3
+      {
+        challengeId: 3,
+        correct: true,
+        text: "Moves diagonally any number of squares",
+      },
+      {
+        challengeId: 3,
+        correct: false,
+        text: "Moves horizontally or vertically any number of squares",
+      },
+      { challengeId: 3, correct: false, text: "Moves in an L-shape" },
+      {
+        challengeId: 3,
+        correct: false,
+        text: "Moves any number of squares in any direction",
+      },
+      // Lesson 1: Challenge 7 (Rank)
+      {
+        challengeId: 7,
+        correct: true,
+        text: "A horizontal row on the chessboard",
+      },
+      {
+        challengeId: 7,
+        correct: false,
+        text: "A vertical column on the chessboard",
+      },
+      {
+        challengeId: 7,
+        correct: false,
+        text: "A diagonal line on the chessboard",
+      },
+      { challengeId: 7, correct: false, text: "The center of the chessboard" },
+      // Lesson 1: Challenge 8 (File)
+      {
+        challengeId: 8,
+        correct: true,
+        text: "A vertical column on the chessboard",
+      },
+      {
+        challengeId: 8,
+        correct: false,
+        text: "A horizontal row on the chessboard",
+      },
+      {
+        challengeId: 8,
+        correct: false,
+        text: "A diagonal line on the chessboard",
+      },
+      { challengeId: 8, correct: false, text: "The center of the chessboard" },
+      // Lesson 1: Challenge 9 (Diagonal)
+      {
+        challengeId: 9,
+        correct: true,
+        text: "A line connecting squares diagonally",
+      },
+      {
+        challengeId: 9,
+        correct: false,
+        text: "A horizontal row on the chessboard",
+      },
+      {
+        challengeId: 9,
+        correct: false,
+        text: "A vertical column on the chessboard",
+      },
+      { challengeId: 9, correct: false, text: "The center of the chessboard" },
+      // Lesson 2: Challenge 4
+      { challengeId: 4, correct: true, text: "e1 for White, e8 for Black" },
+      { challengeId: 4, correct: false, text: "d1 for White, d8 for Black" },
+      { challengeId: 4, correct: false, text: "f1 for White, f8 for Black" },
+      { challengeId: 4, correct: false, text: "c1 for White, c8 for Black" },
+      // Lesson 2: Challenge 5
+      { challengeId: 5, correct: true, text: "9" },
+      { challengeId: 5, correct: false, text: "5" },
+      { challengeId: 5, correct: false, text: "3" },
+      { challengeId: 5, correct: false, text: "1" },
+      // Lesson 2: Challenge 6
+      { challengeId: 6, correct: true, text: "Moves in an L-shape" },
+      {
+        challengeId: 6,
+        correct: false,
+        text: "Moves diagonally any number of squares",
+      },
+      {
+        challengeId: 6,
+        correct: false,
+        text: "Moves one square in any direction",
+      },
+      {
+        challengeId: 6,
+        correct: false,
+        text: "Moves one or two squares forward on its first move",
+      },
+    ])
+    logger.debug("Inserted all challenge options")
 
     logger.info("Database seeding completed successfully")
   } catch (error) {
