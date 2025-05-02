@@ -2,7 +2,7 @@
 
 import { drizzle, NeonHttpDatabase } from "drizzle-orm/neon-http"
 import { neon } from "@neondatabase/serverless"
-import * as schema from "./schema" // Import all exports from schema.ts
+import * as schema from "@/db/schema"
 
 // Define the database connection string from environment variables
 const connectionString = process.env.AUTH_DRIZZLE_URL

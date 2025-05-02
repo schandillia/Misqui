@@ -3,9 +3,8 @@ import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq } from "drizzle-orm"
 import { challengeProgress, units, userProgress } from "@/db/schema"
-import { getLesson } from "./lessons" // Import getLesson
+import { getLesson } from "./lessons"
 
-// Optional: Define an interface for the challenge type returned by getLesson
 interface LessonChallenge {
   id: number
   lessonId: number

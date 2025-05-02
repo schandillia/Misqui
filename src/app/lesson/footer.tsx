@@ -12,7 +12,8 @@ type Props = {
 
 export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
   useKey("Enter", onCheck, {}, [onCheck])
-  const isMobile = useMedia("(max-width: 1024px")
+  // Add defaultState to useMedia to prevent hydration mismatch
+  const isMobile = useMedia("(max-width: 1024px)", false)
 
   return (
     <footer
@@ -21,7 +22,7 @@ export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
         status === "correct" &&
           "border-transparent bg-emerald-100 dark:bg-emerald-950/90",
         status === "wrong" &&
-          "border-transparent bg-rose-100  dark:bg-rose-950/90"
+          "border-transparent bg-rose-100 dark:bg-rose-950/90"
       )}
     >
       <div className="max-w-[1140px] h-full mx-auto flex items-center justify-between px-6 lg:px-10">
