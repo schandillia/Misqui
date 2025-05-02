@@ -47,15 +47,15 @@ export const ChallengeCard = ({
     <div
       onClick={handleClick}
       className={cn(
-        "relative h-full border-2 rounded-3xl hover:bg-black🤷‍♂️5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer min-h-[100px] lg:min-h-[120px]",
+        "relative h-full border-2 rounded-3xl hover:bg-black/5 dark:hover:bg-neutral-800 p-4 lg:p-6 cursor-pointer min-h-[100px] lg:min-h-[120px]",
         selected &&
-          "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:bg-sky-950🤷‍♂️90 dark:border-sky-900",
+          "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:bg-sky-950/90 dark:border-sky-900",
         selected &&
           status === "correct" &&
-          "border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:bg-emerald-950🤷‍♂️90 dark:border-emerald-900",
+          "border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:bg-emerald-950/90 dark:border-emerald-900",
         selected &&
           status === "wrong" &&
-          "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:bg-rose-950🤷‍♂️90 dark:border-rose-900",
+          "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:bg-rose-950/90 dark:border-rose-900",
         disabled && "pointer-events-none hover:bg-white"
       )}
     >
