@@ -20,3 +20,21 @@ git push origin master
 git branch -d feature
 git push origin --delete feature
 ```
+
+## Discarding Changes and Deleting a Feature Branch
+
+To discard all uncommitted changes, delete your current feature branch, and switch back to the `master` branch, follow these steps:
+
+```bash
+git reset --hard
+git checkout master
+git branch -D feature
+git push origin --delete feature
+```
+
+This will:
+
+- Permanently discard all local changes in the working directory and index
+- Switch you to the master branch
+- Delete your feature branch locally
+- Delete the remote version of the feature branch
