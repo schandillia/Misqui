@@ -126,7 +126,7 @@ pnpm test
 
 ## 🤝 Contributing
 
-Contributions are welcome! To contribute:
+Contributions are welcome! For detailed Git workflow instructions, see [WORKFLOW.md](WORKFLOW.md). To contribute:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
