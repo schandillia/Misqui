@@ -1,9 +1,10 @@
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq } from "drizzle-orm"
-import { lessons, challengeProgress } from "@/db/schema"
-import { getCourseProgress } from "./user-progress"
+import { eq, count } from "drizzle-orm"
+import { lessons, challenges, challengeProgress } from "@/db/schema"
+import { getCourseProgress } from "@/db/queries/user-progress"
+import app from "@/lib/data/app.json" // Updated import
 
 export const getLesson = cache(async (id?: number) => {
   const session = await auth()
@@ -19,11 +20,23 @@ export const getLesson = cache(async (id?: number) => {
     return null
   }
 
+  // Count the total number of challenges for the lesson
+  const challengeCountResult = await db
+    .select({ count: count() })
+    .from(challenges)
+    .where(eq(challenges.lessonId, lessonId))
+
+  const challengeCount = challengeCountResult[0]?.count || 0
+
+  // Determine if we fetch all challenges or limit to app.CHALLENGES_PER_LESSON
+  const fetchAllChallenges = challengeCount <= app.CHALLENGES_PER_LESSON
+
   const data = await db.query.lessons.findFirst({
     where: eq(lessons.id, lessonId),
     with: {
       challenges: {
         orderBy: (challenges, { asc }) => [asc(challenges.order)],
+        ...(fetchAllChallenges ? {} : { limit: app.CHALLENGES_PER_LESSON }), // Apply limit if needed
         with: {
           challengeOptions: true,
           challengeProgress: {

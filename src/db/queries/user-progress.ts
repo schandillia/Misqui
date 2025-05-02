@@ -1,9 +1,11 @@
+// src/db/queries/user-progress.ts
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq } from "drizzle-orm"
 import { challengeProgress, units, userProgress } from "@/db/schema"
-import { getLesson } from "./lessons"
+import { getLesson } from "@/db/queries/lessons"
+import app from "@/lib/data/app.json"
 
 interface LessonChallenge {
   id: number
@@ -25,11 +27,9 @@ interface LessonChallenge {
 
 export const getUserProgress = cache(async () => {
   const session = await auth()
-
   if (!session?.user?.id) {
     return null
   }
-
   const data = await db.query.userProgress.findFirst({
     where: eq(userProgress.userId, session.user.id),
     with: {
@@ -56,6 +56,7 @@ export const getCourseProgress = cache(async () => {
         with: {
           unit: true,
           challenges: {
+            orderBy: (challenges, { asc }) => [asc(challenges.order)],
             with: {
               challengeProgress: {
                 where: eq(challengeProgress.userId, session.user.id),
@@ -70,7 +71,11 @@ export const getCourseProgress = cache(async () => {
   const firstIncompleteLesson = unitsInActiveCourse
     .flatMap((unit) => unit.lessons)
     .find((lesson) => {
-      return lesson.challenges.some((challenge) => {
+      const consideredChallenges = lesson.challenges.slice(
+        0,
+        app.CHALLENGES_PER_LESSON
+      )
+      return consideredChallenges.some((challenge) => {
         return (
           !challenge.challengeProgress ||
           challenge.challengeProgress.length === 0 ||
@@ -80,6 +85,7 @@ export const getCourseProgress = cache(async () => {
         )
       })
     })
+
   return {
     activeLesson: firstIncompleteLesson,
     activeLessonId: firstIncompleteLesson?.id,
@@ -97,13 +103,37 @@ export const getLessonPercentage = cache(async () => {
     return 0
   }
 
-  // Use type assertion or interface for lesson.challenges
   const completedChallenges = lesson.challenges.filter(
     (challenge: LessonChallenge) => challenge.completed
   )
   const percentage = Math.round(
-    100 * (completedChallenges.length / lesson.challenges.length)
+    100 *
+      (completedChallenges.length /
+        Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON))
   )
 
   return percentage
 })
+
+export const getLessonPercentageForLesson = async (lessonId: number) => {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return 0
+  }
+
+  const lesson = await getLesson(lessonId)
+  if (!lesson) {
+    return 0
+  }
+
+  const completedChallenges = lesson.challenges.filter(
+    (challenge: LessonChallenge) => challenge.completed
+  )
+  const percentage = Math.round(
+    100 *
+      (completedChallenges.length /
+        Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON))
+  )
+
+  return percentage
+}
