@@ -90,7 +90,7 @@ build/
 .eslintcache
 .cache/
 .cache-loader/
-logs/                # Winston logs and runtime log output
+logs/
 
 # -----------------------
 # Auth.js / NextAuth
