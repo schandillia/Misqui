@@ -74,7 +74,7 @@ export const AuthButton = ({
                 variant="primaryOutline"
                 className="flex items-center justify-center gap-2 h-12"
               >
-                <FaApple className="size-5 text-black" />
+                <FaApple className="size-5 text-black dark:text-white" />
                 <span>Continue with Apple</span>
               </Button>
             </div>
