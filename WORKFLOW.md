@@ -47,3 +47,19 @@ To discard all changes since the last commit while on the same branch, do this:
 git reset --hard
 git clean -fd
 ```
+
+## Dropping All Tables in a PostgreSQL Schema
+
+The following SQL command drops all tables in the `public` schema of a PostgreSQL database:
+
+```sql
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public')
+    LOOP
+        EXECUTE 'DROP TABLE IF EXISTS public.' || r.table_name || ' CASCADE';
+    END LOOP;
+END $$;
+```
