@@ -110,6 +110,6 @@ logs/
 # -----------------------
 # Public assets (optional - uncomment if needed)
 # -----------------------
-/public/uploads/
-/public/images/temp/
-/public/fonts/dev/
+# /public/uploads/
+# /public/images/temp/
+# /public/fonts/dev/
