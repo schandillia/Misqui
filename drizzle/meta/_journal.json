@@ -169,6 +169,13 @@
       "when": 1746254576753,
       "tag": "0023_chunky_lilandra",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1746273850683,
+      "tag": "0024_tiresome_screwball",
+      "breakpoints": true
     }
   ]
 }
