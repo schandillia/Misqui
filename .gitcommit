@@ -1,0 +1,26 @@
+[user]
+  name = Amit Schandillia
+  email = amit@schandillia.com
+[core]
+  editor = code --wait
+  autocrlf = input
+[commit]
+  gpgsign = false
+[init]
+  defaultBranch = main
+[push]
+  default = simple
+[alias]
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
+  hist = log --graph --oneline --decorate --all
+  amend = commit --amend --no-edit
+  unstage = reset HEAD --
+  last = log -1 HEAD
+[color]
+  ui = auto
+[format]
+  pretty = format:%C(yellow)%h%Creset %Cgreen%ad%Creset %C(bold blue)%an%Creset %s
+  date = short
