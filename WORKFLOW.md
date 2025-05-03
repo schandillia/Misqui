@@ -38,3 +38,12 @@ This will:
 - Switch you to the master branch
 - Delete your feature branch locally
 - Delete the remote version of the feature branch
+
+## Rolling Back to Last Commit
+
+To discard all changes since the last commit while on the same branch, do this:
+
+```bash
+git reset --hard
+git clean -fd
+```
