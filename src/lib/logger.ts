@@ -7,7 +7,7 @@ import DailyRotateFile from "winston-daily-rotate-file"
 if (process.env.NODE_ENV === "production") {
   const logDir = "logs"
   if (!existsSync(logDir)) {
-    mkdirSync(logDir)
+    mkdirSync(logDir, { recursive: true }) // Ensure subdirectories can be created if needed
   }
 }
 
