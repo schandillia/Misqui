@@ -1,7 +1,7 @@
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq, count, inArray, and } from "drizzle-orm"
+import { eq, inArray, and } from "drizzle-orm"
 import {
   lessons,
   challenges,
