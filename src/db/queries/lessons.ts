@@ -85,12 +85,27 @@ export async function getOrCreateUserLessonChallengeSubset(
   const shuffled = allChallenges.sort(() => Math.random() - 0.5)
   const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
 
-  // 3. Store in DB
-  await db.insert(userLessonChallengeSubset).values({
-    userId,
-    lessonId,
-    challengeIds: JSON.stringify(subset),
-  })
+  // 3. Store in DB with retry logic
+  try {
+    await db.insert(userLessonChallengeSubset).values({
+      userId,
+      lessonId,
+      challengeIds: JSON.stringify(subset),
+    })
+  } catch (error) {
+    // If insert fails due to unique constraint, fetch the existing subset
+    const existingSubset = await db.query.userLessonChallengeSubset.findFirst({
+      where: and(
+        eq(userLessonChallengeSubset.userId, userId),
+        eq(userLessonChallengeSubset.lessonId, lessonId)
+      ),
+    })
+    if (existingSubset) {
+      return JSON.parse(existingSubset.challengeIds) as number[]
+    }
+    // If we still can't find it, something else went wrong
+    throw error
+  }
 
   return subset
 }
