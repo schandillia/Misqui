@@ -176,6 +176,13 @@
       "when": 1746273850683,
       "tag": "0024_tiresome_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1746333550991,
+      "tag": "0025_milky_rattler",
+      "breakpoints": true
     }
   ]
 }

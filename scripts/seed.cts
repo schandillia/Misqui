@@ -39,6 +39,7 @@ const main = async () => {
       db.delete(schema.challengeOptions),
       db.delete(schema.challengeProgress),
       db.delete(schema.userSubscription),
+      db.delete(schema.userLessonChallengeSubset),
     ])
     logger.debug("Cleared existing data from all tables")
 

@@ -33,7 +33,6 @@ const Page = async () => {
     courseProgressData,
     lessonPercentageData,
     userSubsctiptionData,
-    ,
   ])
 
   if (!userProgress || !userProgress.activeCourse) {

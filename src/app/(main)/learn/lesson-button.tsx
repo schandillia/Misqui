@@ -5,7 +5,6 @@ import { Check, Crown } from "lucide-react"
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-
 import "react-circular-progressbar/dist/styles.css"
 import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
 import { FaLock, FaLockOpen } from "react-icons/fa"

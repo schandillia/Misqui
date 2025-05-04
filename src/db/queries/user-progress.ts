@@ -2,10 +2,18 @@
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq } from "drizzle-orm"
-import { challengeProgress, units, userProgress } from "@/db/schema"
+import { eq, inArray, and } from "drizzle-orm"
+import {
+  challengeProgress,
+  units,
+  userProgress,
+  lessons,
+  challenges,
+  userLessonChallengeSubset,
+} from "@/db/schema"
 import { getLesson } from "@/db/queries/lessons"
 import app from "@/lib/data/app.json"
+import { getOrCreateUserLessonChallengeSubset } from "./lessons"
 
 interface LessonChallenge {
   id: number
@@ -68,23 +76,32 @@ export const getCourseProgress = cache(async () => {
     },
   })
 
-  const firstIncompleteLesson = unitsInActiveCourse
+  const allLessons = unitsInActiveCourse
     .flatMap((unit) => unit.lessons)
-    .find((lesson) => {
-      const consideredChallenges = lesson.challenges.slice(
-        0,
-        app.CHALLENGES_PER_LESSON
-      )
-      return consideredChallenges.some((challenge) => {
-        return (
-          !challenge.challengeProgress ||
-          challenge.challengeProgress.length === 0 ||
-          challenge.challengeProgress.some(
-            (progress) => progress.completed === false
-          )
+    .sort((a, b) => a.order - b.order)
+
+  let firstIncompleteLesson = undefined
+  for (const lesson of allLessons) {
+    const subsetIds = await getOrCreateUserLessonChallengeSubset(
+      session.user.id,
+      lesson.id
+    )
+    const subsetChallenges = lesson.challenges.filter((ch) =>
+      subsetIds.includes(ch.id)
+    )
+    const isIncomplete = subsetChallenges.some(
+      (challenge) =>
+        !challenge.challengeProgress ||
+        challenge.challengeProgress.length === 0 ||
+        challenge.challengeProgress.some(
+          (progress) => progress.completed === false
         )
-      })
-    })
+    )
+    if (isIncomplete) {
+      firstIncompleteLesson = lesson
+      break
+    }
+  }
 
   return {
     activeLesson: firstIncompleteLesson,
@@ -121,19 +138,59 @@ export const getLessonPercentageForLesson = async (lessonId: number) => {
     return 0
   }
 
-  const lesson = await getLesson(lessonId)
-  if (!lesson) {
+  // Get the persisted subset
+  const subsetIds = await getOrCreateUserLessonChallengeSubset(
+    session.user.id,
+    lessonId
+  )
+
+  // Fetch only those challenges
+  const lesson = await db.query.lessons.findFirst({
+    where: eq(lessons.id, lessonId),
+    with: {
+      challenges: {
+        where: inArray(challenges.id, subsetIds),
+        with: {
+          challengeProgress: {
+            where: eq(challengeProgress.userId, session.user.id),
+          },
+        },
+      },
+    },
+  })
+
+  if (!lesson || !lesson.challenges) {
     return 0
   }
 
   const completedChallenges = lesson.challenges.filter(
-    (challenge: LessonChallenge) => challenge.completed
+    (challenge) =>
+      challenge.challengeProgress &&
+      challenge.challengeProgress.length > 0 &&
+      challenge.challengeProgress.every((progress) => progress.completed)
   )
+
+  // Use the subset length as denominator
   const percentage = Math.round(
-    100 *
-      (completedChallenges.length /
-        Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON))
+    100 * (completedChallenges.length / subsetIds.length)
   )
 
   return percentage
+}
+
+export async function resetUserLessonChallengeSubset(
+  userId: string,
+  lessonId: number
+) {
+  // Delete the old subset
+  await db
+    .delete(userLessonChallengeSubset)
+    .where(
+      and(
+        eq(userLessonChallengeSubset.userId, userId),
+        eq(userLessonChallengeSubset.lessonId, lessonId)
+      )
+    )
+  // Generate and return a new one
+  return await getOrCreateUserLessonChallengeSubset(userId, lessonId)
 }
