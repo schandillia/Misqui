@@ -24,23 +24,37 @@ const sql = neon(process.env.AUTH_DRIZZLE_URL!)
 
 const main = async () => {
   try {
-    logger.info("Dropping all tables")
+    logger.info("Dropping all tables and clearing migration history")
+
+    // Clear migration files
+    const drizzleDir = path.resolve(__dirname, "../drizzle")
+    if (fs.existsSync(drizzleDir)) {
+      fs.rmSync(drizzleDir, { recursive: true, force: true })
+      logger.info("Cleared drizzle directory")
+    }
 
     await sql`
       DO $$
       DECLARE
         tabname RECORD;
       BEGIN
+        -- Drop all tables
         FOR tabname IN
           (SELECT tablename FROM pg_tables WHERE schemaname = 'public')
         LOOP
           EXECUTE 'DROP TABLE IF EXISTS "' || tabname.tablename || '" CASCADE';
         END LOOP;
+
+        -- Clear Drizzle migration history
+        DROP TABLE IF EXISTS "__drizzle_migrations" CASCADE;
+        DROP TABLE IF EXISTS "__drizzle_migrations_lock" CASCADE;
+        DROP TABLE IF EXISTS "drizzle_migrations" CASCADE;
+        DROP TABLE IF EXISTS "drizzle_migrations_lock" CASCADE;
       END
       $$;
     `
 
-    logger.info("All tables dropped successfully")
+    logger.info("All tables and migration history cleared successfully")
   } catch (error) {
     logger.error("Failed to drop tables: %O", {
       error,

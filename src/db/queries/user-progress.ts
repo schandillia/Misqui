@@ -84,7 +84,8 @@ export const getCourseProgress = cache(async () => {
   for (const lesson of allLessons) {
     const subsetIds = await getOrCreateUserLessonChallengeSubset(
       session.user.id,
-      lesson.id
+      lesson.id,
+      "lesson"
     )
     const subsetChallenges = lesson.challenges.filter((ch) =>
       subsetIds.includes(ch.id)
@@ -141,7 +142,8 @@ export const getLessonPercentageForLesson = async (lessonId: number) => {
   // Get the persisted subset
   const subsetIds = await getOrCreateUserLessonChallengeSubset(
     session.user.id,
-    lessonId
+    lessonId,
+    "lesson"
   )
 
   // Fetch only those challenges
@@ -188,9 +190,10 @@ export async function resetUserLessonChallengeSubset(
     .where(
       and(
         eq(userLessonChallengeSubset.userId, userId),
-        eq(userLessonChallengeSubset.lessonId, lessonId)
+        eq(userLessonChallengeSubset.lessonId, lessonId),
+        eq(userLessonChallengeSubset.purpose, "lesson")
       )
     )
   // Generate and return a new one
-  return await getOrCreateUserLessonChallengeSubset(userId, lessonId)
+  return await getOrCreateUserLessonChallengeSubset(userId, lessonId, "lesson")
 }

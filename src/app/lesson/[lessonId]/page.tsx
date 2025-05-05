@@ -3,14 +3,22 @@ import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 
-type Props = {
-  params: Promise<{ lessonId: string }>
-}
+// Use Next.js searchParams for query string
+import { type NextPageContext } from "next"
 
-const Page = async ({ params }: Props) => {
+// Accept searchParams in props
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lessonId: string }>
+  searchParams: Promise<{ purpose?: string }>
+}) => {
   const { lessonId } = await params
+  const { purpose } = await searchParams
   const lessonIdNumber = Number(lessonId)
-  const lessonData = getLesson(lessonIdNumber)
+  const lessonPurpose = purpose === "practice" ? "practice" : "lesson"
+  const lessonData = getLesson(lessonIdNumber, lessonPurpose)
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
@@ -23,9 +31,11 @@ const Page = async ({ params }: Props) => {
   if (!lesson || !userProgress) redirect("/learn")
 
   const initialPercentage =
-    (lesson.challenges.filter((challenge) => challenge.completed).length /
-      Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON)) *
-    100
+    lessonPurpose === "practice"
+      ? 0
+      : (lesson.challenges.filter((challenge) => challenge.completed).length /
+          Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON)) *
+        100
 
   return (
     <Quiz

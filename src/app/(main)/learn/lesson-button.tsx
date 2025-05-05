@@ -36,7 +36,7 @@ export const LessonButton = ({
     : locked
     ? FaLock
     : FaLockOpen
-  const href = isCompleted ? `/lesson/${id}` : "/lesson"
+  const href = isCompleted ? `/lesson/${id}?purpose=practice` : "/lesson"
 
   return (
     <Link

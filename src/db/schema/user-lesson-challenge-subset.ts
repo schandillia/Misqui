@@ -15,12 +15,14 @@ export const userLessonChallengeSubset = pgTable(
     userId: uuid("user_id").notNull(),
     lessonId: integer("lesson_id").notNull(),
     challengeIds: text("challenge_ids").notNull(),
+    purpose: text("purpose", { enum: ["lesson", "practice"] }).notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   },
   (table) => ({
-    userLessonIdx: uniqueIndex("user_lesson_idx").on(
+    userLessonPurposeIdx: uniqueIndex("user_lesson_purpose_idx").on(
       table.userId,
-      table.lessonId
+      table.lessonId,
+      table.purpose
     ),
   })
 )

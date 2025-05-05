@@ -11,8 +11,9 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:reset": "tsx scripts/reset.cts",
+    "db:erase": "tsx scripts/erase.cts",
     "db:seed": "tsx scripts/seed.cts",
+    "db:reset": "clear && pnpm run db:erase && pnpm run db:generate && pnpm run db:push && pnpm run db:seed",
     "generate:env": "tsx scripts/generate-env-example.mjs",
     "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
     "type-check": "tsc --noEmit"
