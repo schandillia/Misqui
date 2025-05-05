@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { courses } from "@/db/schema"
-import { InfinityIcon, FlameIcon } from "lucide-react"
+import { InfinityIcon } from "lucide-react"
+import { FaFireFlameCurved } from "react-icons/fa6"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -62,11 +63,11 @@ export const UserProgress = ({
         variant="ghost"
         className={
           isTodayCompleted
-            ? "text-orange-500"
-            : "text-gray-400 dark:text-gray-500"
+            ? "text-orange-500 dark:text-orange-500"
+            : "text-neutral-400 dark:text-neutral-600"
         }
       >
-        <FlameIcon className="size-5" />
+        <FaFireFlameCurved className="size-5" />
         {currentStreak}
       </Button>
     </div>
