@@ -41,6 +41,7 @@ const Page = async ({
       initialGems={userProgress.gems}
       initialPercentage={initialPercentage}
       userSubscription={userSubscription}
+      purpose={lessonPurpose}
     />
   )
 }
