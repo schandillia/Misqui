@@ -60,6 +60,7 @@ For detailed information about the project, please refer to the following docume
 - [Architecture Guide](docs/ARCHITECTURE.md) - System architecture and technical design
 - [Security Policy](docs/SECURITY.md) - Security guidelines and vulnerability reporting
 - [Optimization Guide](docs/OPTIMIZATION.md) - Performance optimization and code quality guidelines
+- [Contributing Guide](docs/CONTRIBUTING.md) - Code style, naming conventions, and contribution guidelines
 - [Workflow Guide](WORKFLOW.md) - Git workflow and contribution guidelines
 
 ## 📦 Installation
