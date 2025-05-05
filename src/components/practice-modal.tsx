@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Modal } from "@/components/ui/modal"
 import Image from "next/image"
 
 export const PracticeModal = () => {
@@ -22,33 +15,27 @@ export const PracticeModal = () => {
   if (!isClient) return null
 
   return (
-    <Dialog open={isOpen} onOpenChange={close}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <div className="flex w-full items-center mb-5 justify-center">
-            <Image src="/gem.svg" alt="Gem" height={100} width={100} />
-          </div>
-          <DialogTitle className="text-center text-2xl font-bold">
-            Practice lesson
-          </DialogTitle>
-          <DialogDescription className="text-center text-base">
-            Use practice sessions to regain gems and points. You cannot lose
-            gems or points in practice lessons.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="mb-4">
-          <div className="flex flex-col gap-y-4 w-full">
-            <Button
-              variant="primary"
-              className="w-full"
-              size="lg"
-              onClick={close}
-            >
-              I understand
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <Modal
+      showModal={isOpen}
+      setShowModal={close}
+      title="Practice lesson"
+      description="Use practice sessions to regain gems and points. You cannot lose gems or points in practice lessons."
+    >
+      <div className="w-full space-y-6">
+        <div className="flex w-full items-center mb-5 justify-center">
+          <Image src="/gem.svg" alt="Gem" height={100} width={100} />
+        </div>
+        <div className="flex flex-col gap-y-4 w-full">
+          <Button
+            variant="primary"
+            className="w-full"
+            size="lg"
+            onClick={close}
+          >
+            I understand
+          </Button>
+        </div>
+      </div>
+    </Modal>
   )
 }
