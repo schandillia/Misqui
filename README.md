@@ -53,6 +53,14 @@ Misqui is built with modern web technologies, organized by category:
 - **Deployment**:
   - Vercel
 
+## 📚 Documentation
+
+For detailed information about the project, please refer to the following documentation:
+
+- [Security Policy](docs/SECURITY.md) - Security guidelines and vulnerability reporting
+- [Optimization Guide](docs/OPTIMIZATION.md) - Performance optimization and code quality guidelines
+- [Workflow Guide](WORKFLOW.md) - Git workflow and contribution guidelines
+
 ## 📦 Installation
 
 To set up the development environment:
