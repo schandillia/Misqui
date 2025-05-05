@@ -57,6 +57,7 @@ Misqui is built with modern web technologies, organized by category:
 
 For detailed information about the project, please refer to the following documentation:
 
+- [Architecture Guide](docs/ARCHITECTURE.md) - System architecture and technical design
 - [Security Policy](docs/SECURITY.md) - Security guidelines and vulnerability reporting
 - [Optimization Guide](docs/OPTIMIZATION.md) - Performance optimization and code quality guidelines
 - [Workflow Guide](WORKFLOW.md) - Git workflow and contribution guidelines
