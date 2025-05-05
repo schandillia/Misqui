@@ -3,9 +3,6 @@ import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 
-// Use Next.js searchParams for query string
-import { type NextPageContext } from "next"
-
 // Accept searchParams in props
 const Page = async ({
   params,
