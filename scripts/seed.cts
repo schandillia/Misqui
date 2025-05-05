@@ -49,19 +49,19 @@ const main = async () => {
         id: 1,
         title: "Chess",
         description: "Learn the basics of chess.",
-        image: "/board.svg",
+        image: "/images/icons/board.svg",
       },
       {
         id: 2,
         title: "Sudoku",
         description: "Learn the basics of sudoku.",
-        image: "/sudoku-icon.svg",
+        image: "/images/icons/sudoku-icon.svg",
       },
       {
         id: 3,
         title: "Math",
         description: "Learn the basics of math.",
-        image: "/math-icon.svg",
+        image: "/images/icons/math-icon.svg",
       },
     ])
     logger.debug("Inserted courses")

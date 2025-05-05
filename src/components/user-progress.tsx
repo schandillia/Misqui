@@ -40,14 +40,23 @@ export const UserProgress = ({
       </Link>
       <Link href="/store">
         <Button variant="ghost" className="text-orange-500">
-          <Image src="/points.svg" alt="Points" width={22} height={22} />
+          <Image
+            src="/images/icons/points.svg"
+            alt="Points"
+            width={22}
+            height={22}
+          />
           {points}
         </Button>
       </Link>
       <Link href="/store">
         <Button variant="ghost" className="text-blue-500">
           <Image
-            src={hasActiveSubscription ? "/gems_unlimited.svg" : "gem.svg"}
+            src={
+              hasActiveSubscription
+                ? "/images/icons/gems_unlimited.svg"
+                : "/images/icons/gem.svg"
+            }
             alt="Gems"
             width={22}
             height={22}
