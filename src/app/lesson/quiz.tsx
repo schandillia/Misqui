@@ -31,7 +31,7 @@ type Props = {
         isActive: boolean
       })
     | null
-  purpose: "lesson" | "practice"
+  purpose?: "lesson" | "practice"
 }
 
 export const Quiz = ({
@@ -40,7 +40,7 @@ export const Quiz = ({
   initialPercentage,
   initialLessonChallenges,
   userSubscription,
-  purpose,
+  purpose = "lesson",
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
