@@ -14,6 +14,7 @@ import {
 import { getLesson } from "@/db/queries/lessons"
 import app from "@/lib/data/app.json"
 import { getOrCreateUserLessonChallengeSubset } from "./lessons"
+import { logger } from "@/lib/logger"
 
 interface LessonChallenge {
   id: number
@@ -38,13 +39,30 @@ export const getUserProgress = cache(async () => {
   if (!session?.user?.id) {
     return null
   }
-  const data = await db.query.userProgress.findFirst({
-    where: eq(userProgress.userId, session.user.id),
-    with: {
-      activeCourse: true,
-    },
-  })
-  return data
+  logger.info("Fetching user progress", { userId: session.user.id })
+  try {
+    const data = await db.query.userProgress.findFirst({
+      where: eq(userProgress.userId, session.user.id),
+      with: {
+        activeCourse: true,
+      },
+    })
+    if (!data) {
+      logger.warn("User progress not found", { userId: session.user.id })
+      return null
+    }
+    logger.info("User progress fetched", {
+      userId: session.user.id,
+      progress: data,
+    })
+    return data
+  } catch (error) {
+    logger.error("Error fetching user progress", {
+      userId: session.user.id,
+      error,
+    })
+    throw error
+  }
 })
 
 export const getCourseProgress = cache(async () => {
@@ -196,4 +214,50 @@ export async function resetUserLessonChallengeSubset(
     )
   // Generate and return a new one
   return await getOrCreateUserLessonChallengeSubset(userId, lessonId, "lesson")
+}
+
+export async function updateUserGems(userId: string, delta: number) {
+  logger.info("Updating user gems", { userId, delta })
+  try {
+    const progress = await db.query.userProgress.findFirst({
+      where: eq(userProgress.userId, userId),
+    })
+    if (!progress) {
+      logger.warn("User progress not found for gem update", { userId })
+      return null
+    }
+    const newGems = Math.max(0, (progress.gems || 0) + delta)
+    await db
+      .update(userProgress)
+      .set({ gems: newGems })
+      .where(eq(userProgress.userId, userId))
+    logger.info("User gems updated", { userId, newGems })
+    return newGems
+  } catch (error) {
+    logger.error("Error updating user gems", { userId, error })
+    throw error
+  }
+}
+
+export async function updateUserPoints(userId: string, delta: number) {
+  logger.info("Updating user points", { userId, delta })
+  try {
+    const progress = await db.query.userProgress.findFirst({
+      where: eq(userProgress.userId, userId),
+    })
+    if (!progress) {
+      logger.warn("User progress not found for point update", { userId })
+      return null
+    }
+    const newPoints = (progress.points || 0) + delta
+    await db
+      .update(userProgress)
+      .set({ points: newPoints })
+      .where(eq(userProgress.userId, userId))
+    logger.info("User points updated", { userId, newPoints })
+    return newPoints
+  } catch (error) {
+    logger.error("Error updating user points", { userId, error })
+    throw error
+  }
 }

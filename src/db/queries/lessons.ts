@@ -10,19 +10,23 @@ import {
 } from "@/db/schema"
 import { getCourseProgress } from "@/db/queries/user-progress"
 import app from "@/lib/data/app.json"
+import { logger } from "@/lib/logger"
 
 export const getLesson = cache(
   async (id?: number, purpose: "lesson" | "practice" = "lesson") => {
+    logger.info("Fetching lesson", { id, purpose })
     const session = await auth()
     const courseProgress = await getCourseProgress()
 
     if (!session?.user?.id) {
+      logger.warn("No user session found when fetching lesson", { id, purpose })
       return null
     }
 
     const lessonId = id || courseProgress?.activeLessonId
 
     if (!lessonId) {
+      logger.warn("No lesson ID found when fetching lesson", { id, purpose })
       return null
     }
 
@@ -48,6 +52,10 @@ export const getLesson = cache(
     })
 
     if (!data || !data.challenges) {
+      logger.warn("Lesson not found or has no challenges", {
+        lessonId,
+        purpose,
+      })
       return null
     }
 
@@ -68,6 +76,12 @@ export const getLesson = cache(
       })
     }
 
+    logger.info("Lesson fetched successfully", {
+      lessonId,
+      purpose,
+      challengeCount: normalizedChallenges.length,
+    })
+
     return { ...data, challenges: normalizedChallenges }
   }
 )
@@ -79,6 +93,7 @@ export async function getOrCreateUserLessonChallengeSubset(
 ) {
   // For practice purpose, always generate a new subset
   if (purpose === "practice") {
+    logger.info("Generating new practice subset", { userId, lessonId })
     const allChallenges = await db.query.challenges.findMany({
       where: eq(challenges.lessonId, lessonId),
     })
@@ -105,10 +120,16 @@ export async function getOrCreateUserLessonChallengeSubset(
         },
       })
 
+    logger.info("Practice subset created and upserted", {
+      userId,
+      lessonId,
+      subset,
+    })
     return subset
   }
 
   // For lesson purpose, try to fetch existing subset first
+  logger.info("Fetching existing lesson subset", { userId, lessonId, purpose })
   const existing = await db.query.userLessonChallengeSubset.findFirst({
     where: and(
       eq(userLessonChallengeSubset.userId, userId),
@@ -117,10 +138,12 @@ export async function getOrCreateUserLessonChallengeSubset(
     ),
   })
   if (existing) {
+    logger.info("Found existing lesson subset", { userId, lessonId, purpose })
     return JSON.parse(existing.challengeIds) as number[]
   }
 
   // Generate new random subset for lesson
+  logger.info("Generating new lesson subset", { userId, lessonId, purpose })
   const allChallenges = await db.query.challenges.findMany({
     where: eq(challenges.lessonId, lessonId),
   })
@@ -147,5 +170,11 @@ export async function getOrCreateUserLessonChallengeSubset(
       },
     })
 
+  logger.info("Lesson subset created and upserted", {
+    userId,
+    lessonId,
+    purpose,
+    subset,
+  })
   return subset
 }

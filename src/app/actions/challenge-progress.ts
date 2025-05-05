@@ -7,11 +7,19 @@ import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
+import { logger } from "@/lib/logger"
 
 export const upsertChallengeProgress = async (challengeId: number) => {
   const session = await auth()
+  logger.info("Attempting to upsert challenge progress", {
+    userId: session?.user?.id,
+    challengeId,
+  })
 
   if (!session?.user?.id) {
+    logger.error("Unauthorized challenge progress upsert attempt", {
+      challengeId,
+    })
     throw new Error("Unauthorized")
   }
 
@@ -19,6 +27,10 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   const userSubscription = await getUserSubscription()
 
   if (!currentUserProgress) {
+    logger.error("User progress not found during challenge progress upsert", {
+      userId: session.user.id,
+      challengeId,
+    })
     throw new Error("User progress not found")
   }
 
@@ -27,6 +39,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   })
 
   if (!challenge) {
+    logger.error("Challenge not found during progress upsert", { challengeId })
     throw new Error("Challenge not found")
   }
 
@@ -46,10 +59,19 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     !isPractice &&
     !userSubscription?.isActive
   ) {
+    logger.warn("Insufficient gems for challenge progress", {
+      userId: session.user.id,
+      challengeId,
+    })
     return { error: "gems" }
   }
 
   if (isPractice) {
+    logger.info("Practice challenge completed", {
+      userId: session.user.id,
+      challengeId,
+      lessonId,
+    })
     await db
       .update(challengeProgress)
       .set({
@@ -71,6 +93,11 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     revalidatePath("/leaderboard")
     revalidatePath(`/lesson/${lessonId}`)
 
+    logger.info("Practice challenge progress and rewards updated", {
+      userId: session.user.id,
+      challengeId,
+      lessonId,
+    })
     return
   }
 
@@ -92,4 +119,10 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   revalidatePath("/missions")
   revalidatePath("/leaderboard")
   revalidatePath(`/lesson/${lessonId}`)
+
+  logger.info("Challenge progress upserted and points updated", {
+    userId: session.user.id,
+    challengeId,
+    lessonId,
+  })
 }

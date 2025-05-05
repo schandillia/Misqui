@@ -7,6 +7,7 @@ import { challengeProgress, units } from "@/db/schema"
 import { getUserProgress } from "@/db/queries/user-progress"
 import { getLessonPercentageForLesson } from "@/db/queries/user-progress"
 import app from "@/lib/data/app.json"
+import { logger } from "@/lib/logger"
 
 export const getUnits = cache(async () => {
   const session = await auth()
@@ -54,3 +55,24 @@ export const getUnits = cache(async () => {
 
   return normalizedData
 })
+
+export async function getUnitsByCourse(courseId: number) {
+  logger.info("Fetching units for course", { courseId })
+  try {
+    const data = await db.query.units.findMany({
+      where: eq(units.courseId, courseId),
+    })
+    if (!data || data.length === 0) {
+      logger.warn("No units found for course", { courseId })
+      return []
+    }
+    logger.info("Units fetched for course", {
+      courseId,
+      unitCount: data.length,
+    })
+    return data
+  } catch (error) {
+    logger.error("Error fetching units for course", { courseId, error })
+    throw error
+  }
+}

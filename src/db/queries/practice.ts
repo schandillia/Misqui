@@ -4,6 +4,8 @@ import { auth } from "@/auth"
 import { eq, inArray } from "drizzle-orm"
 import { lessons, challenges, challengeProgress } from "@/db/schema"
 import { getOrCreateUserLessonChallengeSubset } from "./lessons"
+import app from "@/lib/data/app.json"
+import { logger } from "@/lib/logger"
 
 export const getPracticeLesson = cache(async (lessonId: number) => {
   const session = await auth()
@@ -50,3 +52,35 @@ export const getPracticeLesson = cache(async (lessonId: number) => {
 
   return { ...data, challenges: normalizedChallenges }
 })
+
+export async function getPracticeChallenges(lessonId: number, userId: string) {
+  logger.info("Fetching practice challenges", { lessonId, userId })
+  try {
+    const lesson = await db.query.lessons.findFirst({
+      where: eq(lessons.id, lessonId),
+      with: {
+        challenges: true,
+      },
+    })
+    if (!lesson || !lesson.challenges) {
+      logger.warn("Lesson or challenges not found for practice", { lessonId })
+      return []
+    }
+    // Randomize challenges for practice
+    const shuffled = lesson.challenges.sort(() => Math.random() - 0.5)
+    const selected = shuffled.slice(0, app.CHALLENGES_PER_LESSON)
+    logger.info("Practice challenges selected", {
+      lessonId,
+      userId,
+      challengeIds: selected.map((c) => c.id),
+    })
+    return selected
+  } catch (error) {
+    logger.error("Error fetching practice challenges", {
+      lessonId,
+      userId,
+      error,
+    })
+    throw error
+  }
+}
