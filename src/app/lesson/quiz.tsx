@@ -134,40 +134,76 @@ export const Quiz = ({
     const correctOption = options.find((option) => option.correct)
     if (!correctOption) return
 
+    // Optimistically update UI
     if (correctOption.id === selectedOption) {
+      correctControls.play()
+      setStatus("correct")
+      setPercentage((prev) => prev + 100 / challenges.length)
+
+      // In practice mode, always increase gems on correct answer
+      // In lesson mode, only increase gems if lesson was already completed
+      if (purpose === "practice" || initialPercentage === 100) {
+        setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+      }
+
+      // Update database in background
       startTransition(() => {
         upsertChallengeProgress(challenge.id)
           .then((response) => {
             if (response?.error === "gems") {
+              // Revert optimistic update if there's an error
+              setStatus("none")
+              setSelectedOption(undefined)
+              setPercentage((prev) => prev - 100 / challenges.length)
+              if (purpose === "practice" || initialPercentage === 100) {
+                setGems((prev) => Math.max(prev - 1, 0))
+              }
               openGemsModal()
-              return
-            }
-            correctControls.play()
-            setStatus("correct")
-            setPercentage((prev) => prev + 100 / challenges.length)
-
-            if (initialPercentage === 100) {
-              setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
           })
-          .catch(() => toast.error("Something went wrong. Please try again."))
+          .catch(() => {
+            // Revert optimistic update on error
+            setStatus("none")
+            setSelectedOption(undefined)
+            setPercentage((prev) => prev - 100 / challenges.length)
+            if (purpose === "practice" || initialPercentage === 100) {
+              setGems((prev) => Math.max(prev - 1, 0))
+            }
+            toast.error("Something went wrong. Please try again.")
+          })
       })
     } else {
+      incorrectControls.play()
+      setStatus("wrong")
+
+      // Only reduce gems in lesson mode and if user doesn't have subscription
+      if (purpose === "lesson" && !userSubscription?.isActive) {
+        setGems((prev) => Math.max(prev - 1, 0))
+      }
+
+      // Update database in background
       startTransition(() => {
         reduceGems(challenge.id)
           .then((response) => {
             if (response?.error === "gems") {
+              // Revert optimistic update if there's an error
+              setStatus("none")
+              setSelectedOption(undefined)
+              if (purpose === "lesson" && !userSubscription?.isActive) {
+                setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+              }
               openGemsModal()
-              return
-            }
-            incorrectControls.play()
-            setStatus("wrong")
-
-            if (!response?.error) {
-              setGems((prev) => Math.max(prev - 1, 0))
             }
           })
-          .catch(() => toast.error("Something went wrong. Please try again."))
+          .catch(() => {
+            // Revert optimistic update on error
+            setStatus("none")
+            setSelectedOption(undefined)
+            if (purpose === "lesson" && !userSubscription?.isActive) {
+              setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+            }
+            toast.error("Something went wrong. Please try again.")
+          })
       })
     }
   }
@@ -255,7 +291,7 @@ export const Quiz = ({
         </div>
       </div>
       <Footer
-        disabled={pending || !selectedOption}
+        disabled={status === "none" && (pending || !selectedOption)}
         status={status}
         onCheck={onContinue}
       />
