@@ -52,8 +52,16 @@ export async function POST(req: Request) {
   }
 
   if (event.type === "invoice.payment_succeeded") {
+    const invoice = event.data.object as Stripe.Invoice & {
+      subscription: string
+    }
+    if (!invoice.subscription) {
+      return new NextResponse("No subscription found in invoice", {
+        status: 400,
+      })
+    }
     const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
+      invoice.subscription
     )
 
     await db

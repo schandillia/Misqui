@@ -86,7 +86,8 @@ export const Quiz = ({
     </>
   )
 
-  const [pending, startTransition] = useTransition()
+  const [pending] = useTransition()
+  const [serverPending, setServerPending] = useState(false)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
   const [percentage, setPercentage] = useState(() => {
@@ -146,32 +147,34 @@ export const Quiz = ({
         setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
       }
 
-      // Update database in background
-      startTransition(() => {
-        upsertChallengeProgress(challenge.id)
-          .then((response) => {
-            if (response?.error === "gems") {
-              // Revert optimistic update if there's an error
-              setStatus("none")
-              setSelectedOption(undefined)
-              setPercentage((prev) => prev - 100 / challenges.length)
-              if (purpose === "practice" || initialPercentage === 100) {
-                setGems((prev) => Math.max(prev - 1, 0))
-              }
-              openGemsModal()
-            }
-          })
-          .catch(() => {
-            // Revert optimistic update on error
+      // Update database in background without blocking UI
+      setServerPending(true)
+      upsertChallengeProgress(challenge.id)
+        .then((response) => {
+          if (response?.error === "gems") {
+            // Revert optimistic update if there's an error
             setStatus("none")
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
             if (purpose === "practice" || initialPercentage === 100) {
               setGems((prev) => Math.max(prev - 1, 0))
             }
-            toast.error("Something went wrong. Please try again.")
-          })
-      })
+            openGemsModal()
+          }
+        })
+        .catch(() => {
+          // Revert optimistic update on error
+          setStatus("none")
+          setSelectedOption(undefined)
+          setPercentage((prev) => prev - 100 / challenges.length)
+          if (purpose === "practice" || initialPercentage === 100) {
+            setGems((prev) => Math.max(prev - 1, 0))
+          }
+          toast.error("Something went wrong. Please try again.")
+        })
+        .finally(() => {
+          setServerPending(false)
+        })
     } else {
       incorrectControls.play()
       setStatus("wrong")
@@ -181,30 +184,32 @@ export const Quiz = ({
         setGems((prev) => Math.max(prev - 1, 0))
       }
 
-      // Update database in background
-      startTransition(() => {
-        reduceGems(challenge.id)
-          .then((response) => {
-            if (response?.error === "gems") {
-              // Revert optimistic update if there's an error
-              setStatus("none")
-              setSelectedOption(undefined)
-              if (purpose === "lesson" && !userSubscription?.isActive) {
-                setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-              }
-              openGemsModal()
-            }
-          })
-          .catch(() => {
-            // Revert optimistic update on error
+      // Update database in background without blocking UI
+      setServerPending(true)
+      reduceGems(challenge.id)
+        .then((response) => {
+          if (response?.error === "gems") {
+            // Revert optimistic update if there's an error
             setStatus("none")
             setSelectedOption(undefined)
             if (purpose === "lesson" && !userSubscription?.isActive) {
               setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
-            toast.error("Something went wrong. Please try again.")
-          })
-      })
+            openGemsModal()
+          }
+        })
+        .catch(() => {
+          // Revert optimistic update on error
+          setStatus("none")
+          setSelectedOption(undefined)
+          if (purpose === "lesson" && !userSubscription?.isActive) {
+            setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+          }
+          toast.error("Something went wrong. Please try again.")
+        })
+        .finally(() => {
+          setServerPending(false)
+        })
     }
   }
 
@@ -283,7 +288,7 @@ export const Quiz = ({
                 onSelect={onSelect}
                 status={status}
                 selectedOption={selectedOption}
-                disabled={pending}
+                disabled={status === "none" && (pending || serverPending)}
                 challengeType={challenge.challengeType}
               />
             </div>
