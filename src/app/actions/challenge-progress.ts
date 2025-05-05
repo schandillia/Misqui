@@ -2,7 +2,11 @@
 
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
-import { getUserProgress, getUserSubscription } from "@/db/queries"
+import {
+  getUserProgress,
+  getUserSubscription,
+  markLessonCompleteAndUpdateStreak,
+} from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
@@ -65,6 +69,9 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     })
     return { error: "gems" }
   }
+
+  // Update streak only if the lesson is fully completed
+  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
 
   if (isPractice) {
     logger.info("Practice challenge completed", {

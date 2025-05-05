@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { courses } from "@/db/schema"
-import { InfinityIcon } from "lucide-react"
+import { InfinityIcon, FlameIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -9,6 +9,8 @@ type Props = {
   gems: number
   points: number
   hasActiveSubscription: boolean
+  currentStreak: number
+  lastActivityDate?: string | null
 }
 
 export const UserProgress = ({
@@ -16,7 +18,12 @@ export const UserProgress = ({
   gems,
   points,
   hasActiveSubscription,
+  currentStreak,
+  lastActivityDate,
 }: Props) => {
+  const today = new Date().toISOString().split("T")[0]
+  const isTodayCompleted = lastActivityDate === today
+
   return (
     <div className="flex items-center justify-between gap-x-2 w-full">
       <Link href="/courses">
@@ -51,6 +58,17 @@ export const UserProgress = ({
           )}
         </Button>
       </Link>
+      <Button
+        variant="ghost"
+        className={
+          isTodayCompleted
+            ? "text-orange-500"
+            : "text-gray-400 dark:text-gray-500"
+        }
+      >
+        <FlameIcon className="size-5" />
+        {currentStreak}
+      </Button>
     </div>
   )
 }

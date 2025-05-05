@@ -32,6 +32,8 @@ const Page = async () => {
           gems={userProgress.gems}
           points={userProgress.points}
           hasActiveSubscription={isPro}
+          currentStreak={userProgress.currentStreak}
+          lastActivityDate={userProgress.lastActivityDate}
         />
         {!isPro && <Promo />}
       </StickyWrapper>

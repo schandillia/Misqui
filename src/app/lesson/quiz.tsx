@@ -3,12 +3,15 @@
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
-import { reduceGems } from "@/app/actions/user-progress"
+import {
+  reduceGems,
+  updateStreakAfterLesson,
+} from "@/app/actions/user-progress"
 import { useAudio, useWindowSize, useMount } from "react-use"
 import Image from "next/image"
 import { ResultCard } from "@/app/lesson/result-card"
@@ -212,6 +215,12 @@ export const Quiz = ({
         })
     }
   }
+
+  useEffect(() => {
+    if (!challenge && purpose === "lesson") {
+      updateStreakAfterLesson(lessonId)
+    }
+  }, [challenge, lessonId, purpose])
 
   if (!challenge) {
     finishControls.play()

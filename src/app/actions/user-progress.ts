@@ -6,6 +6,7 @@ import {
   getCourseById,
   getUserProgress,
   getUserSubscription,
+  markLessonCompleteAndUpdateStreak,
 } from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
@@ -118,4 +119,16 @@ export const refillGems = async () => {
   revalidatePath("/learn")
   revalidatePath("/missions")
   revalidatePath("/leaderboard")
+}
+
+export const updateStreakAfterLesson = async (lessonId: number) => {
+  const session = await auth()
+  console.log(
+    "SERVER: updateStreakAfterLesson called for",
+    session?.user?.id,
+    lessonId
+  )
+  if (!session?.user?.id) throw new Error("Unauthorized")
+  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+  return { success: true }
 }
