@@ -46,7 +46,17 @@ export const Quiz = ({
   const { open: openPracticeModal } = usePracticeModal()
 
   useMount(() => {
-    if (purpose === "practice" || initialPercentage === 100) {
+    if (purpose === "practice") {
+      const SIX_HOURS = 6 * 60 * 60 * 1000
+      const key = "practiceModalLastShown"
+      const lastShown = Number(localStorage.getItem(key) || 0)
+      const now = Date.now()
+
+      if (now - lastShown > SIX_HOURS) {
+        openPracticeModal()
+        localStorage.setItem(key, now.toString())
+      }
+    } else if (initialPercentage === 100) {
       openPracticeModal()
     }
   })
