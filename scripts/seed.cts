@@ -49,7 +49,7 @@ const main = async () => {
         id: 1,
         title: "Chess",
         description: "Learn the basics of chess.",
-        image: "/images/icons/board.svg",
+        image: "/images/icons/chess-icon.svg",
       },
       {
         id: 2,

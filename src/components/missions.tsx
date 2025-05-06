@@ -34,7 +34,12 @@ export const Missions = ({ points }: Props) => {
                 key={mission.TITLE}
                 className="flex items-center w-full pb-4 gap-x-3"
               >
-                <Image src="/points.svg" width={40} height={40} alt="Points" />
+                <Image
+                  src="/images/icons/points.svg"
+                  width={40}
+                  height={40}
+                  alt="Points"
+                />
                 <div className="flex flex-col w-full gap-y-2">
                   <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
                     {mission.TITLE}

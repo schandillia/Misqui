@@ -18,7 +18,7 @@ import { ThemeProvider } from "next-themes"
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
   description: meta.HOME.DESCRIPTION,
-  icons: [{ rel: "icon", url: "/mascot.svg" }],
+  icons: [{ rel: "icon", url: "/images/mascots/mascot.svg" }],
 }
 
 export default async function RootLayout({

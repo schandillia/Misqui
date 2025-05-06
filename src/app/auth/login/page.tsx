@@ -25,7 +25,7 @@ const Page = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950 text-center px-6">
       <Image
-        src="/mascot.svg"
+        src="/images/mascots/mascot.svg"
         alt="Mascot"
         width={160}
         height={160}

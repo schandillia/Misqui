@@ -68,15 +68,15 @@ export const Quiz = ({
   const router = useRouter()
 
   const [finishAudioEl, , finishControls] = useAudio({
-    src: "/finish.wav",
+    src: "/audio/effects/finish.wav",
     autoPlay: false,
   })
   const [correctAudioEl, , correctControls] = useAudio({
-    src: "/correct.wav",
+    src: "/audio/effects/correct.wav",
     autoPlay: false,
   })
   const [incorrectAudioEl, , incorrectControls] = useAudio({
-    src: "/incorrect.wav",
+    src: "/audio/effects/incorrect.wav",
     autoPlay: false,
   })
 
@@ -237,14 +237,14 @@ export const Quiz = ({
         />
         <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center justify-center items-center h-full">
           <Image
-            src="/finish.svg"
+            src="/images/icons/finish.svg"
             height={100}
             width={100}
             alt="Finish"
             className="hidden lg:block"
           />
           <Image
-            src="/finish.svg"
+            src="/images/icons/finish.svg"
             height={50}
             width={50}
             alt="Finish"

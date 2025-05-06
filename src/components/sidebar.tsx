@@ -13,10 +13,18 @@ type Props = {
 }
 
 const sidebarItems = [
-  { label: "Learn", iconSrc: "/learn.svg", href: "/learn" },
-  { label: "Leaderboard", iconSrc: "/leaderboard.svg", href: "/leaderboard" },
-  { label: "Missions", iconSrc: "/missions.svg", href: "/missions" },
-  { label: "Store", iconSrc: "/store.svg", href: "/store" },
+  { label: "Learn", iconSrc: "/images/icons/learn.svg", href: "/learn" },
+  {
+    label: "Leaderboard",
+    iconSrc: "/images/icons/leaderboard.svg",
+    href: "/leaderboard",
+  },
+  {
+    label: "Missions",
+    iconSrc: "/images/icons/missions.svg",
+    href: "/missions",
+  },
+  { label: "Store", iconSrc: "/images/icons/store.svg", href: "/store" },
 ]
 
 export const Sidebar = async ({ className }: Props) => {
@@ -32,7 +40,7 @@ export const Sidebar = async ({ className }: Props) => {
       <Link href="/learn">
         <div className="hidden lg:flex pt-4 pl-4 pb-7 gap-x-3 items-center">
           <Image
-            src="/mascot.svg"
+            src="/images/mascots/mascot.svg"
             alt="Mascot"
             width={35}
             height={35}

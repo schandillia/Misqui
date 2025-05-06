@@ -22,7 +22,7 @@ export const MobileSidebar = () => {
           <SheetTitle>
             <div className="pl-4 gap-x-3 flex items-center">
               <Image
-                src="/mascot.svg"
+                src="/images/mascots/mascot.svg"
                 alt="Mascot"
                 width={25}
                 height={25}

@@ -23,7 +23,12 @@ export const PracticeModal = () => {
     >
       <div className="w-full space-y-6">
         <div className="flex w-full items-center mb-5 justify-center">
-          <Image src="/gem.svg" alt="Gem" height={100} width={100} />
+          <Image
+            src="/images/icons/gem.svg"
+            alt="Gem"
+            height={100}
+            width={100}
+          />
         </div>
         <div className="flex flex-col gap-y-4 w-full">
           <Button

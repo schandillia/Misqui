@@ -42,7 +42,12 @@ export const ExitModal = () => {
     >
       <div className="w-full space-y-6">
         <div className="flex w-full items-center mb-5 justify-center">
-          <Image src="/mascot-sad.svg" alt="Mascot" height={80} width={80} />
+          <Image
+            src="/images/mascots/mascot-sad.svg"
+            alt="Mascot"
+            height={80}
+            width={80}
+          />
         </div>
         <div className="flex flex-col gap-y-4 w-full">
           <Button

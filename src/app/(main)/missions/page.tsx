@@ -54,7 +54,7 @@ const Page = async () => {
                   className="flex items-center w-full p-4 gap-x-4 border-t-2"
                 >
                   <Image
-                    src="/points.svg"
+                    src="/images/icons/points.svg"
                     width={60}
                     height={60}
                     alt="Points"
