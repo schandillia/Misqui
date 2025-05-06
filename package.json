@@ -16,7 +16,9 @@
     "db:reset": "clear && pnpm run db:erase && pnpm run db:generate && pnpm run db:push && pnpm run db:seed",
     "generate:env": "tsx scripts/generate-env-example.mjs",
     "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --pretty",
+    "test": "clear && pnpm exec playwright test && pnpm exec playwright show-report",
+    "test:ui": "clear && pnpm exec playwright test --ui"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.9.0",
@@ -53,6 +55,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.14.1",
     "@types/react": "^19",

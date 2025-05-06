@@ -113,3 +113,9 @@ logs/
 # /public/uploads/
 # /public/images/temp/
 # /public/fonts/dev/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
