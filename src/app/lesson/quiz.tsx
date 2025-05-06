@@ -1,5 +1,7 @@
 "use client"
 
+import { useRef } from "react"
+
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
@@ -48,6 +50,8 @@ export const Quiz = ({
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
 
+  const hasPlayedFinishAudio = useRef(false)
+
   useMount(() => {
     if (purpose === "practice") {
       const SIX_HOURS = 6 * 60 * 60 * 1000
@@ -80,12 +84,11 @@ export const Quiz = ({
     autoPlay: false,
   })
 
-  // Function to conditionally render audio elements
   const renderAudioElements = () => (
     <>
-      {finishAudioEl && finishAudioEl}
-      {correctAudioEl && correctAudioEl}
-      {incorrectAudioEl && incorrectAudioEl}
+      {finishAudioEl}
+      {correctAudioEl}
+      {incorrectAudioEl}
     </>
   )
 
@@ -93,9 +96,9 @@ export const Quiz = ({
   const [serverPending, setServerPending] = useState(false)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
-  const [percentage, setPercentage] = useState(() => {
-    return initialPercentage === 100 ? 0 : initialPercentage
-  })
+  const [percentage, setPercentage] = useState(() =>
+    initialPercentage === 100 ? 0 : initialPercentage
+  )
   const [challenges] = useState(initialLessonChallenges)
   const [activeIndex, setActiveIndex] = useState(() => {
     const incompleteIndex = challenges.findIndex(
@@ -138,24 +141,19 @@ export const Quiz = ({
     const correctOption = options.find((option) => option.correct)
     if (!correctOption) return
 
-    // Optimistically update UI
     if (correctOption.id === selectedOption) {
       correctControls.play()
       setStatus("correct")
       setPercentage((prev) => prev + 100 / challenges.length)
 
-      // In practice mode, always increase gems on correct answer
-      // In lesson mode, only increase gems if lesson was already completed
       if (purpose === "practice" || initialPercentage === 100) {
         setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
       }
 
-      // Update database in background without blocking UI
       setServerPending(true)
       upsertChallengeProgress(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
-            // Revert optimistic update if there's an error
             setStatus("none")
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
@@ -166,7 +164,6 @@ export const Quiz = ({
           }
         })
         .catch(() => {
-          // Revert optimistic update on error
           setStatus("none")
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
@@ -182,17 +179,14 @@ export const Quiz = ({
       incorrectControls.play()
       setStatus("wrong")
 
-      // Only reduce gems in lesson mode and if user doesn't have subscription
       if (purpose === "lesson" && !userSubscription?.isActive) {
         setGems((prev) => Math.max(prev - 1, 0))
       }
 
-      // Update database in background without blocking UI
       setServerPending(true)
       reduceGems(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
-            // Revert optimistic update if there's an error
             setStatus("none")
             setSelectedOption(undefined)
             if (purpose === "lesson" && !userSubscription?.isActive) {
@@ -202,7 +196,6 @@ export const Quiz = ({
           }
         })
         .catch(() => {
-          // Revert optimistic update on error
           setStatus("none")
           setSelectedOption(undefined)
           if (purpose === "lesson" && !userSubscription?.isActive) {
@@ -222,9 +215,15 @@ export const Quiz = ({
     }
   }, [challenge, lessonId, purpose])
 
-  if (!challenge) {
-    finishControls.play()
+  // ✅ Play finish audio once when lesson is completed
+  useEffect(() => {
+    if (!challenge && !hasPlayedFinishAudio.current) {
+      hasPlayedFinishAudio.current = true
+      finishControls.play()
+    }
+  }, [challenge, finishControls])
 
+  if (!challenge) {
     return (
       <>
         {renderAudioElements()}
