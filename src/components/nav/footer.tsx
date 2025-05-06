@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 const footerButtons = [
-  { src: "/chess-icon.svg", alt: "Chess", label: "Chess" },
-  { src: "/sudoku-icon.svg", alt: "Sudoku", label: "Sudoku" },
-  { src: "/math-icon.svg", alt: "Math", label: "Math" },
+  { src: "/images/icons/chess-icon.svg", alt: "Chess", label: "Chess" },
+  { src: "/images/icons/sudoku-icon.svg", alt: "Sudoku", label: "Sudoku" },
+  { src: "/images/icons/math-icon.svg", alt: "Math", label: "Math" },
 ]
 
 export const Footer = () => {

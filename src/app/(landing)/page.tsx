@@ -11,7 +11,7 @@ export default async function Home() {
   return (
     <div className="max-w-[988px] mx-auto flex-1 w-full flex flex-col lg:flex-row items-center justify-center p-4 gap-8">
       <div className="relative w-[240px] h-[240px] lg:w-[424px] lg:h-[424px] shrink-0">
-        <Image src="/hero.svg" alt="Mascot" fill priority />
+        <Image src="images/backgrounds/hero.svg" alt="Mascot" fill priority />
       </div>
 
       <div className="flex flex-col items-center gap-8 max-w-[480px] w-full">

@@ -13,7 +13,7 @@ export const Navbar = async () => {
       <div className="lg:max-w-screen-lg mx-auto flex items-center justify-between h-full">
         <div className="pl-4 gap-x-3 flex items-center">
           <Image
-            src="/mascot.svg"
+            src="/images/mascots/mascot.svg"
             alt="Mascot"
             width={40}
             height={40}
