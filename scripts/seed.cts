@@ -181,6 +181,22 @@ const main = async () => {
         order: 6,
         question: "The knight",
       },
+      // Lesson 3: Opening
+      {
+        id: 10,
+        lessonId: 3,
+        challengeType: "SELECT",
+        order: 1,
+        question: "What is the most common first move in chess?",
+      },
+      {
+        id: 11,
+        lessonId: 3,
+        challengeType: "ASSIST",
+        order: 2,
+        question:
+          "What is the purpose of controlling the center in the opening?",
+      },
     ])
     logger.debug("Inserted all challenges")
 
@@ -298,6 +314,48 @@ const main = async () => {
         challengeId: 6,
         correct: false,
         text: "Moves one or two squares forward on its first move",
+      },
+      // Lesson 3: Challenge 10
+      {
+        challengeId: 10,
+        correct: true,
+        text: "e4 (King's Pawn)",
+      },
+      {
+        challengeId: 10,
+        correct: false,
+        text: "d4 (Queen's Pawn)",
+      },
+      {
+        challengeId: 10,
+        correct: false,
+        text: "Nf3 (King's Knight)",
+      },
+      {
+        challengeId: 10,
+        correct: false,
+        text: "c4 (English Opening)",
+      },
+      // Lesson 3: Challenge 11
+      {
+        challengeId: 11,
+        correct: true,
+        text: "It gives pieces more mobility and control over the board",
+      },
+      {
+        challengeId: 11,
+        correct: false,
+        text: "It protects the king better",
+      },
+      {
+        challengeId: 11,
+        correct: false,
+        text: "It allows for faster checkmate",
+      },
+      {
+        challengeId: 11,
+        correct: false,
+        text: "It prevents pawn captures",
       },
     ])
     logger.debug("Inserted all challenge options")
