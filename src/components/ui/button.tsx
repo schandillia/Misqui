@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         locked:
-          "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-400 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700/90 dark:border-neutral-600", // Adjusted for dark mode
+          "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700/90 dark:border-neutral-600", // Adjusted for dark mode
         default:
           "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700", // Adjusted for dark mode
         primary:

@@ -1,13 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { Check, Crown } from "lucide-react"
+import { Crown } from "lucide-react"
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import "react-circular-progressbar/dist/styles.css"
 import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
-import { FaLock, FaLockOpen } from "react-icons/fa"
 
 type Props = {
   id: number
@@ -28,14 +27,8 @@ export const LessonButton = ({
 }: Props) => {
   const isLast = index === totalCount
   const isCompleted = !current && !locked
+  const buttonNumber = index + 1
 
-  const Icon = isCompleted
-    ? Check
-    : isLast
-    ? Crown
-    : locked
-    ? FaLock
-    : FaLockOpen
   const href = isCompleted ? `/lesson/${id}?purpose=practice` : "/lesson"
 
   return (
@@ -48,13 +41,10 @@ export const LessonButton = ({
         index={index}
         totalCount={totalCount}
         isCompleted={isCompleted}
+        current={current}
       >
         {current ? (
           <div className="h-[102px] w-[102px] relative">
-            <div className="absolute -top-6 left-2.5 px-3 py-2.5 border-2 font-bold uppercase text-brand-500 bg-white dark:text-brand-200 dark:bg-black dark:border-neutral-500 rounded-full animate-bounce tracking-wide z-10">
-              Start
-              <div className="absolute left-1/2 -bottom-2 size-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-black transform -translate-x-1/2" />
-            </div>
             <div className="text-neutral-300 dark:text-neutral-700">
               <CircularProgressbarWithChildren
                 value={Number.isNaN(percentage) ? 0 : percentage}
@@ -70,19 +60,33 @@ export const LessonButton = ({
                 <Button
                   size={locked ? "default" : "rounded"}
                   variant={locked ? "locked" : "secondary"}
-                  className={`size-[70px] border-4 ${
+                  className={cn(
+                    "size-[70px] border-4 dark:border-emerald-600",
                     locked ? "rounded-3xl" : ""
-                  }`}
+                  )}
                 >
-                  <Icon
-                    className={cn(
-                      "size-10",
-                      locked
-                        ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
-                        : "fill-primary-foreground text-primary-foreground",
-                      isCompleted && "fill-none stroke-[4]"
-                    )}
-                  />
+                  {isLast ? (
+                    <Crown
+                      className={cn(
+                        "size-10",
+                        locked
+                          ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
+                          : "fill-primary-foreground text-primary-foreground",
+                        isCompleted && "fill-none stroke-[4]"
+                      )}
+                    />
+                  ) : (
+                    <span
+                      className={cn(
+                        "text-2xl font-bold",
+                        locked
+                          ? "text-neutral-400"
+                          : "text-primary-foreground"
+                      )}
+                    >
+                      {buttonNumber}
+                    </span>
+                  )}
                 </Button>
               </CircularProgressbarWithChildren>
             </div>
@@ -90,17 +94,33 @@ export const LessonButton = ({
         ) : (
           <Button
             variant={locked ? "locked" : "secondary"}
-            className="size-[70px] border-4 rounded-3xl"
+            className={cn(
+              "size-[70px] border-4 rounded-3xl",
+              !locked && "dark:border-emerald-600"
+            )}
           >
-            <Icon
-              className={cn(
-                "size-10",
-                locked
-                  ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
-                  : "fill-primary-foreground text-primary-foreground",
-                isCompleted && "fill-none stroke-[4]"
-              )}
-            />
+            {isLast ? (
+              <Crown
+                className={cn(
+                  "size-10",
+                  locked
+                    ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
+                    : "fill-primary-foreground text-primary-foreground",
+                  isCompleted && "fill-none stroke-[4]"
+                )}
+              />
+            ) : (
+              <span
+                className={cn(
+                  "text-2xl font-bold",
+                  locked
+                    ? "text-neutral-400"
+                    : "text-primary-foreground"
+                )}
+              >
+                {buttonNumber}
+              </span>
+            )}
           </Button>
         )}
       </LessonButtonWrapper>
