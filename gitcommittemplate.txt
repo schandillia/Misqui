@@ -1,0 +1,22 @@
+# <type>(<scope>): <subject>
+# Example: feat(parser): add support for IAST transliteration
+#
+# Types: feat, fix, docs, style, refactor, perf, test, chore, revert
+# Scope: optional module or file name (e.g., core, api, styles)
+# Subject: imperative mood, no period, max 50 chars
+
+# -------------------- BODY --------------------
+# Describe what and why (wrap lines at 72 chars):
+#
+# - What changed?
+# - Why was this change necessary?
+# - How does it impact the codebase?
+# - Any technical decisions or trade-offs?
+# - References to earlier changes?
+
+# ------------------- FOOTER -------------------
+# Include metadata:
+#
+# BREAKING CHANGE: <description>
+# Closes: #issue-number
+# Co-authored-by: Amit Schandillia <amit@schandillia.com>
