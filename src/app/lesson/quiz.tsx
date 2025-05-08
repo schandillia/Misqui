@@ -22,6 +22,7 @@ import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
+import { useQuizAudio } from "@/store/use-quiz-audio"
 
 type Props = {
   initialLessonId: number
@@ -49,6 +50,7 @@ export const Quiz = ({
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
+  const { playFinish, playCorrect, playIncorrect } = useQuizAudio()
 
   const hasPlayedFinishAudio = useRef(false)
 
@@ -70,27 +72,6 @@ export const Quiz = ({
 
   const { width, height } = useWindowSize()
   const router = useRouter()
-
-  const [finishAudioEl, , finishControls] = useAudio({
-    src: "/audio/effects/finish.wav",
-    autoPlay: false,
-  })
-  const [correctAudioEl, , correctControls] = useAudio({
-    src: "/audio/effects/correct.wav",
-    autoPlay: false,
-  })
-  const [incorrectAudioEl, , incorrectControls] = useAudio({
-    src: "/audio/effects/incorrect.wav",
-    autoPlay: false,
-  })
-
-  const renderAudioElements = () => (
-    <>
-      {finishAudioEl}
-      {correctAudioEl}
-      {incorrectAudioEl}
-    </>
-  )
 
   const [pending] = useTransition()
   const [serverPending, setServerPending] = useState(false)
@@ -142,7 +123,7 @@ export const Quiz = ({
     if (!correctOption) return
 
     if (correctOption.id === selectedOption) {
-      correctControls.play()
+      playCorrect()
       setStatus("correct")
       setPercentage((prev) => prev + 100 / challenges.length)
 
@@ -176,7 +157,7 @@ export const Quiz = ({
           setServerPending(false)
         })
     } else {
-      incorrectControls.play()
+      playIncorrect()
       setStatus("wrong")
 
       if (purpose === "lesson" && !userSubscription?.isActive) {
@@ -219,14 +200,13 @@ export const Quiz = ({
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio.current) {
       hasPlayedFinishAudio.current = true
-      finishControls.play()
+      playFinish()
     }
-  }, [challenge, finishControls])
+  }, [challenge, playFinish])
 
   if (!challenge) {
     return (
       <>
-        {renderAudioElements()}
         <ReactConfetti
           width={width}
           height={height}
@@ -275,7 +255,6 @@ export const Quiz = ({
 
   return (
     <>
-      {renderAudioElements()}
       <LessonHeader
         gems={gems}
         percentage={percentage}
