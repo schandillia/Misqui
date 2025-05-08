@@ -5,7 +5,7 @@ import { useRef } from "react"
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
-import { useState, useTransition, useEffect } from "react"
+import { useState, useTransition, useEffect, useMemo } from "react"
 import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
@@ -92,7 +92,7 @@ export const Quiz = ({
   const [status, setStatus] = useState<"correct" | "wrong" | "none">("none")
 
   const challenge = challenges[activeIndex]
-  const options = challenge?.challengeOptions ?? []
+  const options = useMemo(() => challenge?.challengeOptions ?? [], [challenge])
 
   const onNext = () => {
     setActiveIndex((current) => current + 1)
