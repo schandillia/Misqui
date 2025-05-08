@@ -1,4 +1,4 @@
-import { Quiz } from "@/app/lesson/quiz"
+import { QuizWrapper } from "@/app/lesson/quiz-wrapper"
 import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
@@ -22,7 +22,7 @@ const Page = async () => {
     100
 
   return (
-    <Quiz
+    <QuizWrapper
       initialLessonId={lesson.id}
       initialLessonChallenges={lesson.challenges}
       initialGems={userProgress.gems}

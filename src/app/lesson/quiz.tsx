@@ -14,7 +14,7 @@ import {
   reduceGems,
   updateStreakAfterLesson,
 } from "@/app/actions/user-progress"
-import { useAudio, useWindowSize, useMount } from "react-use"
+import { useWindowSize, useMount } from "react-use"
 import Image from "next/image"
 import { ResultCard } from "@/app/lesson/result-card"
 import { useRouter } from "next/navigation"

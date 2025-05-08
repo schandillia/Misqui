@@ -36,7 +36,7 @@ const getAudio = (type: keyof typeof AUDIO_FILES): HTMLAudioElement => {
   }
 }
 
-export const useQuizAudio = create<QuizAudioState>((set, get) => {
+export const useQuizAudio = create<QuizAudioState>(() => {
   const playAudio = (type: keyof typeof AUDIO_FILES) => {
     try {
       if (typeof window === 'undefined') return
