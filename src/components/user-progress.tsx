@@ -23,7 +23,7 @@ export const UserProgress = ({
   lastActivityDate,
 }: Props) => {
   const today = new Date().toISOString().split("T")[0]
-  const isTodayCompleted = lastActivityDate === today
+  const isTodayCompleted = lastActivityDate ? lastActivityDate === today : false
 
   return (
     <div className="flex items-center justify-between gap-x-2 w-full">

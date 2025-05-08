@@ -288,28 +288,38 @@ export async function updateUserStreak(userId: string) {
     const lastActivity = progress.lastActivityDate
       ? new Date(progress.lastActivityDate)
       : null
-    if (lastActivity) {
-      lastActivity.setHours(0, 0, 0, 0)
-    }
 
     let newStreak = progress.currentStreak
     let newLongestStreak = progress.longestStreak
 
-    // If no last activity or last activity was more than a day ago, reset streak
-    if (!lastActivity || now.getTime() - lastActivity.getTime() > 86400000) {
+    if (!lastActivity) {
+      // First activity ever
       newStreak = 1
-    }
-    // If last activity was yesterday, increment streak
-    else if (now.getTime() - lastActivity.getTime() === 86400000) {
-      newStreak = (progress.currentStreak || 0) + 1
-      // Update longest streak if current streak exceeds it
-      if (newStreak > (progress.longestStreak || 0)) {
-        newLongestStreak = newStreak
+    } else {
+      // Convert both dates to start of day for comparison
+      const lastActivityDay = new Date(lastActivity)
+      lastActivityDay.setHours(0, 0, 0, 0)
+      const today = new Date(now)
+      today.setHours(0, 0, 0, 0)
+
+      // Calculate difference in days
+      const diffTime = today.getTime() - lastActivityDay.getTime()
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+      if (diffDays === 0) {
+        // Same day, keep streak the same
+        newStreak = progress.currentStreak || 0
+      } else if (diffDays === 1) {
+        // Yesterday, increment streak
+        newStreak = (progress.currentStreak || 0) + 1
+        // Update longest streak if current streak exceeds it
+        if (newStreak > (progress.longestStreak || 0)) {
+          newLongestStreak = newStreak
+        }
+      } else {
+        // More than a day ago, reset streak
+        newStreak = 1
       }
-    }
-    // If last activity was today, keep streak the same
-    else {
-      newStreak = progress.currentStreak || 0
     }
 
     await db
