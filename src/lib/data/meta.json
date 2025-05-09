@@ -7,6 +7,10 @@
     "TITLE": "Your Learning Dashboard | Misqui",
     "DESCRIPTION": "Track progress, pick up where you left off, and explore new challenges—all in your personalized Misqui dashboard."
   },
+  "SETTINGS": {
+    "TITLE": "Settings | Misqui",
+    "DESCRIPTION": "Manage your account settings, preferences, and notifications."
+  },
   "SKILLS": {
     "TITLE": "Skills Library | Misqui",
     "DESCRIPTION": "Discover skill-based learning paths in math, chess, sudoku, logic, and language. Designed for kids to learn at their pace while having fun."
