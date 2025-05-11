@@ -50,9 +50,13 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
         <NotebookText className="mr-2" />
         <span className="hidden lg:inline">Study</span>
       </Button>
-      <Modal showModal={open} setShowModal={setOpen} title={title}>
-        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-line px-1 py-2 flex items-center justify-center min-h-[80px]">
-          {loading && <Loader className="size-8 animate-spin text-muted-foreground" />}
+      <Modal showModal={open} setShowModal={setOpen} title={title} className="max-w-2xl w-full">
+        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-line px-1 py-2" style={{ minHeight: 80 }}>
+          {loading && (
+            <div className="flex justify-center items-center w-full" style={{ minHeight: 64 }}>
+              <Loader className="size-8 animate-spin text-muted-foreground" />
+            </div>
+          )}
           {error && <div className="text-red-500">{error}</div>}
           {!loading && !error && notes}
         </div>
