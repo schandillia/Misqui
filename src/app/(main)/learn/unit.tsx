@@ -37,7 +37,7 @@ export const Unit = ({
 }: Props) => {
   return (
     <>
-      <UnitBanner title={title} description={description} unitId={id} />
+      <UnitBanner title={title} description={description} unitId={id} firstLessonId={lessons[0]?.id} />
       <div className="mt-12">
         <div className="flex flex-wrap gap-y-16 justify-between w-full">
           {lessons.map((lesson, index) => {

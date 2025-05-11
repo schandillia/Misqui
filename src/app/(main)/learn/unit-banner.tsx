@@ -4,11 +4,14 @@ import { NotebookText, Loader } from "lucide-react"
 import { Modal } from "@/components/ui/modal"
 import { marked } from "marked"
 import { UnitNotesScroller } from "@/app/(main)/learn/unit-notes-scroller"
+import Link from "next/link"
 
 type Props = {
   title: string
   description: string
   unitId: number
+  firstLessonId?: number
+  activeLessonId?: number
 }
 
 const renderer = new marked.Renderer()
@@ -25,7 +28,7 @@ renderer.heading = ({ text, depth }: { text: string; depth: number }) => {
   return `<h${depth} class=\"${className}\">${text}</h${depth}>`
 }
 
-export const UnitBanner = ({ title, description, unitId }: Props) => {
+export const UnitBanner = ({ title, description, unitId, firstLessonId, activeLessonId }: Props) => {
   const [open, setOpen] = useState(false)
   const [notes, setNotes] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -50,10 +53,13 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
     }
   }
 
-  const handleClose = () => {
-    setOpen(false)
-    setNotes(null)
-    setError(null)
+  let firstLessonUrl = ""
+  if (firstLessonId) {
+    if (firstLessonId === activeLessonId) {
+      firstLessonUrl = "/lesson"
+    } else {
+      firstLessonUrl = `/lesson/${firstLessonId}?purpose=practice`
+    }
   }
 
   return (
@@ -76,8 +82,12 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
         {!loading && !error && notes && (
           <UnitNotesScroller html={marked(notes, { renderer }) as string} />
         )}
-        <div className="flex justify-center gap-2 mt-4">
-          <Button variant="dangerOutline" onClick={handleClose}>Close</Button>
+        <div className="flex gap-2 mt-4">
+          {firstLessonId && (
+            <Link href={firstLessonUrl} className="w-full">
+              <Button variant="primary" className="w-full">Quiz</Button>
+            </Link>
+          )}
         </div>
       </Modal>
     </div>
