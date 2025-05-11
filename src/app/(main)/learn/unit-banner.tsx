@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { NotebookText, Loader } from "lucide-react"
 import { Modal } from "@/components/ui/modal"
 import { marked } from "marked"
+import { UnitNotesScroller } from "@/app/(main)/learn/unit-notes-scroller"
 
 type Props = {
   title: string
@@ -66,20 +67,15 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
         <span className="hidden lg:inline">Study</span>
       </Button>
       <Modal showModal={open} setShowModal={setOpen} title={title} className="max-w-2xl w-full">
-        <div className="max-h-[60vh] overflow-y-auto px-1 py-2" style={{ minHeight: 80 }}>
-          {loading && (
-            <div className="flex justify-center items-center w-full" style={{ minHeight: 64 }}>
-              <Loader className="size-8 animate-spin text-muted-foreground" />
-            </div>
-          )}
-          {error && <div className="text-red-500">{error}</div>}
-          {!loading && !error && notes && (
-            <div
-              className="w-full"
-              dangerouslySetInnerHTML={{ __html: marked(notes, { renderer }) }}
-            />
-          )}
-        </div>
+        {loading && (
+          <div className="flex justify-center items-center w-full" style={{ minHeight: 64 }}>
+            <Loader className="size-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {error && <div className="text-red-500">{error}</div>}
+        {!loading && !error && notes && (
+          <UnitNotesScroller html={marked(notes, { renderer }) as string} />
+        )}
         <div className="flex justify-center gap-2 mt-4">
           <Button variant="dangerOutline" onClick={handleClose}>Close</Button>
         </div>
