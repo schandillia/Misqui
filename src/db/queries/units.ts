@@ -95,7 +95,7 @@ export async function getUnitsByCourse(courseId: number) {
   }
 }
 
-export async function getUnitNotes(unitId: number) {
+export const getUnitNotes = cache(async (unitId: number) => {
   const data = await db.query.units.findFirst({
     where: eq(units.id, unitId),
     columns: {
@@ -103,4 +103,4 @@ export async function getUnitNotes(unitId: number) {
     },
   })
   return data?.notes || null;
-}
+})

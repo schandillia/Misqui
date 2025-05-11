@@ -17,18 +17,20 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
 
   const handleOpen = async () => {
     setOpen(true)
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch(`/api/units/notes/${unitId}`)
-      if (!res.ok) throw new Error("Failed to fetch notes")
-      const data = await res.json()
-      setNotes(data.notes)
-    } catch (err) {
-      console.error(err)
-      setError("Could not load notes.")
-    } finally {
-      setLoading(false)
+    if (notes === null) {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch(`/api/units/notes/${unitId}`)
+        if (!res.ok) throw new Error("Failed to fetch notes")
+        const data = await res.json()
+        setNotes(data.notes)
+      } catch (err) {
+        console.error(err)
+        setError("Could not load notes.")
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
