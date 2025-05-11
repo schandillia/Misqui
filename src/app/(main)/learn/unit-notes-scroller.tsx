@@ -1,5 +1,6 @@
 "use client"
 import { useRef, useEffect, useState } from "react"
+import { ChevronDown } from "lucide-react"
 
 export function UnitNotesScroller({ html }: { html: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,12 +46,10 @@ export function UnitNotesScroller({ html }: { html: string }) {
           <button
             type="button"
             onClick={handleScrollDown}
-            className="absolute left-1/2 -translate-x-1/2 bottom-2 z-10 bg-white/80 dark:bg-black/60 rounded-full p-2 shadow animate-bounce cursor-pointer"
+            className="absolute left-1/2 -translate-x-1/2 bottom-2 z-10 bg-neutral-500/80 dark:bg-neutral-300/80 rounded-full p-2 shadow animate-bounce cursor-pointer"
             aria-label="Scroll down"
           >
-            <svg className="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
+            <ChevronDown className="size-6 text-neutral-50 dark:text-neutral-700" />
           </button>
         )}
       </div>
