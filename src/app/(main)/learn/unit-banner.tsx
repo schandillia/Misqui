@@ -2,11 +2,26 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { NotebookText, Loader } from "lucide-react"
 import { Modal } from "@/components/ui/modal"
+import { marked } from "marked"
 
 type Props = {
   title: string
   description: string
   unitId: number
+}
+
+const renderer = new marked.Renderer()
+renderer.heading = ({ text, depth }: { text: string; depth: number }) => {
+  const sizes = [
+    "text-3xl font-bold mt-6 mb-2",
+    "text-2xl font-semibold mt-5 mb-2",
+    "text-xl font-semibold mt-4 mb-2",
+    "text-lg font-semibold mt-3 mb-1",
+    "text-base font-semibold mt-2 mb-1",
+    "text-sm font-semibold mt-2 mb-1"
+  ]
+  const className = sizes[depth - 1] || "text-base font-semibold"
+  return `<h${depth} class=\"${className}\">${text}</h${depth}>`
 }
 
 export const UnitBanner = ({ title, description, unitId }: Props) => {
@@ -41,8 +56,8 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
   }
 
   return (
-    <div className="w-full rounded-2xl bg-brand-500 dark:bg-brand-800 p-5 text-white dark:text-neutral-300 flex items-center justify-between">
-      <div className="space-y-2.5">
+    <div className="w-full rounded-2xl bg-brand-500 dark:bg-brand-800 p-5 flex items-center justify-between">
+      <div className="space-y-2.5 text-white dark:text-neutral-300">
         <h3 className="text-2xl font-bold">{title}</h3>
         <p className="text-lg">{description}</p>
       </div>
@@ -51,14 +66,19 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
         <span className="hidden lg:inline">Study</span>
       </Button>
       <Modal showModal={open} setShowModal={setOpen} title={title} className="max-w-2xl w-full">
-        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-line px-1 py-2" style={{ minHeight: 80 }}>
+        <div className="max-h-[60vh] overflow-y-auto px-1 py-2" style={{ minHeight: 80 }}>
           {loading && (
             <div className="flex justify-center items-center w-full" style={{ minHeight: 64 }}>
               <Loader className="size-8 animate-spin text-muted-foreground" />
             </div>
           )}
           {error && <div className="text-red-500">{error}</div>}
-          {!loading && !error && notes}
+          {!loading && !error && notes && (
+            <div
+              className="w-full"
+              dangerouslySetInnerHTML={{ __html: marked(notes, { renderer }) }}
+            />
+          )}
         </div>
         <div className="flex justify-center gap-2 mt-4">
           <Button variant="dangerOutline" className="border-red-500 text-red-600 hover:bg-red-50" onClick={handleClose}>Close</Button>
