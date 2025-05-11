@@ -25,6 +25,7 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
       const data = await res.json()
       setNotes(data.notes)
     } catch (err) {
+      console.error(err)
       setError("Could not load notes.")
     } finally {
       setLoading(false)
