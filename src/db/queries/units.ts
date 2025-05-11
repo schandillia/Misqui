@@ -20,6 +20,15 @@ export const getUnits = cache(async () => {
   const data = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
     where: eq(units.courseId, userProgress.activeCourseId),
+    columns: {
+      id: true,
+      title: true,
+      description: true,
+      courseId: true,
+      order: true,
+      createdAt: true,
+      updatedAt: true,
+    },
     with: {
       lessons: {
         orderBy: (lessons, { asc }) => [asc(lessons.order)],
@@ -61,6 +70,15 @@ export async function getUnitsByCourse(courseId: number) {
   try {
     const data = await db.query.units.findMany({
       where: eq(units.courseId, courseId),
+      columns: {
+        id: true,
+        title: true,
+        description: true,
+        courseId: true,
+        order: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
     if (!data || data.length === 0) {
       logger.warn("No units found for course", { courseId })
@@ -75,4 +93,14 @@ export async function getUnitsByCourse(courseId: number) {
     logger.error("Error fetching units for course", { courseId, error })
     throw error
   }
+}
+
+export async function getUnitNotes(unitId: number) {
+  const data = await db.query.units.findFirst({
+    where: eq(units.id, unitId),
+    columns: {
+      notes: true,
+    },
+  })
+  return data?.notes || null;
 }
