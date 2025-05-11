@@ -7,6 +7,11 @@ import { redirect } from "next/navigation"
 import { UserAvatar } from "@/components/user-avatar"
 import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
+import ThemeToggle from "@/components/theme-toggle"
+import { Switch } from "@/components/ui/switch"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 const Page = async () => {
   const session = await auth()
@@ -23,7 +28,7 @@ const Page = async () => {
   const isPro = !!userSubscription?.isActive
 
   return (
-    <div className="flex flex-row-reverse gap-[48px] px-6">
+    <div className="flex flex-col lg:flex-row-reverse gap-6 lg:gap-[48px] px-4 lg:px-6">
       <StickyWrapper>
         <UserProgress
           activeCourse={userProgress.activeCourse}
@@ -37,122 +42,154 @@ const Page = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <HeaderSection
-          imageSrc="/settings.svg"
+          imageSrc="/images/mascots/mascot.svg"
           imageAlt="Settings"
           title="Settings"
           description="Manage your account settings and preferences"
         />
         
-        <div className="space-y-6">
+        <div className="space-y-6 lg:space-y-8">
           {/* Profile Information */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Profile Information</h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-x-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <UserAvatar
                   name={session?.user?.name}
                   image={session?.user?.image}
                   className="size-16"
                 />
-                <button className="px-4 py-2 border rounded-md">Change Avatar</button>
+                <button className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+                  Change Avatar
+                </button>
               </div>
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Name</p>
-                <p className="font-medium">{session?.user?.name}</p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" defaultValue={session?.user?.name || ""} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" defaultValue={session?.user?.email || ""} disabled />
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Email</p>
-                <p className="font-medium">{session?.user?.email}</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Learning Progress */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Learning Progress</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Current Course</p>
-                <p className="font-medium">{userProgress.activeCourse.title}</p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Learning Progress</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+                <div>
+                  <Label>Current Course</Label>
+                  <p className="text-sm font-medium mt-1">{userProgress.activeCourse.title}</p>
+                </div>
+                <div>
+                  <Label>Total Points</Label>
+                  <p className="text-sm font-medium mt-1">{userProgress.points}</p>
+                </div>
+                <div>
+                  <Label>Current Streak</Label>
+                  <p className="text-sm font-medium mt-1">{userProgress.currentStreak} days</p>
+                </div>
+                <div>
+                  <Label>Longest Streak</Label>
+                  <p className="text-sm font-medium mt-1">{userProgress.longestStreak} days</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Total Points</p>
-                <p className="font-medium">{userProgress.points}</p>
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Current Streak</p>
-                <p className="font-medium">{userProgress.currentStreak} days</p>
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Longest Streak</p>
-                <p className="font-medium">{userProgress.longestStreak} days</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Subscription Management */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Subscription</h2>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Current Plan</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {isPro ? "Pro Plan" : "Free Plan"}
-                </p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Subscription</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <p className="font-medium">Current Plan</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isPro ? "Pro Plan" : "Free Plan"}
+                  </p>
+                </div>
+                <button className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isPro 
+                    ? "bg-blue-500 text-white hover:bg-blue-600" 
+                    : "bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                }`}>
+                  {isPro ? "Manage Subscription" : "Upgrade to Pro"}
+                </button>
               </div>
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
-                {isPro ? "Manage Subscription" : "Upgrade to Pro"}
-              </button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Account Settings */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Account Settings</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <p className="font-medium">Dark Mode</p>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  <Label>Dark Mode</Label>
+                  <p className="text-sm text-muted-foreground">
                     Toggle dark mode appearance
                   </p>
                 </div>
-                <button className="px-4 py-2 border rounded-md">Toggle</button>
+                <ThemeToggle />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <p className="font-medium">Sound Effects</p>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  <Label>Sound Effects</Label>
+                  <p className="text-sm text-muted-foreground">
                     Enable sound effects during lessons
                   </p>
                 </div>
-                <button className="px-4 py-2 border rounded-md">Toggle</button>
+                <Switch defaultChecked />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Security */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Security</h2>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Connected Account</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  Google Account
-                </p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Security</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <Label>Connected Account</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Google Account
+                  </p>
+                </div>
+                <button className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+                  Manage
+                </button>
               </div>
-              <button className="px-4 py-2 border rounded-md">Manage</button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Data & Privacy */}
-          <div className="p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Data & Privacy</h2>
-            <div className="space-y-4">
-              <button className="w-full px-4 py-2 border rounded-md">Export Data</button>
-              <button className="w-full px-4 py-2 bg-red-500 text-white rounded-md">Delete Account</button>
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Data & Privacy</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <button className="w-full px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+                Export Data
+              </button>
+              <button className="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
+                Delete Account
+              </button>
+            </CardContent>
+          </Card>
         </div>
       </FeedWrapper>
     </div>
