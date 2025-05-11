@@ -61,7 +61,7 @@ export const LessonButton = ({
                   size={locked ? "default" : "rounded"}
                   variant={locked ? "locked" : "secondary"}
                   className={cn(
-                    "size-[70px] border-4 dark:border-emerald-600",
+                    "size-[70px] border-4 dark:border-emerald-600 relative",
                     locked ? "rounded-3xl" : ""
                   )}
                 >
@@ -95,7 +95,7 @@ export const LessonButton = ({
           <Button
             variant={locked ? "locked" : "secondary"}
             className={cn(
-              "size-[70px] border-4 rounded-3xl",
+              "size-[70px] border-4 rounded-3xl relative",
               !locked && "dark:border-emerald-600"
             )}
           >
