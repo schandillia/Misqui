@@ -62,7 +62,7 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
         <p className="text-lg">{description}</p>
       </div>
       <Button size="lg" variant="secondary" onClick={handleOpen}>
-        <NotebookText className="mr-2" />
+        <NotebookText className="lg:mr-2" />
         <span className="hidden lg:inline">Study</span>
       </Button>
       <Modal showModal={open} setShowModal={setOpen} title={title} className="max-w-2xl w-full">
@@ -81,8 +81,7 @@ export const UnitBanner = ({ title, description, unitId }: Props) => {
           )}
         </div>
         <div className="flex justify-center gap-2 mt-4">
-          <Button variant="dangerOutline" className="border-red-500 text-red-600 hover:bg-red-50" onClick={handleClose}>Close</Button>
-          <Button variant="primary" onClick={handleClose} disabled={loading}>Finished</Button>
+          <Button variant="dangerOutline" onClick={handleClose}>Close</Button>
         </div>
       </Modal>
     </div>
