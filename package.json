@@ -18,6 +18,7 @@
     "clean": "rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf coverage",
     "type-check": "tsc --noEmit --pretty",
     "test": "clear && pnpm exec playwright test && pnpm exec playwright show-report",
+    "test:auth": "clear && pnpm exec playwright test tests/auth.setup.ts --headed --project=setup --trace=on",
     "test:ui": "clear && pnpm exec playwright test --ui"
   },
   "dependencies": {
