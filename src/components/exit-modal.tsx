@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
 import Image from "next/image"
 import exitMessages from "@/lib/data/exit-messages.json"
+import { mutate } from "swr"
 
 export const ExitModal = () => {
   const router = useRouter()
@@ -29,7 +30,23 @@ export const ExitModal = () => {
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (isOpen) {
+      router.prefetch("/learn")
+      fetch("/api/learn-data")
+        .then(res => res.json())
+        .then(data => {
+          mutate("/api/learn-data", data, false)
+        })
+    }
+  }, [isOpen, router])
+
   useEffect(() => setIsClient(true), [])
+
+  const handleEndSession = () => {
+    close();
+    router.push("/learn");
+  };
 
   if (!isClient) return null
 
@@ -62,10 +79,7 @@ export const ExitModal = () => {
             variant="dangerOutline"
             className="w-full"
             size="lg"
-            onClick={() => {
-              close()
-              router.push("/learn")
-            }}
+            onClick={handleEndSession}
           >
             End session
           </Button>

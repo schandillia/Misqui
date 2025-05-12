@@ -3,7 +3,7 @@ import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, inArray } from "drizzle-orm"
 import { lessons, challenges, challengeProgress } from "@/db/schema"
-import { getOrCreateUserLessonChallengeSubset } from "./lessons"
+import { getOrCreateUserLessonChallengeSubset } from "@/db/queries/lessons"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 

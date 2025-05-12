@@ -1,10 +1,4 @@
-import { Header } from "@/app/(main)/learn/header"
-import { Unit } from "@/app/(main)/learn/unit"
-import { FeedWrapper } from "@/components/feed-wrapper"
-import { Promo } from "@/components/promo"
-import { Missions } from "@/components/missions"
-import { StickyWrapper } from "@/components/sticky-wrapper"
-import { UserProgress } from "@/components/user-progress"
+import { LearnClient } from "@/app/(main)/learn/learn-client"
 import {
   getCourseProgress,
   getLessonPercentage,
@@ -15,24 +9,18 @@ import {
 import { redirect } from "next/navigation"
 
 const Page = async () => {
-  const unitsData = getUnits()
-  const userProgressData = getUserProgress()
-  const courseProgressData = getCourseProgress()
-  const lessonPercentageData = getLessonPercentage()
-  const userSubsctiptionData = getUserSubscription()
-
   const [
     userProgress,
     units,
     courseProgress,
     lessonPercentage,
-    userSubsctiption,
+    userSubscription,
   ] = await Promise.all([
-    userProgressData,
-    unitsData,
-    courseProgressData,
-    lessonPercentageData,
-    userSubsctiptionData,
+    getUserProgress(),
+    getUnits(),
+    getCourseProgress(),
+    getLessonPercentage(),
+    getUserSubscription(),
   ])
 
   if (!userProgress || !userProgress.activeCourse) {
@@ -42,39 +30,22 @@ const Page = async () => {
     redirect("/courses")
   }
 
-  const isPro = !!userSubsctiption?.isActive
+  const isPro = !!userSubscription?.isActive
 
+  // Pass all data as initialData to the client component
   return (
-    <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          gems={userProgress.gems}
-          points={userProgress.points}
-          hasActiveSubscription={isPro}
-          currentStreak={userProgress.currentStreak}
-          lastActivityDate={userProgress.lastActivityDate}
-        />
-        {!isPro && <Promo />}
-        <Missions points={userProgress.points} />
-      </StickyWrapper>
-      <FeedWrapper>
-        <Header title={userProgress.activeCourse.title} />
-        {units.map((unit) => (
-          <div key={unit.id} className="mb-10">
-            <Unit
-              id={unit.id}
-              order={unit.order}
-              description={unit.description}
-              title={unit.title}
-              lessons={unit.lessons}
-              activeLesson={courseProgress.activeLesson}
-              activeLessonPercentage={lessonPercentage}
-            />
-          </div>
-        ))}
-      </FeedWrapper>
-    </div>
+    <LearnClient
+      initialData={{
+        userProgress: {
+          ...userProgress,
+          activeCourse: userProgress.activeCourse!,
+        },
+        units: units.map((u) => ({ notes: null, ...u })),
+        courseProgress,
+        lessonPercentage,
+        userSubscription,
+      }}
+    />
   )
 }
 export default Page

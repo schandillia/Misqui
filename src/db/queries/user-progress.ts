@@ -13,7 +13,7 @@ import {
 } from "@/db/schema"
 import { getLesson } from "@/db/queries/lessons"
 import app from "@/lib/data/app.json"
-import { getOrCreateUserLessonChallengeSubset } from "./lessons"
+import { getOrCreateUserLessonChallengeSubset } from "@/db/queries/lessons"
 import { logger } from "@/lib/logger"
 
 interface LessonChallenge {

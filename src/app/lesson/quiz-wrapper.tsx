@@ -1,6 +1,6 @@
 "use client"
 
-import { Quiz } from "./quiz"
+import { Quiz } from "@/app/lesson/quiz"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 
 type Props = {
@@ -21,4 +21,4 @@ type Props = {
 
 export const QuizWrapper = (props: Props) => {
   return <Quiz {...props} />
-} 
+}
