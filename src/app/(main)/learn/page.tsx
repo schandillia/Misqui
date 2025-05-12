@@ -30,8 +30,6 @@ const Page = async () => {
     redirect("/courses")
   }
 
-  const isPro = !!userSubscription?.isActive
-
   // Pass all data as initialData to the client component
   return (
     <LearnClient

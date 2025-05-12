@@ -38,7 +38,7 @@ const Page = async () => {
       <FeedWrapper>
         <div className="w-full flex flex-col items-center">
           <HeaderSection
-            imageSrc="/store.svg"
+            imageSrc="/images/icons/store.svg"
             imageAlt="Store"
             title="Store"
             description="Spend your points on cool stuff"
