@@ -44,7 +44,7 @@ const Page = async () => {
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">
           <HeaderSection
-            imageSrc="/leaderboard.svg"
+            imageSrc="/images/icons/leaderboard.svg"
             imageAlt="Leaderboard"
             title="Leaderboard"
             description="See where you stand among your peers"
@@ -57,7 +57,7 @@ const Page = async () => {
             >
               {index < 3 ? (
                 <span
-                  className={`flex items-center justify-center size-8 rounded-full border-2 ${
+                  className={`flex items-center justify-center size-8 rounded-full border-2 relative overflow-hidden ${
                     index === 0
                       ? "bg-yellow-500 border-yellow-200"
                       : index === 1
@@ -65,8 +65,10 @@ const Page = async () => {
                       : "bg-orange-500 border-orange-300"
                   }`}
                 >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shine" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent" />
                   <p
-                    className={`font-bold text-sm ${
+                    className={`font-bold text-sm relative z-10 ${
                       index === 2 ? "text-neutral-300" : "text-neutral-700"
                     }`}
                   >
