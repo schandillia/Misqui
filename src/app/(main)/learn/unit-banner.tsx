@@ -22,13 +22,19 @@ renderer.heading = ({ text, depth }: { text: string; depth: number }) => {
     "text-xl font-semibold mt-4 mb-2",
     "text-lg font-semibold mt-3 mb-1",
     "text-base font-semibold mt-2 mb-1",
-    "text-sm font-semibold mt-2 mb-1"
+    "text-sm font-semibold mt-2 mb-1",
   ]
   const className = sizes[depth - 1] || "text-base font-semibold"
   return `<h${depth} class=\"${className}\">${text}</h${depth}>`
 }
 
-export const UnitBanner = ({ title, description, unitId, firstLessonId, activeLessonId }: Props) => {
+export const UnitBanner = ({
+  title,
+  description,
+  unitId,
+  firstLessonId,
+  activeLessonId,
+}: Props) => {
   const [open, setOpen] = useState(false)
   const [notes, setNotes] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -72,9 +78,17 @@ export const UnitBanner = ({ title, description, unitId, firstLessonId, activeLe
         <NotebookText className="lg:mr-2" />
         <span className="hidden lg:inline">Study</span>
       </Button>
-      <Modal showModal={open} setShowModal={setOpen} title={title} className="max-w-2xl w-full">
+      <Modal
+        showModal={open}
+        setShowModal={setOpen}
+        title={title}
+        className="max-w-2xl w-full"
+      >
         {loading && (
-          <div className="flex justify-center items-center w-full" style={{ minHeight: 64 }}>
+          <div
+            className="flex justify-center items-center w-full"
+            style={{ minHeight: 64 }}
+          >
             <Loader className="size-8 animate-spin text-muted-foreground" />
           </div>
         )}
@@ -83,11 +97,19 @@ export const UnitBanner = ({ title, description, unitId, firstLessonId, activeLe
           <UnitNotesScroller html={marked(notes, { renderer }) as string} />
         )}
         <div className="flex gap-2 mt-4">
-          <Button variant="dangerOutline" onClick={() => setOpen(false)} className="flex-1">
+          <Button
+            variant="dangerOutline"
+            onClick={() => setOpen(false)}
+            className="flex-1"
+          >
             Close
           </Button>
           {firstLessonId && (
-            <Button asChild variant="primary" className="flex-1">
+            <Button
+              asChild
+              variant="primary"
+              className="flex-1 button-shine-effect"
+            >
               <Link href={firstLessonUrl}>Quiz</Link>
             </Button>
           )}

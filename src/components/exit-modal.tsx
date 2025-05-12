@@ -34,8 +34,8 @@ export const ExitModal = () => {
     if (isOpen) {
       router.prefetch("/learn")
       fetch("/api/learn-data")
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           mutate("/api/learn-data", data, false)
         })
     }
@@ -44,9 +44,9 @@ export const ExitModal = () => {
   useEffect(() => setIsClient(true), [])
 
   const handleEndSession = () => {
-    close();
-    router.push("/learn");
-  };
+    close()
+    router.push("/learn")
+  }
 
   if (!isClient) return null
 
@@ -69,7 +69,7 @@ export const ExitModal = () => {
         <div className="flex flex-col gap-y-4 w-full">
           <Button
             variant="primary"
-            className="w-full"
+            className="w-full button-shine-effect"
             size="lg"
             onClick={close}
           >

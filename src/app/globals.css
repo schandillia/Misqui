@@ -1,3 +1,4 @@
+/* globals.css */
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -160,7 +161,30 @@ body,
   }
 }
 
+/* Your existing animate-shine, if you still want it for other elements */
 .animate-shine {
   animation: shine 3s infinite;
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
+/* NEW: Button Shine Effect Class */
+@layer utilities {
+  /* Or just directly in the file */
+  .button-shine-effect::after {
+    content: "";
+    @apply absolute -z-[1] block h-[155px] w-8 -translate-x-full -translate-y-1/2 rotate-[135deg] transform bg-white opacity-20 transition-all duration-500 ease-in-out;
+    /* Initial position, effectively top: -50px; left: -75px from original but more dynamic with translate */
+    /* Corrected initial position to be fully to the left */
+    left: -10%; /* Start far left */
+    top: -20%; /* Adjust if needed based on button height for better centering of the shine */
+  }
+
+  .button-shine-effect:hover::after {
+    @apply translate-x-[calc(100%+75px)]; /* Move it across the button + its own width */
+    left: 110%; /* End far right */
+  }
+
+  .dark .button-shine-effect::after {
+    @apply bg-white opacity-10;
+  }
 }

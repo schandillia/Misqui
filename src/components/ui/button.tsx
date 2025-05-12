@@ -4,39 +4,40 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal group relative overflow-hidden",
+  // REMOVED 'group' from here, it's only needed if shine is intrinsic.
+  // 'custom-ease' was also removed as it's not standard and the shine has its own transition.
+  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal relative overflow-hidden",
   {
     variants: {
       variant: {
         locked:
-          "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700/90 dark:border-neutral-600", // Adjusted for dark mode
+          "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700/90 dark:border-neutral-600",
         default:
-          "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700", // Adjusted for dark mode
+          "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700",
         primary:
-          "bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-brand-500 hover:to-indigo-500 active:scale-95 dark:hover:from-brand-700 dark:hover:to-indigo-700", // Adjusted hover for dark
+          "bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-brand-500 hover:to-indigo-500 active:scale-95 dark:hover:from-brand-700 dark:hover:to-indigo-700",
         primaryOutline:
-          "bg-white text-brand-600 border-2 border-brand-300 rounded-3xl hover:bg-brand-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-brand-400 dark:border-brand-500 dark:hover:bg-brand-900/50", // Adjusted for dark mode outline
+          "bg-white text-brand-600 border-2 border-brand-300 rounded-3xl hover:bg-brand-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-brand-400 dark:border-brand-500 dark:hover:bg-brand-900/50",
         secondary:
           "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95 dark:from-teal-700 dark:to-emerald-600 dark:hover:from-teal-600 dark:hover:to-emerald-500",
         secondaryOutline:
-          "bg-white text-teal-600 border-2 border-emerald-300 rounded-3xl hover:bg-emerald-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-teal-400 dark:border-emerald-500 dark:hover:bg-emerald-900/50", // Adjusted for dark mode outline
+          "bg-white text-teal-600 border-2 border-emerald-300 rounded-3xl hover:bg-emerald-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-teal-400 dark:border-emerald-500 dark:hover:bg-emerald-900/50",
         danger:
-          "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-3xl hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95 dark:hover:from-red-600 dark:hover:to-red-700", // Adjusted hover for dark
+          "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-3xl hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95 dark:hover:from-red-600 dark:hover:to-red-700",
         dangerOutline:
-          "bg-white text-red-600 border-2 border-red-300 rounded-3xl hover:bg-red-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-red-400 dark:border-red-500 dark:hover:bg-red-900/50", // Adjusted for dark mode outline
+          "bg-white text-red-600 border-2 border-red-300 rounded-3xl hover:bg-red-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-red-400 dark:border-red-500 dark:hover:bg-red-900/50",
         super:
-          "bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-3xl hover:scale-105 hover:from-yellow-300 hover:to-orange-300 active:scale-95 dark:hover:from-yellow-500 dark:hover:to-orange-500", // Adjusted hover for dark
+          "bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-3xl hover:scale-105 hover:from-yellow-300 hover:to-orange-300 active:scale-95 dark:hover:from-yellow-500 dark:hover:to-orange-500",
         superOutline:
-          "bg-white text-yellow-600 border-2 border-yellow-300 rounded-3xl hover:bg-yellow-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-yellow-400 dark:border-yellow-500 dark:hover:bg-yellow-900/50", // Adjusted for dark mode outline
+          "bg-white text-yellow-600 border-2 border-yellow-300 rounded-3xl hover:bg-yellow-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-yellow-400 dark:border-yellow-500 dark:hover:bg-yellow-900/50",
         defaultOutline:
-          "bg-transparent text-gray-600 border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:scale-105 active:scale-95 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-800", // Adjusted for dark mode outline
+          "bg-transparent text-gray-600 border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:scale-105 active:scale-95 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-800",
         ghost:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40", // Adjusted for dark mode
-        // Assuming similar to ghost
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40",
         sidebar:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40", // Adjusted for dark mode
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40",
         sidebarOutline:
-          "bg-brand-100 text-brand-600 border-2 border-brand-200 rounded-3xl hover:bg-brand-200 hover:scale-105 active:scale-95 dark:bg-brand-900/50 dark:text-brand-300 dark:border-brand-800 dark:hover:bg-brand-900/70", // Adjusted for dark mode
+          "bg-brand-100 text-brand-600 border-2 border-brand-200 rounded-3xl hover:bg-brand-200 hover:scale-105 active:scale-95 dark:bg-brand-900/50 dark:text-brand-300 dark:border-brand-800 dark:hover:bg-brand-900/70",
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",
@@ -53,7 +54,6 @@ const buttonVariants = cva(
   }
 )
 
-// Define the props type extending React's button props, CVA variants, and asChild
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -64,15 +64,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    const content = (
-      <>
-        <span className="relative z-10 flex items-center gap-2">
-          {children}
-        </span>
-        {/* Subtle hover animation div - added dark mode variant */}
-        <div className="custom-ease absolute -left-[75px] -top-[50px] -z-10 h-[155px] w-8 rotate-[135deg] bg-white opacity-20 transition-all duration-500 group-hover:left-[120%] dark:bg-white dark:opacity-10" />
-      </>
-    )
+    // REMOVED the content wrapper and the shine div.
+    // The span wrapper is now conditionally applied if not asChild,
+    // to ensure content is above the ::after pseudo-element (shine)
+    // and to maintain the `gap-2` for icons.
 
     return (
       <Comp
@@ -81,8 +76,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {/* Render content wrapper only if not using asChild */}
-        {asChild ? children : content}
+        {asChild ? (
+          children
+        ) : (
+          <span className="relative z-[1] flex items-center gap-2">
+            {" "}
+            {/* z-index ensures content is above pseudo-element */}
+            {children}
+          </span>
+        )}
       </Comp>
     )
   }

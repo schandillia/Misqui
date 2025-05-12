@@ -21,16 +21,18 @@ export default async function Home() {
 
         <div className="flex flex-col items-center gap-y-3 max-w-[330px]">
           {session?.user ? (
-            <Button size="lg" variant="primary" className="w-full" asChild>
+            <Button
+              size="lg"
+              variant="primary"
+              className="w-full button-shine-effect"
+              asChild
+            >
               <Link href="/learn">Continue learning</Link>
             </Button>
           ) : (
-            // <Button size="lg" variant="primary" className="w-full">
-            //   Get started
-            // </Button>
             <AuthButton
               variant="primary"
-              className="w-full"
+              className="w-full button-shine-effect"
               label="Get Started"
             />
           )}
