@@ -83,10 +83,13 @@ export const UnitBanner = ({ title, description, unitId, firstLessonId, activeLe
           <UnitNotesScroller html={marked(notes, { renderer }) as string} />
         )}
         <div className="flex gap-2 mt-4">
+          <Button variant="dangerOutline" onClick={() => setOpen(false)} className="flex-1">
+            Close
+          </Button>
           {firstLessonId && (
-            <Link href={firstLessonUrl} className="w-full">
-              <Button variant="primary" className="w-full">Quiz</Button>
-            </Link>
+            <Button asChild variant="primary" className="flex-1">
+              <Link href={firstLessonUrl}>Quiz</Link>
+            </Button>
           )}
         </div>
       </Modal>

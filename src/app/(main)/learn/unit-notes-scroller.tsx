@@ -12,7 +12,7 @@ export function UnitNotesScroller({ html }: { html: string }) {
       if (!el) return
       setShowScrollArrow(
         el.scrollHeight > el.clientHeight &&
-        el.scrollTop + el.clientHeight < el.scrollHeight - 10
+        Math.ceil(el.scrollTop + el.clientHeight) < Math.floor(el.scrollHeight)
       )
     }
     checkScroll()
@@ -36,12 +36,13 @@ export function UnitNotesScroller({ html }: { html: string }) {
 
   return (
     <>
-      <div
-        ref={containerRef}
-        className="relative max-h-[60vh] overflow-y-auto px-1 py-2 custom-notes-scrollbar"
-        style={{ minHeight: 80 }}
-      >
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div className="relative max-h-[60vh]" style={{ minHeight: 80 }}>
+        <div
+          ref={containerRef}
+          className="overflow-y-auto px-1 py-2 custom-notes-scrollbar h-full"
+        >
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
         {showScrollArrow && (
           <button
             type="button"
