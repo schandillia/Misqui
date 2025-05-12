@@ -40,7 +40,7 @@ const Page = async () => {
       <FeedWrapper>
         <div className="w-full flex flex-col items-center cursor-default">
           <HeaderSection
-            imageSrc="/missions.svg"
+            imageSrc="/images/icons/missions.svg"
             imageAlt="Missions"
             title="Missions"
             description="Complete missions by earning points"
