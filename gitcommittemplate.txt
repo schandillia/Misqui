@@ -17,6 +17,6 @@
 # ------------------- FOOTER -------------------
 # Include metadata:
 #
-# BREAKING CHANGE: <description>
+# BREAKING CHANGE: <description> (Explain any backward compatibility issues)
 # Closes: #issue-number
 # Co-authored-by: Amit Schandillia <amit@schandillia.com>

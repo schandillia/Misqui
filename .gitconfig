@@ -1,50 +1,30 @@
-gitconfig
 [user]
   name = Amit Schandillia
   email = amit@schandillia.com
+
 [core]
   editor = code --wait
   autocrlf = input
+
 [commit]
   gpgsign = false
   template = gitcommittemplate.txt
+
 [init]
   defaultBranch = main
+
 [push]
   default = simple
+
 [alias]
   co = checkout
   br = branch
   ci = commit
   st = status
-  hist = log --graph --oneline --decorate --all
+  hist = log --graph --oneline --decorate --all --pretty=format:%C(yellow)%h%Creset %Cgreen%ad%Creset %C(bold blue)%an%Creset %s
   amend = commit --amend --no-edit
   unstage = reset HEAD --
   last = log -1 HEAD
+
 [color]
   ui = auto
-[format]
-  pretty = format:%C(yellow)%h%Creset %Cgreen%ad%Creset %C(bold blue)%an%Creset %s
-  date = short
-# <type>(<scope>): <subject>
-# Example: feat(parser): add support for IAST transliteration
-#
-# Types: feat, fix, docs, style, refactor, perf, test, chore, revert
-# Scope: optional module or file name (e.g., core, api, styles)
-# Subject: imperative mood, no period, max 50 chars
-
-# -------------------- BODY --------------------
-# Describe what and why (wrap lines at 72 chars):
-#
-# - What changed?
-# - Why was this change necessary?
-# - How does it impact the codebase?
-# - Any technical decisions or trade-offs?
-# - References to earlier changes?
-
-# ------------------- FOOTER -------------------
-# Include metadata:
-#
-# BREAKING CHANGE: <description>
-# Closes: #issue-number
-# Co-authored-by: Amit Schandillia <amit@schandillia.com>
