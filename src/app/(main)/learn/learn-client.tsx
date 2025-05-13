@@ -16,7 +16,11 @@ type Lesson = typeof lessons.$inferSelect & {
   completed: boolean
   percentage: number
 }
-type UnitType = typeof units.$inferSelect & { lessons: Lesson[] }
+
+type UnitType = typeof units.$inferSelect & {
+  lessons: Lesson[]
+}
+
 type ActiveCourse = typeof courses.$inferSelect
 
 type LearnData = {
@@ -29,9 +33,11 @@ type LearnData = {
   }
   units: UnitType[]
   courseProgress: {
-    activeLesson?: typeof lessons.$inferSelect & {
-      unit: typeof units.$inferSelect
-    }
+    activeLesson?:
+      | (typeof lessons.$inferSelect & {
+          unit: typeof units.$inferSelect
+        })
+      | undefined
   }
   lessonPercentage: number
   userSubscription: { isActive?: boolean } | null
@@ -44,6 +50,8 @@ type Props = {
 export function LearnClient({ initialData }: Props) {
   const { data } = useSWR<LearnData>("/api/learn-data", fetcher, {
     fallbackData: initialData,
+    revalidateOnFocus: false, // Optimize performance
+    revalidateOnMount: false, // Use initialData on mount
   })
 
   if (!data) return null
@@ -73,7 +81,7 @@ export function LearnClient({ initialData }: Props) {
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
-        {units.map((unit) => (
+        {units.map((unit: UnitType) => (
           <div key={unit.id} className="mb-10">
             <Unit
               id={unit.id}
@@ -83,6 +91,8 @@ export function LearnClient({ initialData }: Props) {
               lessons={unit.lessons}
               activeLesson={courseProgress.activeLesson}
               activeLessonPercentage={lessonPercentage}
+              gems={userProgress.gems}
+              hasActiveSubscription={isPro}
             />
           </div>
         ))}

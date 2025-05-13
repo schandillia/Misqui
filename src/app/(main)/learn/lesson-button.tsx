@@ -1,12 +1,13 @@
 "use client"
 
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Crown } from "lucide-react"
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import "react-circular-progressbar/dist/styles.css"
 import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
+import { useGemsModal } from "@/store/use-gems-modal"
 
 type Props = {
   id: number
@@ -15,6 +16,8 @@ type Props = {
   locked?: boolean
   current?: boolean
   percentage: number
+  gems: number
+  hasActiveSubscription: boolean
 }
 
 export const LessonButton = ({
@@ -24,16 +27,34 @@ export const LessonButton = ({
   locked,
   current,
   percentage,
+  gems,
+  hasActiveSubscription,
 }: Props) => {
   const isLast = index === totalCount
   const isCompleted = !current && !locked
   const buttonNumber = index + 1
+  const { open: openGemsModal } = useGemsModal()
+  const router = useRouter()
 
-  const href = isCompleted ? `/lesson/${id}?purpose=practice` : "/lesson"
+  const handleClick = (e: React.MouseEvent) => {
+    if (locked) return
+
+    if (gems <= 0 && !hasActiveSubscription) {
+      e.preventDefault()
+      openGemsModal()
+      return
+    }
+
+    const href = isCompleted
+      ? `/lesson/${id}?purpose=practice`
+      : `/lesson/${id}`
+    router.push(href)
+  }
 
   return (
-    <Link
-      href={href}
+    <div
+      onClick={handleClick}
+      className={cn("cursor-pointer", locked && "cursor-not-allowed")}
       aria-disabled={locked}
       style={{ pointerEvents: locked ? "none" : "auto" }}
     >
@@ -79,9 +100,7 @@ export const LessonButton = ({
                     <span
                       className={cn(
                         "text-2xl font-bold",
-                        locked
-                          ? "text-neutral-400"
-                          : "text-primary-foreground"
+                        locked ? "text-neutral-400" : "text-primary-foreground"
                       )}
                     >
                       {buttonNumber}
@@ -113,9 +132,7 @@ export const LessonButton = ({
               <span
                 className={cn(
                   "text-2xl font-bold",
-                  locked
-                    ? "text-neutral-400"
-                    : "text-primary-foreground"
+                  locked ? "text-neutral-400" : "text-primary-foreground"
                 )}
               >
                 {buttonNumber}
@@ -124,6 +141,6 @@ export const LessonButton = ({
           </Button>
         )}
       </LessonButtonWrapper>
-    </Link>
+    </div>
   )
 }
