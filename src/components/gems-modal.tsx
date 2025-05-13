@@ -25,7 +25,7 @@ export const GemsModal = () => {
     <Modal
       showModal={isOpen}
       setShowModal={close}
-      title="You're out of gems!"
+      title="You’re out of gems!"
       description="Get Pro for unlimited gems, or purchase them in the store."
     >
       <div className="w-full space-y-6">
@@ -47,7 +47,7 @@ export const GemsModal = () => {
             Get unlimited gems
           </Button>
           <Button
-            variant="primaryOutline"
+            variant="dangerOutline"
             className="w-full"
             size="lg"
             onClick={close}
