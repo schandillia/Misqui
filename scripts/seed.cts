@@ -30,18 +30,21 @@ const main = async () => {
     logger.info("Starting database seeding")
 
     // Clear existing data
+    // Important: Ensure units are deleted before courses if there's a foreign key constraint
+    // and challenges/lessons are deleted before units, etc.
+    // Reordering delete operations for potential foreign key constraints:
     await Promise.all([
-      db.delete(schema.courses),
-      db.delete(schema.userProgress),
-      db.delete(schema.units),
-      db.delete(schema.lessons),
-      db.delete(schema.challenges),
       db.delete(schema.challengeOptions),
       db.delete(schema.challengeProgress),
-      db.delete(schema.userSubscription),
-      db.delete(schema.userLessonChallengeSubset),
+      db.delete(schema.userLessonChallengeSubset), // Depends on user/lesson/challenge
+      db.delete(schema.challenges),
+      db.delete(schema.lessons),
+      db.delete(schema.userProgress), // Depends on user/course
+      db.delete(schema.units),
+      db.delete(schema.courses),
+      db.delete(schema.userSubscription), // Depends on user
     ])
-    logger.debug("Cleared existing data from all tables")
+    logger.debug("Cleared existing data from relevant tables")
 
     // Insert courses
     await db.insert(schema.courses).values([
@@ -74,9 +77,28 @@ const main = async () => {
         title: "Unit 1",
         description: "Learn the basics of Chess",
         order: 1,
+        // --- Added notes field here ---
+        notes: `# Lorem Ipsum Dolor
+## Sit Amet Consectetur
+Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+### Key Features
+- **Duis aute irure**: Dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+- *Excepteur sint occaecat*: Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+- Sed ut **perspiciatis unde** omnis iste natus error sit voluptatem.
+
+## Accusantium Doloremque
+### Why Choose Us?
+* **Totam rem aperiam**: Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+* *Nemo enim ipsam*: Voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+* Neque porro **quisquam est**, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+- **Sed do eiusmod** tempor incididunt ut labore et dolore magna aliqua.
+- *Ut enim ad minim* veniam, quis nostrud exercitation ullamco laboris.`,
+        // --- End of added notes field ---
       },
     ])
-    logger.debug("Inserted units")
+    logger.debug("Inserted units (with notes)")
 
     // Insert lessons
     await db.insert(schema.lessons).values([
@@ -163,7 +185,7 @@ const main = async () => {
         id: 4,
         lessonId: 2,
         challengeType: "SELECT",
-        order: 4,
+        order: 4, // Note: order might be intended to start from 1 for each lesson?
         question:
           "What is the starting position of the king in a standard chess game?",
       },
