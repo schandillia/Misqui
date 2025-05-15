@@ -17,8 +17,27 @@ type Props = {
       })
     | null
   purpose?: "lesson" | "practice"
+  isTimed?: boolean // Add isTimed prop
 }
 
-export const QuizWrapper = (props: Props) => {
-  return <Quiz {...props} />
+export const QuizWrapper = ({
+  initialLessonId,
+  initialGems,
+  initialPercentage,
+  initialLessonChallenges,
+  userSubscription,
+  purpose,
+  isTimed, // Destructure isTimed
+}: Props) => {
+  return (
+    <Quiz
+      initialLessonId={initialLessonId}
+      initialGems={initialGems}
+      initialPercentage={initialPercentage}
+      initialLessonChallenges={initialLessonChallenges}
+      userSubscription={userSubscription}
+      purpose={purpose}
+      isTimed={isTimed} // Pass isTimed to Quiz
+    />
+  )
 }

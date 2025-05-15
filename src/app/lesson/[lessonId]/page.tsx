@@ -42,6 +42,7 @@ const Page = async ({
       initialPercentage={initialPercentage}
       userSubscription={userSubscription}
       purpose={lessonPurpose}
+      isTimed={lesson.isTimed} // Pass isTimed
     />
   )
 }

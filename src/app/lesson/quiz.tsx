@@ -20,6 +20,7 @@ import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
 import { useQuizAudio } from "@/store/use-quiz-audio"
+import { CountdownTimer } from "@/components/countdown-timer" // Import the timer
 
 type Props = {
   initialLessonId: number
@@ -35,6 +36,7 @@ type Props = {
       })
     | null
   purpose?: "lesson" | "practice"
+  isTimed?: boolean
 }
 
 export const Quiz = ({
@@ -44,6 +46,7 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
   purpose = "lesson",
+  isTimed = false,
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
@@ -251,6 +254,8 @@ export const Quiz = ({
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
       />
+      {/* Add the CountdownTimer below the LessonHeader */}
+      {isTimed && <CountdownTimer isLessonCompleted={!challenge} />}
       <div className="flex-1">
         <div className="h-full items-center justify-center flex">
           <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
