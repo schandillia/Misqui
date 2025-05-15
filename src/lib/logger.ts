@@ -1,42 +1,42 @@
-// src/lib/logger.ts
 import { existsSync, mkdirSync } from "fs"
 import { createLogger, format, transports } from "winston"
 import DailyRotateFile from "winston-daily-rotate-file"
 
-// Ensure log directory exists in production
-if (process.env.NODE_ENV === "production") {
-  const logDir = "logs"
-  if (!existsSync(logDir)) {
+const isProd = process.env.NODE_ENV === "production"
+const isVercel = !!process.env.VERCEL
+
+let logDir = "logs"
+
+// On Vercel, use /tmp for write access
+if (isProd && isVercel) {
+  logDir = "/tmp/logs"
+}
+
+// Ensure log directory exists if in prod and not Vercel preview mode
+if (isProd && !existsSync(logDir)) {
+  try {
     mkdirSync(logDir, { recursive: true })
+  } catch (err) {
+    console.warn("Could not create log directory:", err)
   }
 }
 
-// Create a logger instance
 const logger = createLogger({
-  // Log level based on environment
-  level: process.env.NODE_ENV === "production" ? "warn" : "debug",
-
-  // Format logs: timestamp, error stack trace, and structured JSON
+  level: isProd ? "warn" : "debug",
   format: format.combine(
     format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.errors({ stack: true }), // Log stack trace for errors
-    format.splat(), // Allows interpolation like %s in log messages
-    format.json() // Outputs logs in JSON format
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
   ),
-
-  // Transports: where the logs go
   transports: [
     new transports.Console({
-      format: format.combine(
-        format.colorize(), // Adds color to logs in the console
-        format.simple() // Simple log format for console
-      ),
+      format: format.combine(format.colorize(), format.simple()),
     }),
-    // Only in production, log to rotated files
-    ...(process.env.NODE_ENV === "production"
+    ...(isProd
       ? [
           new DailyRotateFile({
-            filename: "logs/error-%DATE%.log",
+            filename: `${logDir}/error-%DATE%.log`,
             datePattern: "YYYY-MM-DD",
             zippedArchive: true,
             maxSize: "20m",
@@ -44,7 +44,7 @@ const logger = createLogger({
             level: "error",
           }),
           new DailyRotateFile({
-            filename: "logs/combined-%DATE%.log",
+            filename: `${logDir}/combined-%DATE%.log`,
             datePattern: "YYYY-MM-DD",
             zippedArchive: true,
             maxSize: "20m",
