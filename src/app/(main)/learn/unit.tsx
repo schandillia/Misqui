@@ -71,6 +71,7 @@ export const Unit = ({
                     percentage={percentage}
                     gems={gems}
                     hasActiveSubscription={hasActiveSubscription}
+                    isTimed={lesson.isTimed} // Pass isTimed
                   />
                 </div>
               )

@@ -8,7 +8,7 @@ import {
   challengeProgress,
   userLessonChallengeSubset,
 } from "@/db/schema"
-import { getCourseProgress } from "@/db/queries/user-progress"
+import { getCourseProgress } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
@@ -138,15 +138,43 @@ export async function getOrCreateUserLessonChallengeSubset(
     ),
   })
   if (existing) {
-    logger.info("Found existing lesson subset", { userId, lessonId, purpose })
-    return JSON.parse(existing.challengeIds) as number[]
+    const subset = JSON.parse(existing.challengeIds) as number[]
+    // Check if subset is valid (non-empty and contains valid challenge IDs)
+    if (subset.length > 0) {
+      const validChallenges = await db.query.challenges.findMany({
+        where: inArray(challenges.id, subset),
+      })
+      if (validChallenges.length === subset.length) {
+        logger.info("Found valid existing lesson subset", {
+          userId,
+          lessonId,
+          purpose,
+          subset,
+        })
+        return subset
+      }
+    }
+    logger.warn("Invalid or empty subset found, regenerating", {
+      userId,
+      lessonId,
+      purpose,
+      subset,
+    })
   }
 
-  // Generate new random subset for lesson
+  // Generate new random subset for lesson if no valid subset exists
   logger.info("Generating new lesson subset", { userId, lessonId, purpose })
   const allChallenges = await db.query.challenges.findMany({
     where: eq(challenges.lessonId, lessonId),
   })
+  if (allChallenges.length === 0) {
+    logger.error("No challenges found for lesson", {
+      userId,
+      lessonId,
+      purpose,
+    })
+    return []
+  }
   const shuffled = allChallenges.sort(() => Math.random() - 0.5)
   const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
 

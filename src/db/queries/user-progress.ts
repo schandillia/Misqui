@@ -370,6 +370,7 @@ export async function getUserStreak(userId: string) {
 /**
  * Checks if all challenges in a lesson are completed for the user, and if so, updates the streak only if lastActivityDate is not today.
  */
+// queries/user-progress.ts
 export async function markLessonCompleteAndUpdateStreak(
   userId: string,
   lessonId: number
@@ -393,6 +394,7 @@ export async function markLessonCompleteAndUpdateStreak(
     String(now.getDate()).padStart(2, "0")
 
   if (progress.lastActivityDate === todayStr) {
+    logger.info("Streak already updated today, skipping", { userId, lessonId })
     return // Already updated today
   }
 
@@ -407,6 +409,12 @@ export async function markLessonCompleteAndUpdateStreak(
     return
   }
 
+  logger.info("Checking lesson completion", {
+    userId,
+    lessonId,
+    subsetIds,
+  })
+
   // Fetch challenge progress for the user for these subset challenges
   const progressList = await db.query.challengeProgress.findMany({
     where: and(
@@ -415,14 +423,26 @@ export async function markLessonCompleteAndUpdateStreak(
     ),
   })
 
+  // Log progress for debugging
+  logger.info("Challenge progress for subset", {
+    userId,
+    lessonId,
+    progressList: progressList.map((p) => ({
+      challengeId: p.challengeId,
+      completed: p.completed,
+    })),
+  })
+
   // If all subset challenges are completed
   const allCompleted = subsetIds.every((id) =>
     progressList.find((p) => p.challengeId === id && p.completed)
   )
   if (!allCompleted) {
+    logger.info("Lesson not fully completed", { userId, lessonId })
     return
   }
 
   // Update streak
   await updateUserStreak(userId)
+  logger.info("Streak updated after lesson completion", { userId, lessonId })
 }

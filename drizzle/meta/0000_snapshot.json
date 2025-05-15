@@ -1,5 +1,5 @@
 {
-  "id": "fc2da925-0941-4085-a1a7-a23bf40edc75",
+  "id": "c4ac7809-0a81-4653-8ff6-28f22600cd6c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -343,7 +343,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'/mascot.svg'"
+          "default": "'/images/mascots/mascot.svg'"
         },
         "created_at": {
           "name": "created_at",
@@ -686,6 +686,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_timed": {
+          "name": "is_timed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -756,6 +763,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

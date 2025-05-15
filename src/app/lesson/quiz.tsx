@@ -10,10 +10,7 @@ import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
-import {
-  reduceGems,
-  updateStreakAfterLesson,
-} from "@/app/actions/user-progress"
+import { reduceGems } from "@/app/actions/user-progress"
 import { useWindowSize, useMount } from "react-use"
 import Image from "next/image"
 import { ResultCard } from "@/app/lesson/result-card"
@@ -190,12 +187,6 @@ export const Quiz = ({
     }
   }
 
-  useEffect(() => {
-    if (!challenge && purpose === "lesson") {
-      updateStreakAfterLesson(lessonId)
-    }
-  }, [challenge, lessonId, purpose])
-
   // ✅ Play finish audio once when lesson is completed
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio.current) {
@@ -232,7 +223,7 @@ export const Quiz = ({
           <h1 className="text-xl lg:text-3xl font-bold text-neutral-700 dark:text-neutral-300">
             Great job!
             <br />
-            You&#8217;ve completed the lesson.
+            You’ve completed the lesson.
           </h1>
           <div className="flex items-center gap-x-4 w-full">
             <ResultCard variant="points" value={challenges.length * 10} />

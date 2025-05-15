@@ -7,6 +7,7 @@ import {
   integer,
   serial,
   index,
+  boolean,
 } from "drizzle-orm/pg-core"
 import { userProgress } from "@/db/schema/progress"
 import { challenges } from "@/db/schema/challenges"
@@ -44,6 +45,7 @@ export const lessons = pgTable("lessons", {
     .references(() => units.id, { onDelete: "cascade" })
     .notNull(),
   order: integer("order").notNull(),
+  isTimed: boolean("is_timed").notNull().default(false),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })

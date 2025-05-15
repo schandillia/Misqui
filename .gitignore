@@ -49,21 +49,13 @@ Desktop.ini
 *.code-workspace
 
 # -----------------------
-# Prisma
-# -----------------------
-prisma/dev.db
-prisma/dev.db-journal
-prisma/migrations/*/README.md
-prisma/migrations/*/migration_lock.toml
-!prisma/migrations/
-*.sqlite
-*.sqlite-journal
-
-# -----------------------
 # Drizzle ORM
 # -----------------------
-!drizzle/
-drizzle/meta/*
+drizzle/meta/
+drizzle/*.sqlite
+drizzle/*.sqlite-journal
+!drizzle/schema.ts
+!drizzle/migrations/
 
 # -----------------------
 # Docker
@@ -114,11 +106,15 @@ logs/
 # /public/images/temp/
 # /public/fonts/dev/
 
+# -----------------------
 # Playwright
+# -----------------------
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 
+# -----------------------
 # Playwright Authentication State
+# -----------------------
 playwright/.auth/

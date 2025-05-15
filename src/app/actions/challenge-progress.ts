@@ -70,9 +70,6 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     return { error: "gems" }
   }
 
-  // Update streak only if the lesson is fully completed
-  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
-
   if (isPractice) {
     logger.info("Practice challenge completed", {
       userId: session.user.id,
@@ -94,6 +91,9 @@ export const upsertChallengeProgress = async (challengeId: number) => {
       })
       .where(eq(userProgress.userId, session.user.id))
 
+    // Check if lesson is complete and update streak after updating progress
+    await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+
     revalidatePath("/learn")
     revalidatePath("/lesson")
     revalidatePath("/missions")
@@ -108,6 +108,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     return
   }
 
+  // For non-practice (lesson purpose), insert progress first
   await db.insert(challengeProgress).values({
     challengeId,
     userId: session.user.id,
@@ -120,6 +121,9 @@ export const upsertChallengeProgress = async (challengeId: number) => {
       points: currentUserProgress.points + 10,
     })
     .where(eq(userProgress.userId, session.user.id))
+
+  // Check if lesson is complete and update streak after inserting progress
+  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
 
   revalidatePath("/learn")
   revalidatePath("/lesson")

@@ -18,6 +18,7 @@ type Props = {
   percentage: number
   gems: number
   hasActiveSubscription: boolean
+  isTimed: boolean
 }
 
 export const LessonButton = ({
@@ -29,7 +30,9 @@ export const LessonButton = ({
   percentage,
   gems,
   hasActiveSubscription,
+  isTimed,
 }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLast = index === totalCount
   const isCompleted = !current && !locked
   const buttonNumber = index + 1
@@ -50,6 +53,9 @@ export const LessonButton = ({
       : `/lesson/${id}`
     router.push(href)
   }
+
+  // Show crown only if isTimed is true
+  const showCrown = isTimed
 
   return (
     <div
@@ -86,7 +92,7 @@ export const LessonButton = ({
                     locked ? "rounded-3xl" : ""
                   )}
                 >
-                  {isLast ? (
+                  {showCrown ? (
                     <Crown
                       className={cn(
                         "size-10",
@@ -118,7 +124,7 @@ export const LessonButton = ({
               !locked && "dark:border-emerald-600"
             )}
           >
-            {isLast ? (
+            {showCrown ? (
               <Crown
                 className={cn(
                   "size-10",
