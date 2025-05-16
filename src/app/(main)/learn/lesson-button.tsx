@@ -48,7 +48,10 @@ export const LessonButton = ({
       return
     }
 
-    const href = isCompleted
+    // For timed lessons, never use ?purpose=practice
+    const href = isTimed
+      ? `/lesson/${id}`
+      : isCompleted
       ? `/lesson/${id}?purpose=practice`
       : `/lesson/${id}`
     router.push(href)
@@ -70,7 +73,7 @@ export const LessonButton = ({
         isCompleted={isCompleted}
         current={current}
       >
-        {current ? (
+        {current && !isTimed ? ( // Only show CircularProgressbar for current lessons that are not isTimed
           <div className="h-[102px] w-[102px] relative">
             <div className="text-neutral-300 dark:text-neutral-700">
               <CircularProgressbarWithChildren

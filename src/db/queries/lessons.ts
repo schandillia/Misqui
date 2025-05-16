@@ -30,10 +30,34 @@ export const getLesson = cache(
       return null
     }
 
+    const lessonData = await db.query.lessons.findFirst({
+      where: eq(lessons.id, lessonId),
+      with: {
+        challenges: {
+          with: {
+            challengeOptions: true,
+            challengeProgress: {
+              where: eq(challengeProgress.userId, session.user.id),
+            },
+          },
+        },
+      },
+    })
+
+    if (!lessonData || !lessonData.challenges) {
+      logger.warn("Lesson not found or has no challenges", {
+        lessonId,
+        purpose,
+      })
+      return null
+    }
+
+    const isTimed = lessonData.isTimed
     const subsetIds = await getOrCreateUserLessonChallengeSubset(
       session.user.id,
       lessonId,
-      purpose
+      purpose,
+      isTimed
     )
 
     const data = await db.query.lessons.findFirst({
@@ -89,18 +113,99 @@ export const getLesson = cache(
 export async function getOrCreateUserLessonChallengeSubset(
   userId: string,
   lessonId: number,
-  purpose: "lesson" | "practice"
+  purpose: "lesson" | "practice",
+  isTimed: boolean = false
 ) {
-  // For practice purpose, always generate a new subset
-  if (purpose === "practice") {
-    logger.info("Generating new practice subset", { userId, lessonId })
+  // For practice purpose or isTimed lessons that aren't fully completed, always generate a new subset
+  if (purpose === "practice" || (isTimed && purpose === "lesson")) {
+    const lessonData = await db.query.lessons.findFirst({
+      where: eq(lessons.id, lessonId),
+      with: {
+        challenges: {
+          with: {
+            challengeProgress: {
+              where: eq(challengeProgress.userId, userId),
+            },
+          },
+        },
+      },
+    })
+
+    if (!lessonData) {
+      logger.error("Lesson not found when generating subset", {
+        userId,
+        lessonId,
+        purpose,
+      })
+      return []
+    }
+
+    const completedChallenges = lessonData.challenges.filter(
+      (challenge) =>
+        challenge.challengeProgress &&
+        challenge.challengeProgress.length > 0 &&
+        challenge.challengeProgress.every((progress) => progress.completed)
+    )
+
+    // For isTimed lessons, only reuse the subset if the lesson is fully completed
+    if (
+      isTimed &&
+      completedChallenges.length === lessonData.challenges.length
+    ) {
+      const existing = await db.query.userLessonChallengeSubset.findFirst({
+        where: and(
+          eq(userLessonChallengeSubset.userId, userId),
+          eq(userLessonChallengeSubset.lessonId, lessonId),
+          eq(userLessonChallengeSubset.purpose, purpose)
+        ),
+      })
+      if (existing) {
+        const subset = JSON.parse(existing.challengeIds) as number[]
+        if (subset.length > 0) {
+          const validChallenges = await db.query.challenges.findMany({
+            where: inArray(challenges.id, subset),
+          })
+          if (validChallenges.length === subset.length) {
+            logger.info(
+              "Reusing existing subset for completed isTimed lesson",
+              {
+                userId,
+                lessonId,
+                purpose,
+                subset,
+              }
+            )
+            return subset
+          }
+        }
+      }
+    }
+
+    // If isTimed and not fully completed, clear challengeProgress
+    if (isTimed && completedChallenges.length < lessonData.challenges.length) {
+      await db.delete(challengeProgress).where(
+        and(
+          eq(challengeProgress.userId, userId),
+          inArray(
+            challengeProgress.challengeId,
+            lessonData.challenges.map((c) => c.id)
+          )
+        )
+      )
+      logger.info("Cleared challengeProgress for incomplete isTimed lesson", {
+        userId,
+        lessonId,
+        purpose,
+      })
+    }
+
+    logger.info("Generating new subset", { userId, lessonId, purpose, isTimed })
     const allChallenges = await db.query.challenges.findMany({
       where: eq(challenges.lessonId, lessonId),
     })
     const shuffled = allChallenges.sort(() => Math.random() - 0.5)
     const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
 
-    // Upsert practice row
     await db
       .insert(userLessonChallengeSubset)
       .values({
@@ -120,15 +225,17 @@ export async function getOrCreateUserLessonChallengeSubset(
         },
       })
 
-    logger.info("Practice subset created and upserted", {
+    logger.info("Subset created and upserted", {
       userId,
       lessonId,
+      purpose,
+      isTimed,
       subset,
     })
     return subset
   }
 
-  // For lesson purpose, try to fetch existing subset first
+  // For lesson purpose (non-isTimed), try to fetch existing subset first
   logger.info("Fetching existing lesson subset", { userId, lessonId, purpose })
   const existing = await db.query.userLessonChallengeSubset.findFirst({
     where: and(
@@ -139,7 +246,6 @@ export async function getOrCreateUserLessonChallengeSubset(
   })
   if (existing) {
     const subset = JSON.parse(existing.challengeIds) as number[]
-    // Check if subset is valid (non-empty and contains valid challenge IDs)
     if (subset.length > 0) {
       const validChallenges = await db.query.challenges.findMany({
         where: inArray(challenges.id, subset),
@@ -178,7 +284,6 @@ export async function getOrCreateUserLessonChallengeSubset(
   const shuffled = allChallenges.sort(() => Math.random() - 0.5)
   const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
 
-  // Upsert in DB
   await db
     .insert(userLessonChallengeSubset)
     .values({

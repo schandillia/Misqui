@@ -19,7 +19,8 @@ export const List = ({ courses, activeCourseId }: Props) => {
   const onClick = (id: number) => {
     if (pending) return
 
-    if (id === activeCourseId) {
+    // Add null check for activeCourseId
+    if (activeCourseId && id === activeCourseId) {
       return router.push("/learn")
     }
 
@@ -47,7 +48,7 @@ export const List = ({ courses, activeCourseId }: Props) => {
           image={course.image}
           onClick={onClick}
           disabled={pending}
-          active={course.id === activeCourseId}
+          active={activeCourseId ? course.id === activeCourseId : false} // Add null check
         />
       ))}
     </div>

@@ -16,19 +16,31 @@ const Page = async () => {
 
   if (!lesson || !userProgress) redirect("/learn")
 
+  // Calculate initialPercentage first
   const initialPercentage =
     (lesson.challenges.filter((challenge) => challenge.completed).length /
       Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON)) *
     100
+
+  // Set purpose: force "practice" if initialPercentage === 100 and isTimed === false
+  const lessonPurpose =
+    !lesson.isTimed && initialPercentage === 100 ? "practice" : "lesson"
+
+  // Reset initialPercentage to 0 for practice sessions
+  const finalInitialPercentage =
+    lessonPurpose === "practice" ? 0 : initialPercentage
 
   return (
     <QuizWrapper
       initialLessonId={lesson.id}
       initialLessonChallenges={lesson.challenges}
       initialGems={userProgress.gems}
-      initialPercentage={initialPercentage}
+      initialPercentage={finalInitialPercentage}
       userSubscription={userSubscription}
+      purpose={lessonPurpose}
+      isTimed={lesson.isTimed}
     />
   )
 }
+
 export default Page

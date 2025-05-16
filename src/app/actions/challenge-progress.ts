@@ -2,22 +2,23 @@
 
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
-import {
-  getUserProgress,
-  getUserSubscription,
-  markLessonCompleteAndUpdateStreak,
-} from "@/db/queries"
+import { getUserProgress, getUserSubscription } from "@/db/queries"
+import { markLessonCompleteAndUpdateStreak } from "@/app/actions/user-progress"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
-export const upsertChallengeProgress = async (challengeId: number) => {
+export const upsertChallengeProgress = async (
+  challengeId: number,
+  isTimed: boolean = false
+) => {
   const session = await auth()
   logger.info("Attempting to upsert challenge progress", {
     userId: session?.user?.id,
     challengeId,
+    isTimed,
   })
 
   if (!session?.user?.id) {
@@ -83,16 +84,20 @@ export const upsertChallengeProgress = async (challengeId: number) => {
       })
       .where(eq(challengeProgress.id, existingChallengeProgress.id))
 
-    await db
-      .update(userProgress)
-      .set({
-        gems: Math.min(currentUserProgress.gems + 1, app.GEMS_LIMIT),
-        points: currentUserProgress.points + 10,
-      })
-      .where(eq(userProgress.userId, session.user.id))
+    // Update points and gems only for non-timed lessons or practice mode
+    if (!isTimed) {
+      await db
+        .update(userProgress)
+        .set({
+          gems: Math.min(currentUserProgress.gems + 1, app.GEMS_LIMIT),
+          points: currentUserProgress.points + 10,
+        })
+        .where(eq(userProgress.userId, session.user.id))
+    }
 
-    // Check if lesson is complete and update streak after updating progress
-    await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+    if (!isTimed) {
+      await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+    }
 
     revalidatePath("/learn")
     revalidatePath("/lesson")
@@ -108,22 +113,25 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     return
   }
 
-  // For non-practice (lesson purpose), insert progress first
   await db.insert(challengeProgress).values({
     challengeId,
     userId: session.user.id,
     completed: true,
   })
 
-  await db
-    .update(userProgress)
-    .set({
-      points: currentUserProgress.points + 10,
-    })
-    .where(eq(userProgress.userId, session.user.id))
+  // Update points only for non-timed lessons
+  if (!isTimed) {
+    await db
+      .update(userProgress)
+      .set({
+        points: currentUserProgress.points + 10,
+      })
+      .where(eq(userProgress.userId, session.user.id))
+  }
 
-  // Check if lesson is complete and update streak after inserting progress
-  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+  if (!isTimed) {
+    await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+  }
 
   revalidatePath("/learn")
   revalidatePath("/lesson")

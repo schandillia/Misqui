@@ -6,12 +6,77 @@ import {
   getCourseById,
   getUserProgress,
   getUserSubscription,
-  markLessonCompleteAndUpdateStreak,
+  markLessonCompleteAndUpdateStreak as markLessonCompleteAndUpdateStreakFromQueries,
+  updateUserPoints as updateUserPointsFromQueries,
 } from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
+
+export const markLessonCompleteAndUpdateStreak = async (
+  userId: string,
+  lessonId: number
+) => {
+  await markLessonCompleteAndUpdateStreakFromQueries(userId, lessonId)
+}
+
+export const getCurrentUserId = async () => {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized")
+  }
+  return session.user.id
+}
+
+export const updateUserGems = async (delta: number) => {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized")
+  }
+
+  const currentUserProgress = await getUserProgress()
+  if (!currentUserProgress) {
+    throw new Error("User progress not found")
+  }
+
+  const newGems = Math.max(
+    0,
+    Math.min(currentUserProgress.gems + delta, app.GEMS_LIMIT)
+  )
+  await db
+    .update(userProgress)
+    .set({
+      gems: newGems,
+    })
+    .where(eq(userProgress.userId, session.user.id))
+
+  revalidatePath("/learn")
+  revalidatePath("/lesson")
+  revalidatePath("/missions")
+  revalidatePath("/leaderboard")
+
+  return newGems
+}
+
+export const updateUserPoints = async (delta: number) => {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized")
+  }
+
+  const newPoints = await updateUserPointsFromQueries(session.user.id, delta)
+  if (newPoints === null) {
+    throw new Error("Failed to update points: User progress not found")
+  }
+
+  revalidatePath("/learn")
+  revalidatePath("/lesson")
+  revalidatePath("/missions")
+  revalidatePath("/leaderboard")
+
+  return newPoints
+}
 
 export const upsertUserProgress = async (courseId: number) => {
   const session = await auth()

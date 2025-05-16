@@ -1,4 +1,5 @@
-import { useKey, useMedia } from "react-use"
+// src/app/lesson/footer.tsx
+import { useMedia } from "react-use"
 import { CheckCircle, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -7,13 +8,23 @@ type Props = {
   disabled?: boolean
   status: "correct" | "wrong" | "none" | "completed"
   lessonId?: number
-  onCheck: () => void
+  onCheck: (event?: React.MouseEvent | KeyboardEvent) => void
+  isTimed?: boolean
 }
 
-export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
-  useKey("Enter", onCheck, {}, [onCheck])
-  // Add defaultState to useMedia to prevent hydration mismatch
+export const Footer = ({
+  disabled,
+  status,
+  lessonId,
+  onCheck,
+  isTimed = false,
+}: Props) => {
   const isMobile = useMedia("(max-width: 1024px)", false)
+
+  const handleClick = (event: React.MouseEvent) => {
+    if (disabled) return
+    onCheck(event)
+  }
 
   return (
     <footer
@@ -43,7 +54,9 @@ export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
             variant="default"
             size={isMobile ? "sm" : "lg"}
             onClick={() =>
-              (window.location.href = `/lesson/${lessonId}?purpose=practice`)
+              (window.location.href = isTimed
+                ? `/lesson/${lessonId}`
+                : `/lesson/${lessonId}?purpose=practice`)
             }
           >
             Practice again
@@ -52,13 +65,13 @@ export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
         <Button
           disabled={disabled}
           className="ml-auto"
-          onClick={onCheck}
+          onClick={handleClick}
           size={isMobile ? "sm" : "lg"}
           variant={status === "wrong" ? "danger" : "secondary"}
         >
           {status === "none" && "Check"}
           {status === "correct" && "Next"}
-          {status === "wrong" && "Retry"}
+          {status === "wrong" && (isTimed ? "Next" : "Retry")}
           {status === "completed" && "Continue"}
         </Button>
       </div>

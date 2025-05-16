@@ -1,14 +1,19 @@
 "use client"
 
-import { useRef } from "react"
-
+import { useRef, useState, useEffect, useCallback } from "react"
 import { LessonHeader } from "@/app/lesson/lesson-header"
 import { QuestionBubble } from "@/app/lesson/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
-import { useState, useTransition, useEffect, useMemo } from "react"
+import { useTransition, useMemo } from "react"
 import { Challenge } from "@/app/lesson/challenge"
 import { Footer } from "@/app/lesson/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
+import {
+  markLessonCompleteAndUpdateStreak,
+  getCurrentUserId,
+  updateUserGems,
+  updateUserPoints,
+} from "@/app/actions/user-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
 import { useWindowSize, useMount } from "react-use"
@@ -20,7 +25,7 @@ import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
 import { useQuizAudio } from "@/store/use-quiz-audio"
-import { CountdownTimer } from "@/components/countdown-timer" // Import the timer
+import { CountdownTimer } from "@/components/countdown-timer"
 
 type Props = {
   initialLessonId: number
@@ -54,27 +59,42 @@ export const Quiz = ({
 
   const hasPlayedFinishAudio = useRef(false)
 
-  useMount(() => {
-    if (purpose === "practice") {
-      const SIX_HOURS = 6 * 60 * 60 * 1000
-      const key = "practiceModalLastShown"
-      const lastShown = Number(localStorage.getItem(key) || 0)
-      const now = Date.now()
+  const [userId, setUserId] = useState<string | null>(null)
+  const [points, setPoints] = useState(0)
+  const [isUpdating, setIsUpdating] = useState(false)
 
-      if (now - lastShown > SIX_HOURS) {
-        openPracticeModal()
-        localStorage.setItem(key, now.toString())
+  useMount(() => {
+    if (!isTimed) {
+      if (purpose === "practice") {
+        const SIX_HOURS = 6 * 60 * 60 * 1000
+        const key = "practiceModalLastShown"
+        const lastShown = Number(localStorage.getItem(key) || 0)
+        const now = Date.now()
+
+        if (now - lastShown > SIX_HOURS) {
+          openPracticeModal()
+          localStorage.setItem(key, now.toString())
+        }
       }
-    } else if (initialPercentage === 100) {
-      openPracticeModal()
     }
+
+    const fetchUserId = async () => {
+      try {
+        const id = await getCurrentUserId()
+        console.log("Fetched userId:", id)
+        setUserId(id)
+      } catch (error) {
+        console.error("Failed to fetch userId:", error)
+        toast.error("Failed to fetch user ID. Please try again.")
+      }
+    }
+    fetchUserId()
   })
 
   const { width, height } = useWindowSize()
   const router = useRouter()
 
   const [pending] = useTransition()
-  const [serverPending, setServerPending] = useState(false)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
   const [percentage, setPercentage] = useState(() =>
@@ -87,15 +107,30 @@ export const Quiz = ({
     )
     return incompleteIndex === -1 ? 0 : incompleteIndex
   })
+  const [correctAnswers, setCorrectAnswers] = useState(0)
+  const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
 
   const [selectedOption, setSelectedOption] = useState<number>()
   const [status, setStatus] = useState<"correct" | "wrong" | "none">("none")
+  const [isDbUpdateComplete, setIsDbUpdateComplete] = useState(false)
+  const [isReadyForFinishScreen, setIsReadyForFinishScreen] = useState(false)
+
+  // Synchronous tracking of processed challenges and processing state
+  const processedChallengesRef = useRef(new Set<number>())
+  const isProcessingRef = useRef(false)
+  const isTransitioningRef = useRef(false)
+  const hasProcessedRef = useRef(false)
 
   const challenge = challenges[activeIndex]
   const options = useMemo(() => challenge?.challengeOptions ?? [], [challenge])
 
+  const isLastChallenge = activeIndex === challenges.length - 1
+  const isLessonCompleted = !challenge && isReadyForFinishScreen
+
   const onNext = () => {
     setActiveIndex((current) => current + 1)
+    hasProcessedRef.current = false // Reset for the next challenge
+    isTransitioningRef.current = false
   }
 
   const onSelect = (id: number) => {
@@ -103,102 +138,346 @@ export const Quiz = ({
     setSelectedOption(id)
   }
 
-  const onContinue = () => {
+  const handleContinue = async (eventType: string) => {
     if (!selectedOption) return
 
-    if (status === "wrong") {
-      setStatus("none")
-      setSelectedOption(undefined)
+    if (isProcessingRef.current) {
+      console.log(
+        `handleContinue blocked: already processing (event: ${eventType})`
+      )
       return
     }
+    isProcessingRef.current = true
+    console.log(
+      `handleContinue called for challenge ${challenge?.id}, event: ${eventType}, status: ${status}`
+    )
 
-    if (status === "correct") {
-      onNext()
-      setStatus("none")
-      setSelectedOption(undefined)
-      return
-    }
-
-    const correctOption = options.find((option) => option.correct)
-    if (!correctOption) return
-
-    if (correctOption.id === selectedOption) {
-      playCorrect()
-      setStatus("correct")
-      setPercentage((prev) => prev + 100 / challenges.length)
-
-      if (purpose === "practice" || initialPercentage === 100) {
-        setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-      }
-
-      setServerPending(true)
-      upsertChallengeProgress(challenge.id)
-        .then((response) => {
-          if (response?.error === "gems") {
-            setStatus("none")
-            setSelectedOption(undefined)
-            setPercentage((prev) => prev - 100 / challenges.length)
-            if (purpose === "practice" || initialPercentage === 100) {
-              setGems((prev) => Math.max(prev - 1, 0))
-            }
-            openGemsModal()
+    try {
+      if (status === "wrong") {
+        if (isTimed) {
+          setPercentage((prev) => prev + 100 / challenges.length)
+          if (isLastChallenge) {
+            setTimeout(() => {
+              onNext()
+              setIsReadyForFinishScreen(true)
+            }, 100)
+          } else {
+            onNext()
           }
-        })
-        .catch(() => {
           setStatus("none")
           setSelectedOption(undefined)
-          setPercentage((prev) => prev - 100 / challenges.length)
-          if (purpose === "practice" || initialPercentage === 100) {
-            setGems((prev) => Math.max(prev - 1, 0))
-          }
-          toast.error("Something went wrong. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
-    } else {
-      playIncorrect()
-      setStatus("wrong")
-
-      if (purpose === "lesson" && !userSubscription?.isActive) {
-        setGems((prev) => Math.max(prev - 1, 0))
+          return
+        } else {
+          setStatus("none")
+          setSelectedOption(undefined)
+          hasProcessedRef.current = false
+          isTransitioningRef.current = false
+          return
+        }
       }
 
-      setServerPending(true)
-      reduceGems(challenge.id)
-        .then((response) => {
-          if (response?.error === "gems") {
+      if (status === "correct") {
+        const isLastChallengeHere = activeIndex === challenges.length - 1
+
+        if (
+          isLastChallengeHere &&
+          isTimed &&
+          correctAnswers === challenges.length
+        ) {
+          if (isUpdating) {
+            return
+          }
+
+          setPercentage((prev) => prev + 100 / challenges.length)
+
+          setIsUpdating(true)
+          try {
+            for (const challengeId of completedChallenges) {
+              console.log(
+                "Updating challenge progress for challengeId:",
+                challengeId
+              )
+              await upsertChallengeProgress(challengeId, isTimed)
+            }
+            console.log("Marking lesson complete and updating streak...")
+            await markLessonCompleteAndUpdateStreak(userId!, lessonId)
+            console.log(
+              "Updating points with TIMED_LESSON_REWARD:",
+              app.TIMED_LESSON_REWARD
+            )
+            const newPoints = await updateUserPoints(app.TIMED_LESSON_REWARD)
+            console.log("Points updated successfully, newPoints:", newPoints)
+            setPoints(newPoints)
+          } catch (error) {
+            console.error("Error completing timed lesson:", error)
+            toast.error("Failed to mark lesson as complete. Please try again.")
+            return
+          } finally {
+            setIsUpdating(false)
+            setIsDbUpdateComplete(true)
+          }
+
+          setTimeout(() => {
+            onNext()
+            setIsReadyForFinishScreen(true)
+          }, 100)
+          setStatus("none")
+          setSelectedOption(undefined)
+          return
+        }
+
+        setPercentage((prev) => prev + 100 / challenges.length)
+        if (isLastChallengeHere) {
+          if (!isTimed) {
+            if (isUpdating) {
+              return
+            }
+
+            setIsUpdating(true)
+            try {
+              for (const challengeId of completedChallenges) {
+                console.log(
+                  "Updating challenge progress for challengeId:",
+                  challengeId
+                )
+                await upsertChallengeProgress(challengeId, isTimed)
+              }
+              console.log(
+                "Marking lesson complete and updating streak for non-timed lesson..."
+              )
+              await markLessonCompleteAndUpdateStreak(userId!, lessonId)
+            } catch (error) {
+              console.error("Error completing non-timed lesson:", error)
+              toast.error(
+                "Failed to mark lesson as complete. Please try again."
+              )
+              return
+            } finally {
+              setIsUpdating(false)
+            }
+          }
+
+          setTimeout(() => {
+            onNext()
+            setIsReadyForFinishScreen(true)
+          }, 100)
+        } else {
+          onNext()
+        }
+        setStatus("none")
+        setSelectedOption(undefined)
+        return
+      }
+
+      const correctOption = options.find((option) => option.correct)
+      if (!correctOption) return
+
+      if (correctOption.id === selectedOption) {
+        if (processedChallengesRef.current.has(challenge.id)) {
+          console.log(`Challenge ${challenge.id} already processed, skipping`)
+          setStatus("correct")
+          setCorrectAnswers((prev) => prev + 1)
+          return
+        }
+
+        playCorrect().catch((error: unknown) => {
+          console.warn("Failed to play correct sound:", error)
+        })
+        isTransitioningRef.current = true // Mark as transitioning
+        setStatus("correct")
+        setCorrectAnswers((prev) => prev + 1)
+
+        processedChallengesRef.current.add(challenge.id)
+        hasProcessedRef.current = true
+        console.log(`Challenge ${challenge.id} marked as processed`)
+
+        if (!isTimed) {
+          // Optimistic updates
+          if (purpose === "practice") {
+            setGems((prev) => prev + 1)
+          }
+          setPoints((prev) => prev + app.POINTS_PER_CORRECT_ANSWER)
+
+          // Background database updates with deduplication
+          const gemPromise: Promise<number> =
+            purpose === "practice"
+              ? updateUserGems(1).then((updatedGems) => {
+                  setGems(updatedGems)
+                  return updatedGems
+                })
+              : Promise.resolve(gems)
+
+          const upsertPromise: Promise<{ error: string } | undefined> =
+            upsertChallengeProgress(challenge.id, isTimed)
+
+          const pointsPromise: Promise<number> = updateUserPoints(
+            app.POINTS_PER_CORRECT_ANSWER
+          ).then((updatedPoints) => {
+            setPoints(updatedPoints)
+            return updatedPoints
+          })
+
+          const updatePromises: [
+            Promise<number>,
+            Promise<{ error: string } | undefined>,
+            Promise<number>
+          ] = [gemPromise, upsertPromise, pointsPromise]
+
+          Promise.all(updatePromises)
+            .then(
+              ([updatedGems, upsertResponse, updatedPoints]: [
+                number,
+                { error: string } | undefined,
+                number
+              ]) => {
+                if (upsertResponse && upsertResponse.error === "gems") {
+                  setStatus("none")
+                  setSelectedOption(undefined)
+                  setPercentage((prev) => prev - 100 / challenges.length)
+                  if (purpose === "practice") {
+                    setGems((prev) => prev - 1)
+                  }
+                  openGemsModal()
+                }
+              }
+            )
+            .catch((error) => {
+              console.error("Failed to update progress:", error)
+              toast.error("Failed to update progress. Values may be incorrect.")
+              setStatus("none")
+              setSelectedOption(undefined)
+              setPercentage((prev) => prev - 100 / challenges.length)
+              if (purpose === "practice") {
+                setGems((prev) => prev - 1)
+              }
+              setPoints((prev) => prev - app.POINTS_PER_CORRECT_ANSWER)
+            })
+        } else {
+          setCompletedChallenges((prev) => [...prev, challenge.id])
+        }
+      } else {
+        playIncorrect().catch((error: unknown) => {
+          console.warn("Failed to play incorrect sound:", error)
+        })
+        setStatus("wrong")
+
+        if (!isTimed) {
+          if (purpose === "lesson" && !userSubscription?.isActive) {
+            setGems((prev) => Math.max(prev - 1, 0))
+          }
+
+          Promise.all([
+            reduceGems(challenge.id).then((response) => {
+              if (response?.error === "gems") {
+                setStatus("none")
+                setSelectedOption(undefined)
+                if (purpose === "lesson" && !userSubscription?.isActive) {
+                  setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+                }
+                openGemsModal()
+              }
+              return response
+            }),
+          ]).catch((error) => {
+            console.error("Failed to reduce gems:", error)
             setStatus("none")
             setSelectedOption(undefined)
             if (purpose === "lesson" && !userSubscription?.isActive) {
               setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
-            openGemsModal()
-          }
-        })
-        .catch(() => {
-          setStatus("none")
-          setSelectedOption(undefined)
-          if (purpose === "lesson" && !userSubscription?.isActive) {
-            setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-          }
-          toast.error("Something went wrong. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
+            toast.error("Something went wrong. Please try again.")
+          })
+        }
+      }
+    } finally {
+      isProcessingRef.current = false
+      console.log(
+        `handleContinue finished for challenge ${challenge?.id}, processing reset`
+      )
     }
   }
 
-  // ✅ Play finish audio once when lesson is completed
-  useEffect(() => {
-    if (!challenge && !hasPlayedFinishAudio.current) {
-      hasPlayedFinishAudio.current = true
-      playFinish()
-    }
-  }, [challenge, playFinish])
+  const onContinue = useCallback(
+    (event?: React.MouseEvent | KeyboardEvent) => {
+      const eventType = event
+        ? event instanceof KeyboardEvent
+          ? "keydown"
+          : "click"
+        : "unknown"
+      console.log(
+        `onContinue called with event: ${eventType}, status: ${status}, hasProcessed: ${hasProcessedRef.current}, isTransitioning: ${isTransitioningRef.current}`
+      )
 
-  if (!challenge) {
+      if (hasProcessedRef.current || isTransitioningRef.current) {
+        console.log(
+          `onContinue blocked: challenge already processed or transitioning (event: ${eventType})`
+        )
+        return
+      }
+      if (isProcessingRef.current) {
+        console.log(
+          `onContinue blocked: already processing (event: ${eventType})`
+        )
+        return
+      }
+      handleContinue(eventType)
+    },
+    [
+      selectedOption,
+      status,
+      isTimed,
+      isLastChallenge,
+      isUpdating,
+      userId,
+      lessonId,
+      challenges,
+      purpose,
+      gems,
+      points,
+    ]
+  )
+
+  // Handle "Enter" key press at the Quiz level
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        const isDisabled =
+          (status === "none" && (pending || !selectedOption)) ||
+          isUpdating ||
+          isProcessingRef.current ||
+          isTransitioningRef.current ||
+          hasProcessedRef.current
+        if (!isDisabled) {
+          event.preventDefault()
+          event.stopPropagation()
+          console.log("Quiz keydown listener triggered")
+          onContinue(event)
+        } else {
+          console.log("Enter key blocked: component is disabled")
+        }
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [onContinue, status, pending, selectedOption, isUpdating])
+
+  useEffect(() => {
+    if (!challenge && !hasPlayedFinishAudio.current && userId) {
+      hasPlayedFinishAudio.current = true
+      playFinish().catch((error: unknown) => {
+        console.warn("Failed to play finish sound:", error)
+      })
+    }
+  }, [challenge, playFinish, userId])
+
+  // Reset processedChallengesRef when the lesson restarts
+  useEffect(() => {
+    processedChallengesRef.current.clear()
+    hasProcessedRef.current = false
+    isTransitioningRef.current = false
+  }, [initialLessonId])
+
+  if (isLessonCompleted) {
     return (
       <>
         <ReactConfetti
@@ -229,7 +508,16 @@ export const Quiz = ({
             You’ve completed the lesson.
           </h1>
           <div className="flex items-center gap-x-4 w-full">
-            <ResultCard variant="points" value={challenges.length * 10} />
+            <ResultCard
+              variant="points"
+              value={
+                isTimed
+                  ? correctAnswers === challenges.length
+                    ? app.TIMED_LESSON_REWARD
+                    : 0
+                  : challenges.length * app.POINTS_PER_CORRECT_ANSWER
+              }
+            />
             <ResultCard variant="gems" value={gems} />
           </div>
         </div>
@@ -237,6 +525,7 @@ export const Quiz = ({
           lessonId={lessonId}
           status="completed"
           onCheck={() => router.push("/learn")}
+          isTimed={isTimed}
         />
       </>
     )
@@ -254,8 +543,7 @@ export const Quiz = ({
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
       />
-      {/* Add the CountdownTimer below the LessonHeader */}
-      {isTimed && <CountdownTimer isLessonCompleted={!challenge} />}
+      {isTimed && <CountdownTimer isLessonCompleted={isLessonCompleted} />}
       <div className="flex-1">
         <div className="h-full items-center justify-center flex">
           <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
@@ -271,7 +559,7 @@ export const Quiz = ({
                 onSelect={onSelect}
                 status={status}
                 selectedOption={selectedOption}
-                disabled={status === "none" && (pending || serverPending)}
+                disabled={pending || status !== "none"}
                 challengeType={challenge.challengeType}
               />
             </div>
@@ -279,9 +567,16 @@ export const Quiz = ({
         </div>
       </div>
       <Footer
-        disabled={status === "none" && (pending || !selectedOption)}
+        disabled={
+          (status === "none" && (pending || !selectedOption)) ||
+          isUpdating ||
+          isProcessingRef.current ||
+          isTransitioningRef.current ||
+          hasProcessedRef.current
+        }
         status={status}
         onCheck={onContinue}
+        isTimed={isTimed}
       />
     </>
   )

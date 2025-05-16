@@ -12,10 +12,18 @@ const Page = async ({
   searchParams: Promise<{ purpose?: string }>
 }) => {
   const { lessonId } = await params
-  const { purpose } = await searchParams
+  const { purpose: queryPurpose } = await searchParams
   const lessonIdNumber = Number(lessonId)
-  const lessonPurpose = purpose === "practice" ? "practice" : "lesson"
-  const lessonData = getLesson(lessonIdNumber, lessonPurpose)
+
+  // Validate queryPurpose to match the expected type for getLesson
+  const validatedPurpose: "lesson" | "practice" | undefined =
+    queryPurpose === "practice"
+      ? "practice"
+      : queryPurpose === "lesson"
+      ? "lesson"
+      : undefined
+
+  const lessonData = getLesson(lessonIdNumber, validatedPurpose)
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
@@ -27,23 +35,34 @@ const Page = async ({
 
   if (!lesson || !userProgress) redirect("/learn")
 
+  // Calculate initialPercentage first
   const initialPercentage =
-    lessonPurpose === "practice"
-      ? 0
-      : (lesson.challenges.filter((challenge) => challenge.completed).length /
-          Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON)) *
-        100
+    (lesson.challenges.filter((challenge) => challenge.completed).length /
+      Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON)) *
+    100
+
+  // Set purpose: force "practice" if initialPercentage === 100 and isTimed === false
+  const lessonPurpose =
+    validatedPurpose === "practice" ||
+    (!lesson.isTimed && initialPercentage === 100)
+      ? "practice"
+      : "lesson"
+
+  // Reset initialPercentage to 0 for practice sessions
+  const finalInitialPercentage =
+    lessonPurpose === "practice" ? 0 : initialPercentage
 
   return (
     <QuizWrapper
       initialLessonId={lesson.id}
       initialLessonChallenges={lesson.challenges}
       initialGems={userProgress.gems}
-      initialPercentage={initialPercentage}
+      initialPercentage={finalInitialPercentage}
       userSubscription={userSubscription}
       purpose={lessonPurpose}
-      isTimed={lesson.isTimed} // Pass isTimed
+      isTimed={lesson.isTimed}
     />
   )
 }
+
 export default Page
