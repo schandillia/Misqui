@@ -1,20 +1,15 @@
+// auth.ts
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { db } from "@/db/drizzle" // Import db instance from drizzle.ts
-import { accounts, sessions, users, authenticators } from "@/db/schema" // Import tables from schema.ts
-// Import the specific Neon DB type if needed for explicit typing, though often inferred
+import { db } from "@/db/drizzle"
+import { accounts, sessions, users, authenticators } from "@/db/schema"
 import { NeonHttpDatabase } from "drizzle-orm/neon-http"
-import * as schema from "@/db/schema" // Import the full schema for type inference
+import * as schema from "@/db/schema"
 
-// Define the correct type for the Neon HTTP database instance
-// This matches the type exported from db/drizzle.ts
 type NeonDB = NeonHttpDatabase<typeof schema>
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  // Use the Drizzle adapter, passing the db instance and table definitions
-  // Cast 'db' to the correct NeonDB type.
-  // The adapter is designed to work with various Drizzle drivers.
   adapter: DrizzleAdapter(db as NeonDB, {
     usersTable: users,
     accountsTable: accounts,
@@ -22,43 +17,63 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     authenticatorsTable: authenticators,
   }),
   providers: [
-    // Configure the Google OAuth provider
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      // Customize the profile data mapping if necessary
       profile(profile) {
         return {
-          // Standard fields expected by NextAuth
-          id: profile.sub, // Google's unique ID for the user
+          id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          // Add any other custom fields you might need from the profile
         }
       },
     }),
-    // Add other providers here if needed (e.g., GitHub, Email)
   ],
   session: {
-    // Use database sessions instead of JWTs for session storage
     strategy: "database",
   },
   callbacks: {
-    /**
-     * Modify the session object before it's returned.
-     * Here, we add the user's database ID to the session.
-     */
     async session({ session, user }) {
-      // Ensure session.user exists before assigning properties
       if (session.user) {
-        session.user.id = user.id // Add the user's DB id to the session object
+        session.user.id = user.id
       }
-      return session // Return the modified session
+      return session
     },
-    // Add other callbacks if needed (e.g., jwt, signIn, redirect)
   },
-  // Add any other NextAuth configuration options here
-  // pages: { signIn: '/auth/signin' }, // Custom sign-in page
-  // debug: process.env.NODE_ENV === 'development', // Enable debug logs in development
+  // Custom logger with precise cause extraction
+  logger: {
+    error(error: Error) {
+      let causeMessage = "Unknown error"
+      if (error.cause) {
+        if (error.cause instanceof Error) {
+          causeMessage = error.cause.message
+        } else if (typeof error.cause === "string") {
+          causeMessage = error.cause
+        } else if (typeof error.cause === "object" && error.cause !== null) {
+          const causeObj = error.cause as any
+          causeMessage =
+            causeObj.err?.message || // NeonDbError message
+            causeObj.message ||
+            causeObj.error?.message ||
+            causeObj.details?.message ||
+            causeObj.cause?.message ||
+            "Unknown cause"
+        }
+      }
+      console.error(`[Auth] Error: ${error.message}`, { cause: causeMessage })
+      // Debug cause structure in development
+      if (process.env.NODE_ENV === "development" && error.cause) {
+        console.debug("[Auth] Raw Cause:", error.cause)
+      }
+    },
+    warn(message: string) {
+      console.warn(`[Auth] Warning: ${message}`)
+    },
+    debug(message: string, metadata?: any) {
+      if (process.env.NODE_ENV === "development") {
+        console.debug(`[Auth] Debug: ${message}`, metadata)
+      }
+    },
+  },
 })
