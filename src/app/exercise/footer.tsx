@@ -43,7 +43,7 @@ export const Footer = ({ disabled, status, exerciseId, onCheck }: Props) => {
             variant="default"
             size={isMobile ? "sm" : "lg"}
             onClick={() =>
-              (window.location.href = `/exercise/${exerciseId}?purpose=practice`)
+              (window.location.href = `/exercise/${exerciseId}?isPractice=true`)
             }
           >
             Practice again

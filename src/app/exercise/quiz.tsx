@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef } from "react"
-
 import { QuestionBubble } from "@/app/exercise/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 import { useState, useTransition, useEffect, useMemo } from "react"
@@ -34,7 +33,7 @@ type Props = {
         isActive: boolean
       })
     | null
-  purpose?: "exercise" | "practice"
+  isPractice?: boolean
 }
 
 export const Quiz = ({
@@ -43,7 +42,7 @@ export const Quiz = ({
   initialPercentage,
   initialExerciseChallenges,
   userSubscription,
-  purpose = "exercise",
+  isPractice = false,
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
@@ -52,7 +51,7 @@ export const Quiz = ({
   const hasPlayedFinishAudio = useRef(false)
 
   useMount(() => {
-    if (purpose === "practice") {
+    if (isPractice) {
       const SIX_HOURS = 6 * 60 * 60 * 1000
       const key = "practiceModalLastShown"
       const lastShown = Number(localStorage.getItem(key) || 0)
@@ -124,7 +123,7 @@ export const Quiz = ({
       setStatus("correct")
       setPercentage((prev) => prev + 100 / challenges.length)
 
-      if (purpose === "practice" || initialPercentage === 100) {
+      if (isPractice || initialPercentage === 100) {
         setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
       }
 
@@ -135,7 +134,7 @@ export const Quiz = ({
             setStatus("none")
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
-            if (purpose === "practice" || initialPercentage === 100) {
+            if (isPractice || initialPercentage === 100) {
               setGems((prev) => Math.max(prev - 1, 0))
             }
             openGemsModal()
@@ -145,7 +144,7 @@ export const Quiz = ({
           setStatus("none")
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
-          if (purpose === "practice" || initialPercentage === 100) {
+          if (isPractice || initialPercentage === 100) {
             setGems((prev) => Math.max(prev - 1, 0))
           }
           toast.error("Something went wrong. Please try again.")
@@ -157,7 +156,7 @@ export const Quiz = ({
       playIncorrect()
       setStatus("wrong")
 
-      if (purpose === "exercise" && !userSubscription?.isActive) {
+      if (!isPractice && !userSubscription?.isActive) {
         setGems((prev) => Math.max(prev - 1, 0))
       }
 
@@ -167,7 +166,7 @@ export const Quiz = ({
           if (response?.error === "gems") {
             setStatus("none")
             setSelectedOption(undefined)
-            if (purpose === "exercise" && !userSubscription?.isActive) {
+            if (!isPractice && !userSubscription?.isActive) {
               setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
             openGemsModal()
@@ -176,7 +175,7 @@ export const Quiz = ({
         .catch(() => {
           setStatus("none")
           setSelectedOption(undefined)
-          if (purpose === "exercise" && !userSubscription?.isActive) {
+          if (!isPractice && !userSubscription?.isActive) {
             setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
           }
           toast.error("Something went wrong. Please try again.")
@@ -187,7 +186,7 @@ export const Quiz = ({
     }
   }
 
-  // ✅ Play finish audio once when exercise is completed
+  // Play finish audio once when exercise is completed
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio.current) {
       hasPlayedFinishAudio.current = true

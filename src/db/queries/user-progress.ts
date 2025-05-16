@@ -1,4 +1,3 @@
-// src/db/queries/user-progress.ts
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
@@ -109,7 +108,7 @@ export const getCourseProgress = cache(async () => {
     const subsetIds = await getOrCreateUserExerciseChallengeSubset(
       session.user.id,
       exercise.id,
-      "exercise"
+      false
     )
     const subsetChallenges = exercise.challenges.filter((ch) =>
       subsetIds.includes(ch.id)
@@ -139,7 +138,7 @@ export const getExercisePercentage = cache(async () => {
   if (!courseProgress?.activeExerciseId) {
     return 0
   }
-  const exercise = await getExercise(courseProgress.activeExerciseId)
+  const exercise = await getExercise(courseProgress.activeExerciseId, false)
 
   if (!exercise) {
     return 0
@@ -167,7 +166,7 @@ export const getExercisePercentageForExercise = async (exerciseId: number) => {
   const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     session.user.id,
     exerciseId,
-    "exercise"
+    false
   )
 
   // Fetch only those challenges
@@ -215,15 +214,11 @@ export async function resetUserExerciseChallengeSubset(
       and(
         eq(userExerciseChallengeSubset.userId, userId),
         eq(userExerciseChallengeSubset.exerciseId, exerciseId),
-        eq(userExerciseChallengeSubset.purpose, "exercise")
+        eq(userExerciseChallengeSubset.isPractice, false)
       )
     )
   // Generate and return a new one
-  return await getOrCreateUserExerciseChallengeSubset(
-    userId,
-    exerciseId,
-    "exercise"
-  )
+  return await getOrCreateUserExerciseChallengeSubset(userId, exerciseId, false)
 }
 
 export async function updateUserGems(userId: string, delta: number) {
@@ -373,10 +368,6 @@ export async function getUserStreak(userId: string) {
   }
 }
 
-/**
- * Checks if all challenges in a exercise are completed for the user, and if so, updates the streak only if lastActivityDate is not today.
- */
-// queries/user-progress.ts
 export async function markExerciseCompleteAndUpdateStreak(
   userId: string,
   exerciseId: number
@@ -411,7 +402,7 @@ export async function markExerciseCompleteAndUpdateStreak(
   const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     userId,
     exerciseId,
-    "exercise"
+    false
   )
   if (!subsetIds.length) {
     logger.warn("No subset found for exercise", { userId, exerciseId })

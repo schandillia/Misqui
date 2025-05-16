@@ -16,7 +16,7 @@ type Props = {
         isActive: boolean
       })
     | null
-  purpose?: "exercise" | "practice"
+  isPractice?: boolean
 }
 
 export const QuizWrapper = (props: Props) => {

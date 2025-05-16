@@ -49,7 +49,7 @@ export const ExerciseButton = ({
     }
 
     const href = isCompleted
-      ? `/exercise/${id}?purpose=practice`
+      ? `/exercise/${id}?isPractice=true`
       : `/exercise/${id}`
     router.push(href)
   }

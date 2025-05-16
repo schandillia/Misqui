@@ -13,15 +13,15 @@ import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
 export const getExercise = cache(
-  async (id?: number, purpose: "exercise" | "practice" = "exercise") => {
-    logger.info("Fetching exercise", { id, purpose })
+  async (id?: number, isPractice: boolean = false) => {
+    logger.info("Fetching exercise", { id, isPractice })
     const session = await auth()
     const courseProgress = await getCourseProgress()
 
     if (!session?.user?.id) {
       logger.warn("No user session found when fetching exercise", {
         id,
-        purpose,
+        isPractice,
       })
       return null
     }
@@ -31,7 +31,7 @@ export const getExercise = cache(
     if (!exerciseId) {
       logger.warn("No exercise ID found when fetching exercise", {
         id,
-        purpose,
+        isPractice,
       })
       return null
     }
@@ -39,7 +39,7 @@ export const getExercise = cache(
     const subsetIds = await getOrCreateUserExerciseChallengeSubset(
       session.user.id,
       exerciseId,
-      purpose
+      isPractice
     )
 
     const data = await db.query.exercises.findFirst({
@@ -60,7 +60,7 @@ export const getExercise = cache(
     if (!data || !data.challenges) {
       logger.warn("Exercise not found or has no challenges", {
         exerciseId,
-        purpose,
+        isPractice,
       })
       return null
     }
@@ -76,7 +76,7 @@ export const getExercise = cache(
       })
       .sort((a, b) => (idOrder.get(a.id) ?? 0) - (idOrder.get(b.id) ?? 0))
 
-    if (purpose === "practice") {
+    if (isPractice) {
       normalizedChallenges.forEach((challenge) => {
         challenge.completed = false
       })
@@ -84,7 +84,7 @@ export const getExercise = cache(
 
     logger.info("Exercise fetched successfully", {
       exerciseId,
-      purpose,
+      isPractice,
       challengeCount: normalizedChallenges.length,
     })
 
@@ -95,10 +95,10 @@ export const getExercise = cache(
 export async function getOrCreateUserExerciseChallengeSubset(
   userId: string,
   exerciseId: number,
-  purpose: "exercise" | "practice"
+  isPractice: boolean
 ) {
-  // For practice purpose, always generate a new subset
-  if (purpose === "practice") {
+  // For practice mode, always generate a new subset
+  if (isPractice) {
     logger.info("Generating new practice subset", { userId, exerciseId })
     const allChallenges = await db.query.challenges.findMany({
       where: eq(challenges.exerciseId, exerciseId),
@@ -115,16 +115,17 @@ export async function getOrCreateUserExerciseChallengeSubset(
         userId,
         exerciseId,
         challengeIds: JSON.stringify(subset),
-        purpose,
+        isPractice: true,
       })
       .onConflictDoUpdate({
         target: [
           userExerciseChallengeSubset.userId,
           userExerciseChallengeSubset.exerciseId,
-          userExerciseChallengeSubset.purpose,
+          userExerciseChallengeSubset.isPractice,
         ],
         set: {
           challengeIds: JSON.stringify(subset),
+          isPractice: true,
         },
       })
 
@@ -136,17 +137,17 @@ export async function getOrCreateUserExerciseChallengeSubset(
     return subset
   }
 
-  // For exercise purpose, try to fetch existing subset first
+  // For exercise mode, try to fetch existing subset first
   logger.info("Fetching existing exercise subset", {
     userId,
     exerciseId,
-    purpose,
+    isPractice: false,
   })
   const existing = await db.query.userExerciseChallengeSubset.findFirst({
     where: and(
       eq(userExerciseChallengeSubset.userId, userId),
       eq(userExerciseChallengeSubset.exerciseId, exerciseId),
-      eq(userExerciseChallengeSubset.purpose, purpose)
+      eq(userExerciseChallengeSubset.isPractice, false)
     ),
   })
   if (existing) {
@@ -160,7 +161,7 @@ export async function getOrCreateUserExerciseChallengeSubset(
         logger.info("Found valid existing exercise subset", {
           userId,
           exerciseId,
-          purpose,
+          isPractice: false,
           subset,
         })
         return subset
@@ -169,13 +170,17 @@ export async function getOrCreateUserExerciseChallengeSubset(
     logger.warn("Invalid or empty subset found, regenerating", {
       userId,
       exerciseId,
-      purpose,
+      isPractice: false,
       subset,
     })
   }
 
   // Generate new random subset for exercise if no valid subset exists
-  logger.info("Generating new exercise subset", { userId, exerciseId, purpose })
+  logger.info("Generating new exercise subset", {
+    userId,
+    exerciseId,
+    isPractice: false,
+  })
   const allChallenges = await db.query.challenges.findMany({
     where: eq(challenges.exerciseId, exerciseId),
   })
@@ -183,7 +188,7 @@ export async function getOrCreateUserExerciseChallengeSubset(
     logger.error("No challenges found for exercise", {
       userId,
       exerciseId,
-      purpose,
+      isPractice: false,
     })
     return []
   }
@@ -197,23 +202,24 @@ export async function getOrCreateUserExerciseChallengeSubset(
       userId,
       exerciseId,
       challengeIds: JSON.stringify(subset),
-      purpose,
+      isPractice: false,
     })
     .onConflictDoUpdate({
       target: [
         userExerciseChallengeSubset.userId,
         userExerciseChallengeSubset.exerciseId,
-        userExerciseChallengeSubset.purpose,
+        userExerciseChallengeSubset.isPractice,
       ],
       set: {
         challengeIds: JSON.stringify(subset),
+        isPractice: false,
       },
     })
 
   logger.info("Exercise subset created and upserted", {
     userId,
     exerciseId,
-    purpose,
+    isPractice: false,
     subset,
   })
   return subset

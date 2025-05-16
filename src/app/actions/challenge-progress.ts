@@ -108,7 +108,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     return
   }
 
-  // For non-practice (exercise purpose), insert progress first
+  // For non-practice (exercise mode), insert progress first
   await db.insert(challengeProgress).values({
     challengeId,
     userId: session.user.id,

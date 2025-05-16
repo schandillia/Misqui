@@ -5,6 +5,7 @@ import {
   integer,
   text,
   timestamp,
+  boolean,
   uniqueIndex,
 } from "drizzle-orm/pg-core"
 
@@ -15,14 +16,14 @@ export const userExerciseChallengeSubset = pgTable(
     userId: uuid("user_id").notNull(),
     exerciseId: integer("exercise_id").notNull(),
     challengeIds: text("challenge_ids").notNull(),
-    purpose: text("purpose", { enum: ["exercise", "practice"] }).notNull(),
+    isPractice: boolean("is_practice").notNull().default(false),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   },
   (table) => ({
-    userExercisePurposeIdx: uniqueIndex("user_exercise_purpose_idx").on(
+    userExerciseIsPracticeIdx: uniqueIndex("user_exercise_is_practice_idx").on(
       table.userId,
       table.exerciseId,
-      table.purpose
+      table.isPractice
     ),
   })
 )

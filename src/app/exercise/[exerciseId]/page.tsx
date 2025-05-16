@@ -9,13 +9,13 @@ const Page = async ({
   searchParams,
 }: {
   params: Promise<{ exerciseId: string }>
-  searchParams: Promise<{ purpose?: string }>
+  searchParams: Promise<{ isPractice?: string }>
 }) => {
   const { exerciseId } = await params
-  const { purpose } = await searchParams
+  const { isPractice } = await searchParams
   const exerciseIdNumber = Number(exerciseId)
-  const exercisePurpose = purpose === "practice" ? "practice" : "exercise"
-  const exerciseData = getExercise(exerciseIdNumber, exercisePurpose)
+  const exerciseIsPractice = isPractice === "true"
+  const exerciseData = getExercise(exerciseIdNumber, exerciseIsPractice)
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
@@ -27,12 +27,11 @@ const Page = async ({
 
   if (!exercise || !userProgress) redirect("/learn")
 
-  const initialPercentage =
-    exercisePurpose === "practice"
-      ? 0
-      : (exercise.challenges.filter((challenge) => challenge.completed).length /
-          Math.min(exercise.challenges.length, app.CHALLENGES_PER_EXERCISE)) *
-        100
+  const initialPercentage = exerciseIsPractice
+    ? 0
+    : (exercise.challenges.filter((challenge) => challenge.completed).length /
+        Math.min(exercise.challenges.length, app.CHALLENGES_PER_EXERCISE)) *
+      100
 
   return (
     <QuizWrapper
@@ -41,7 +40,7 @@ const Page = async ({
       initialGems={userProgress.gems}
       initialPercentage={initialPercentage}
       userSubscription={userSubscription}
-      purpose={exercisePurpose}
+      isPractice={exerciseIsPractice}
     />
   )
 }

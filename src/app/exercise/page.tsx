@@ -3,8 +3,14 @@ import { getExercise, getUserProgress, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 
-const Page = async () => {
-  const exerciseData = getExercise()
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ isPractice?: string }>
+}) => {
+  const { isPractice } = await searchParams
+  const exerciseIsPractice = isPractice === "true"
+  const exerciseData = getExercise(undefined, exerciseIsPractice)
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
@@ -16,10 +22,11 @@ const Page = async () => {
 
   if (!exercise || !userProgress) redirect("/learn")
 
-  const initialPercentage =
-    (exercise.challenges.filter((challenge) => challenge.completed).length /
-      Math.min(exercise.challenges.length, app.CHALLENGES_PER_EXERCISE)) *
-    100
+  const initialPercentage = exerciseIsPractice
+    ? 0
+    : (exercise.challenges.filter((challenge) => challenge.completed).length /
+        Math.min(exercise.challenges.length, app.CHALLENGES_PER_EXERCISE)) *
+      100
 
   return (
     <QuizWrapper
@@ -28,6 +35,7 @@ const Page = async () => {
       initialGems={userProgress.gems}
       initialPercentage={initialPercentage}
       userSubscription={userSubscription}
+      isPractice={exerciseIsPractice}
     />
   )
 }

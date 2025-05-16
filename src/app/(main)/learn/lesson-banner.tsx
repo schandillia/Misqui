@@ -64,7 +64,7 @@ export const LessonBanner = ({
     if (firstExerciseId === activeExerciseId) {
       firstExerciseUrl = "/exercise"
     } else {
-      firstExerciseUrl = `/exercise/${firstExerciseId}?purpose=practice`
+      firstExerciseUrl = `/exercise/${firstExerciseId}?isPractice=true`
     }
   }
 
