@@ -10,8 +10,8 @@ type Props = {
   title: string
   description: string
   unitId: number
-  firstLessonId?: number
-  activeLessonId?: number
+  firstExerciseId?: number
+  activeExerciseId?: number
 }
 
 const renderer = new marked.Renderer()
@@ -32,8 +32,8 @@ export const UnitBanner = ({
   title,
   description,
   unitId,
-  firstLessonId,
-  activeLessonId,
+  firstExerciseId,
+  activeExerciseId,
 }: Props) => {
   const [open, setOpen] = useState(false)
   const [notes, setNotes] = useState<string | null>(null)
@@ -59,12 +59,12 @@ export const UnitBanner = ({
     }
   }
 
-  let firstLessonUrl = ""
-  if (firstLessonId) {
-    if (firstLessonId === activeLessonId) {
-      firstLessonUrl = "/lesson"
+  let firstExerciseUrl = ""
+  if (firstExerciseId) {
+    if (firstExerciseId === activeExerciseId) {
+      firstExerciseUrl = "/exercise"
     } else {
-      firstLessonUrl = `/lesson/${firstLessonId}?purpose=practice`
+      firstExerciseUrl = `/exercise/${firstExerciseId}?purpose=practice`
     }
   }
 
@@ -104,13 +104,13 @@ export const UnitBanner = ({
           >
             Close
           </Button>
-          {firstLessonId && (
+          {firstExerciseId && (
             <Button
               asChild
               variant="primary"
               className="flex-1 button-shine-effect"
             >
-              <Link href={firstLessonUrl}>Quiz</Link>
+              <Link href={firstExerciseUrl}>Quiz</Link>
             </Button>
           )}
         </div>

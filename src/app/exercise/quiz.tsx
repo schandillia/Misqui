@@ -2,30 +2,30 @@
 
 import { useRef } from "react"
 
-import { LessonHeader } from "@/app/lesson/lesson-header"
-import { QuestionBubble } from "@/app/lesson/question-bubble"
+import { QuestionBubble } from "@/app/exercise/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 import { useState, useTransition, useEffect, useMemo } from "react"
-import { Challenge } from "@/app/lesson/challenge"
-import { Footer } from "@/app/lesson/footer"
+import { Challenge } from "@/app/exercise/challenge"
+import { Footer } from "@/app/exercise/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
 import { useWindowSize, useMount } from "react-use"
 import Image from "next/image"
-import { ResultCard } from "@/app/lesson/result-card"
+import { ResultCard } from "@/app/exercise/result-card"
 import { useRouter } from "next/navigation"
 import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
 import { useQuizAudio } from "@/store/use-quiz-audio"
+import { ExerciseHeader } from "@/app/exercise/exercise-header"
 
 type Props = {
-  initialLessonId: number
+  initialExerciseId: number
   initialGems: number
   initialPercentage: number
-  initialLessonChallenges: (typeof challenges.$inferSelect & {
+  initialExerciseChallenges: (typeof challenges.$inferSelect & {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
@@ -34,16 +34,16 @@ type Props = {
         isActive: boolean
       })
     | null
-  purpose?: "lesson" | "practice"
+  purpose?: "exercise" | "practice"
 }
 
 export const Quiz = ({
-  initialLessonId,
+  initialExerciseId,
   initialGems,
   initialPercentage,
-  initialLessonChallenges,
+  initialExerciseChallenges,
   userSubscription,
-  purpose = "lesson",
+  purpose = "exercise",
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
@@ -72,12 +72,12 @@ export const Quiz = ({
 
   const [pending] = useTransition()
   const [serverPending, setServerPending] = useState(false)
-  const [lessonId] = useState(initialLessonId)
+  const [exerciseId] = useState(initialExerciseId)
   const [gems, setGems] = useState(initialGems)
   const [percentage, setPercentage] = useState(() =>
     initialPercentage === 100 ? 0 : initialPercentage
   )
-  const [challenges] = useState(initialLessonChallenges)
+  const [challenges] = useState(initialExerciseChallenges)
   const [activeIndex, setActiveIndex] = useState(() => {
     const incompleteIndex = challenges.findIndex(
       (challenge) => !challenge.completed
@@ -157,7 +157,7 @@ export const Quiz = ({
       playIncorrect()
       setStatus("wrong")
 
-      if (purpose === "lesson" && !userSubscription?.isActive) {
+      if (purpose === "exercise" && !userSubscription?.isActive) {
         setGems((prev) => Math.max(prev - 1, 0))
       }
 
@@ -167,7 +167,7 @@ export const Quiz = ({
           if (response?.error === "gems") {
             setStatus("none")
             setSelectedOption(undefined)
-            if (purpose === "lesson" && !userSubscription?.isActive) {
+            if (purpose === "exercise" && !userSubscription?.isActive) {
               setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
             openGemsModal()
@@ -176,7 +176,7 @@ export const Quiz = ({
         .catch(() => {
           setStatus("none")
           setSelectedOption(undefined)
-          if (purpose === "lesson" && !userSubscription?.isActive) {
+          if (purpose === "exercise" && !userSubscription?.isActive) {
             setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
           }
           toast.error("Something went wrong. Please try again.")
@@ -187,7 +187,7 @@ export const Quiz = ({
     }
   }
 
-  // ✅ Play finish audio once when lesson is completed
+  // ✅ Play finish audio once when exercise is completed
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio.current) {
       hasPlayedFinishAudio.current = true
@@ -223,7 +223,7 @@ export const Quiz = ({
           <h1 className="text-xl lg:text-3xl font-bold text-neutral-700 dark:text-neutral-300">
             Great job!
             <br />
-            You’ve completed the lesson.
+            You’ve completed the exercise.
           </h1>
           <div className="flex items-center gap-x-4 w-full">
             <ResultCard variant="points" value={challenges.length * 10} />
@@ -231,7 +231,7 @@ export const Quiz = ({
           </div>
         </div>
         <Footer
-          lessonId={lessonId}
+          exerciseId={exerciseId}
           status="completed"
           onCheck={() => router.push("/learn")}
         />
@@ -246,7 +246,7 @@ export const Quiz = ({
 
   return (
     <>
-      <LessonHeader
+      <ExerciseHeader
         gems={gems}
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}

@@ -47,7 +47,7 @@ const Page = async () => {
           title="Settings"
           description="Manage your account settings and preferences"
         />
-        
+
         <div className="space-y-6 lg:space-y-8">
           {/* Profile Information */}
           <Card>
@@ -72,7 +72,11 @@ const Page = async () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" defaultValue={session?.user?.email || ""} disabled />
+                  <Input
+                    id="email"
+                    defaultValue={session?.user?.email || ""}
+                    disabled
+                  />
                 </div>
               </div>
             </CardContent>
@@ -87,19 +91,27 @@ const Page = async () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                 <div>
                   <Label>Current Course</Label>
-                  <p className="text-sm font-medium mt-1">{userProgress.activeCourse.title}</p>
+                  <p className="text-sm font-medium mt-1">
+                    {userProgress.activeCourse.title}
+                  </p>
                 </div>
                 <div>
                   <Label>Total Points</Label>
-                  <p className="text-sm font-medium mt-1">{userProgress.points}</p>
+                  <p className="text-sm font-medium mt-1">
+                    {userProgress.points}
+                  </p>
                 </div>
                 <div>
                   <Label>Current Streak</Label>
-                  <p className="text-sm font-medium mt-1">{userProgress.currentStreak} days</p>
+                  <p className="text-sm font-medium mt-1">
+                    {userProgress.currentStreak} days
+                  </p>
                 </div>
                 <div>
                   <Label>Longest Streak</Label>
-                  <p className="text-sm font-medium mt-1">{userProgress.longestStreak} days</p>
+                  <p className="text-sm font-medium mt-1">
+                    {userProgress.longestStreak} days
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -118,11 +130,13 @@ const Page = async () => {
                     {isPro ? "Pro Plan" : "Free Plan"}
                   </p>
                 </div>
-                <button className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isPro 
-                    ? "bg-blue-500 text-white hover:bg-blue-600" 
-                    : "bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-600"
-                }`}>
+                <button
+                  className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium transition-colors ${
+                    isPro
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                  }`}
+                >
                   {isPro ? "Manage Subscription" : "Upgrade to Pro"}
                 </button>
               </div>
@@ -148,7 +162,7 @@ const Page = async () => {
                 <div>
                   <Label>Sound Effects</Label>
                   <p className="text-sm text-muted-foreground">
-                    Enable sound effects during lessons
+                    Enable sound effects during exercises
                   </p>
                 </div>
                 <Switch defaultChecked />

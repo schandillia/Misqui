@@ -18,8 +18,8 @@ export const getCourseById = cache(async (courseId: number) => {
         units: {
           orderBy: (units, { asc }) => [asc(units.order)],
           with: {
-            lessons: {
-              orderBy: (lessons, { asc }) => [asc(lessons.order)],
+            exercises: {
+              orderBy: (exercises, { asc }) => [asc(exercises.order)],
             },
           },
         },

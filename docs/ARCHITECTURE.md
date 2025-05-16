@@ -48,7 +48,7 @@ graph TD
 ```mermaid
 graph TD
     A[courses] --> B[units]
-    B --> C[lessons]
+    B --> C[exercises]
     C --> D[challenges]
     D --> E[challengeOptions]
     D --> F[challengeProgress]
@@ -64,11 +64,11 @@ graph TD
 
 2. **Units**
 
-   - Logical grouping of lessons
+   - Logical grouping of exercises
    - Ordered sequence within a course
    - Contains title and description
 
-3. **Lessons**
+3. **Exercises**
 
    - Individual learning modules
    - Ordered sequence within units
@@ -103,7 +103,7 @@ graph TD
 ### Learning Flow
 
 1. Course selection and enrollment
-2. Unit and lesson progression
+2. Unit and exercise progression
 3. Challenge completion tracking
 4. Progress and achievement updates
 
@@ -125,7 +125,7 @@ graph TD
 
 ### Local State
 
-- Current lesson context
+- Current exercise context
 - Challenge responses
 - Temporary user inputs
 - UI component states

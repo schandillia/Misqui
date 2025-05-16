@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button"
 type Props = {
   disabled?: boolean
   status: "correct" | "wrong" | "none" | "completed"
-  lessonId?: number
+  exerciseId?: number
   onCheck: () => void
 }
 
-export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
+export const Footer = ({ disabled, status, exerciseId, onCheck }: Props) => {
   useKey("Enter", onCheck, {}, [onCheck])
   // Add defaultState to useMedia to prevent hydration mismatch
   const isMobile = useMedia("(max-width: 1024px)", false)
@@ -43,7 +43,7 @@ export const Footer = ({ disabled, status, lessonId, onCheck }: Props) => {
             variant="default"
             size={isMobile ? "sm" : "lg"}
             onClick={() =>
-              (window.location.href = `/lesson/${lessonId}?purpose=practice`)
+              (window.location.href = `/exercise/${exerciseId}?purpose=practice`)
             }
           >
             Practice again

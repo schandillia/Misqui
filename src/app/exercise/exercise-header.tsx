@@ -9,7 +9,7 @@ type Props = {
   hasActiveSubscription: boolean
 }
 
-export const LessonHeader = ({
+export const ExerciseHeader = ({
   gems,
   percentage,
   hasActiveSubscription,

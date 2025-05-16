@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
-const LessonSkeleton = () => (
+const ExerciseSkeleton = () => (
   <div className="flex flex-col min-h-screen">
     {/* Header skeleton */}
     <div className="lg:pt-[50px] pt-[20px] px-10 flex gap-x-7 items-center justify-between max-w-[1140px] mx-auto w-full mb-8">
@@ -35,4 +35,4 @@ const LessonSkeleton = () => (
   </div>
 )
 
-export default LessonSkeleton
+export default ExerciseSkeleton

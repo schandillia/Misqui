@@ -3,41 +3,47 @@ import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, inArray, and } from "drizzle-orm"
 import {
-  lessons,
+  exercises,
   challenges,
   challengeProgress,
-  userLessonChallengeSubset,
+  userExerciseChallengeSubset,
 } from "@/db/schema"
 import { getCourseProgress } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
-export const getLesson = cache(
-  async (id?: number, purpose: "lesson" | "practice" = "lesson") => {
-    logger.info("Fetching lesson", { id, purpose })
+export const getExercise = cache(
+  async (id?: number, purpose: "exercise" | "practice" = "exercise") => {
+    logger.info("Fetching exercise", { id, purpose })
     const session = await auth()
     const courseProgress = await getCourseProgress()
 
     if (!session?.user?.id) {
-      logger.warn("No user session found when fetching lesson", { id, purpose })
+      logger.warn("No user session found when fetching exercise", {
+        id,
+        purpose,
+      })
       return null
     }
 
-    const lessonId = id || courseProgress?.activeLessonId
+    const exerciseId = id || courseProgress?.activeExerciseId
 
-    if (!lessonId) {
-      logger.warn("No lesson ID found when fetching lesson", { id, purpose })
+    if (!exerciseId) {
+      logger.warn("No exercise ID found when fetching exercise", {
+        id,
+        purpose,
+      })
       return null
     }
 
-    const subsetIds = await getOrCreateUserLessonChallengeSubset(
+    const subsetIds = await getOrCreateUserExerciseChallengeSubset(
       session.user.id,
-      lessonId,
+      exerciseId,
       purpose
     )
 
-    const data = await db.query.lessons.findFirst({
-      where: eq(lessons.id, lessonId),
+    const data = await db.query.exercises.findFirst({
+      where: eq(exercises.id, exerciseId),
       with: {
         challenges: {
           where: inArray(challenges.id, subsetIds),
@@ -52,8 +58,8 @@ export const getLesson = cache(
     })
 
     if (!data || !data.challenges) {
-      logger.warn("Lesson not found or has no challenges", {
-        lessonId,
+      logger.warn("Exercise not found or has no challenges", {
+        exerciseId,
         purpose,
       })
       return null
@@ -76,8 +82,8 @@ export const getLesson = cache(
       })
     }
 
-    logger.info("Lesson fetched successfully", {
-      lessonId,
+    logger.info("Exercise fetched successfully", {
+      exerciseId,
       purpose,
       challengeCount: normalizedChallenges.length,
     })
@@ -86,34 +92,36 @@ export const getLesson = cache(
   }
 )
 
-export async function getOrCreateUserLessonChallengeSubset(
+export async function getOrCreateUserExerciseChallengeSubset(
   userId: string,
-  lessonId: number,
-  purpose: "lesson" | "practice"
+  exerciseId: number,
+  purpose: "exercise" | "practice"
 ) {
   // For practice purpose, always generate a new subset
   if (purpose === "practice") {
-    logger.info("Generating new practice subset", { userId, lessonId })
+    logger.info("Generating new practice subset", { userId, exerciseId })
     const allChallenges = await db.query.challenges.findMany({
-      where: eq(challenges.lessonId, lessonId),
+      where: eq(challenges.exerciseId, exerciseId),
     })
     const shuffled = allChallenges.sort(() => Math.random() - 0.5)
-    const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
+    const subset = shuffled
+      .slice(0, app.CHALLENGES_PER_EXERCISE)
+      .map((c) => c.id)
 
     // Upsert practice row
     await db
-      .insert(userLessonChallengeSubset)
+      .insert(userExerciseChallengeSubset)
       .values({
         userId,
-        lessonId,
+        exerciseId,
         challengeIds: JSON.stringify(subset),
         purpose,
       })
       .onConflictDoUpdate({
         target: [
-          userLessonChallengeSubset.userId,
-          userLessonChallengeSubset.lessonId,
-          userLessonChallengeSubset.purpose,
+          userExerciseChallengeSubset.userId,
+          userExerciseChallengeSubset.exerciseId,
+          userExerciseChallengeSubset.purpose,
         ],
         set: {
           challengeIds: JSON.stringify(subset),
@@ -122,19 +130,23 @@ export async function getOrCreateUserLessonChallengeSubset(
 
     logger.info("Practice subset created and upserted", {
       userId,
-      lessonId,
+      exerciseId,
       subset,
     })
     return subset
   }
 
-  // For lesson purpose, try to fetch existing subset first
-  logger.info("Fetching existing lesson subset", { userId, lessonId, purpose })
-  const existing = await db.query.userLessonChallengeSubset.findFirst({
+  // For exercise purpose, try to fetch existing subset first
+  logger.info("Fetching existing exercise subset", {
+    userId,
+    exerciseId,
+    purpose,
+  })
+  const existing = await db.query.userExerciseChallengeSubset.findFirst({
     where: and(
-      eq(userLessonChallengeSubset.userId, userId),
-      eq(userLessonChallengeSubset.lessonId, lessonId),
-      eq(userLessonChallengeSubset.purpose, purpose)
+      eq(userExerciseChallengeSubset.userId, userId),
+      eq(userExerciseChallengeSubset.exerciseId, exerciseId),
+      eq(userExerciseChallengeSubset.purpose, purpose)
     ),
   })
   if (existing) {
@@ -145,9 +157,9 @@ export async function getOrCreateUserLessonChallengeSubset(
         where: inArray(challenges.id, subset),
       })
       if (validChallenges.length === subset.length) {
-        logger.info("Found valid existing lesson subset", {
+        logger.info("Found valid existing exercise subset", {
           userId,
-          lessonId,
+          exerciseId,
           purpose,
           subset,
         })
@@ -156,51 +168,51 @@ export async function getOrCreateUserLessonChallengeSubset(
     }
     logger.warn("Invalid or empty subset found, regenerating", {
       userId,
-      lessonId,
+      exerciseId,
       purpose,
       subset,
     })
   }
 
-  // Generate new random subset for lesson if no valid subset exists
-  logger.info("Generating new lesson subset", { userId, lessonId, purpose })
+  // Generate new random subset for exercise if no valid subset exists
+  logger.info("Generating new exercise subset", { userId, exerciseId, purpose })
   const allChallenges = await db.query.challenges.findMany({
-    where: eq(challenges.lessonId, lessonId),
+    where: eq(challenges.exerciseId, exerciseId),
   })
   if (allChallenges.length === 0) {
-    logger.error("No challenges found for lesson", {
+    logger.error("No challenges found for exercise", {
       userId,
-      lessonId,
+      exerciseId,
       purpose,
     })
     return []
   }
   const shuffled = allChallenges.sort(() => Math.random() - 0.5)
-  const subset = shuffled.slice(0, app.CHALLENGES_PER_LESSON).map((c) => c.id)
+  const subset = shuffled.slice(0, app.CHALLENGES_PER_EXERCISE).map((c) => c.id)
 
   // Upsert in DB
   await db
-    .insert(userLessonChallengeSubset)
+    .insert(userExerciseChallengeSubset)
     .values({
       userId,
-      lessonId,
+      exerciseId,
       challengeIds: JSON.stringify(subset),
       purpose,
     })
     .onConflictDoUpdate({
       target: [
-        userLessonChallengeSubset.userId,
-        userLessonChallengeSubset.lessonId,
-        userLessonChallengeSubset.purpose,
+        userExerciseChallengeSubset.userId,
+        userExerciseChallengeSubset.exerciseId,
+        userExerciseChallengeSubset.purpose,
       ],
       set: {
         challengeIds: JSON.stringify(subset),
       },
     })
 
-  logger.info("Lesson subset created and upserted", {
+  logger.info("Exercise subset created and upserted", {
     userId,
-    lessonId,
+    exerciseId,
     purpose,
     subset,
   })

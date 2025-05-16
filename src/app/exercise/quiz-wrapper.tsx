@@ -1,13 +1,13 @@
 "use client"
 
-import { Quiz } from "@/app/lesson/quiz"
+import { Quiz } from "@/app/exercise/quiz"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 
 type Props = {
-  initialLessonId: number
+  initialExerciseId: number
   initialGems: number
   initialPercentage: number
-  initialLessonChallenges: (typeof challenges.$inferSelect & {
+  initialExerciseChallenges: (typeof challenges.$inferSelect & {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
@@ -16,7 +16,7 @@ type Props = {
         isActive: boolean
       })
     | null
-  purpose?: "lesson" | "practice"
+  purpose?: "exercise" | "practice"
 }
 
 export const QuizWrapper = (props: Props) => {

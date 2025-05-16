@@ -18,8 +18,8 @@ export const PracticeModal = () => {
     <Modal
       showModal={isOpen}
       setShowModal={close}
-      title="Practice lesson"
-      description="Use practice sessions to regain gems and points. You cannot lose gems or points in practice lessons."
+      title="Practice exercise"
+      description="Use practice sessions to regain gems and points. You cannot lose gems or points in practice exercises."
     >
       <div className="w-full space-y-6">
         <div className="flex w-full items-center mb-5 justify-center">

@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { eq } from "drizzle-orm"
 import { challengeProgress, units } from "@/db/schema"
 import { getUserProgress } from "@/db/queries/user-progress"
-import { getLessonPercentageForLesson } from "@/db/queries/user-progress"
+import { getExercisePercentageForExercise } from "@/db/queries/user-progress"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
@@ -30,12 +30,12 @@ export const getUnits = cache(async () => {
       updatedAt: true,
     },
     with: {
-      lessons: {
-        orderBy: (lessons, { asc }) => [asc(lessons.order)],
+      exercises: {
+        orderBy: (exercises, { asc }) => [asc(exercises.order)],
         with: {
           challenges: {
             orderBy: (challenges, { asc }) => [asc(challenges.order)],
-            limit: app.CHALLENGES_PER_LESSON,
+            limit: app.CHALLENGES_PER_EXERCISE,
             with: {
               challengeProgress: {
                 where: eq(challengeProgress.userId, session.user.id),
@@ -47,18 +47,18 @@ export const getUnits = cache(async () => {
     },
   })
 
-  // Compute percentages and completed status for each lesson
+  // Compute percentages and completed status for each exercise
   const normalizedData = await Promise.all(
     data.map(async (unit) => {
-      const lessonsWithCompletedStatus = await Promise.all(
-        unit.lessons.map(async (lesson) => {
-          // Use getLessonPercentageForLesson to compute the percentage
-          const percentage = await getLessonPercentageForLesson(lesson.id)
+      const exercisesWithCompletedStatus = await Promise.all(
+        unit.exercises.map(async (exercise) => {
+          // Use getExercisePercentageForExercise to compute the percentage
+          const percentage = await getExercisePercentageForExercise(exercise.id)
           const completed = percentage === 100
-          return { ...lesson, percentage, completed }
+          return { ...exercise, percentage, completed }
         })
       )
-      return { ...unit, lessons: lessonsWithCompletedStatus }
+      return { ...unit, exercises: exercisesWithCompletedStatus }
     })
   )
 
@@ -102,5 +102,5 @@ export const getUnitNotes = cache(async (unitId: number) => {
       notes: true,
     },
   })
-  return data?.notes || null;
+  return data?.notes || null
 })

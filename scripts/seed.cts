@@ -31,14 +31,14 @@ const main = async () => {
 
     // Clear existing data
     // Important: Ensure units are deleted before courses if there's a foreign key constraint
-    // and challenges/lessons are deleted before units, etc.
+    // and challenges/exercises are deleted before units, etc.
     // Reordering delete operations for potential foreign key constraints:
     await Promise.all([
       db.delete(schema.challengeOptions),
       db.delete(schema.challengeProgress),
-      db.delete(schema.userLessonChallengeSubset), // Depends on user/lesson/challenge
+      db.delete(schema.userExerciseChallengeSubset), // Depends on user/exercise/challenge
       db.delete(schema.challenges),
-      db.delete(schema.lessons),
+      db.delete(schema.exercises),
       db.delete(schema.userProgress), // Depends on user/course
       db.delete(schema.units),
       db.delete(schema.courses),
@@ -100,8 +100,8 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
     ])
     logger.debug("Inserted units (with notes)")
 
-    // Insert lessons
-    await db.insert(schema.lessons).values([
+    // Insert exercises
+    await db.insert(schema.exercises).values([
       {
         id: 1,
         unitId: 1,
@@ -133,87 +133,87 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         title: "Rook",
       },
     ])
-    logger.debug("Inserted lessons")
+    logger.debug("Inserted exercises")
 
     // Insert all challenges
     await db.insert(schema.challenges).values([
-      // Lesson 1: Grid
+      // Exercise 1: Grid
       {
         id: 1,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "SELECT",
         order: 1,
         question: "How many squares are there on a chess board?",
       },
       {
         id: 2,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "ASSIST",
         order: 2,
         question: "The pawn",
       },
       {
         id: 3,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "SELECT",
         order: 3,
         question: "Which of these is the bishop?",
       },
       {
         id: 7,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "ASSIST",
         order: 4,
         question: "What is a rank on a chessboard?",
       },
       {
         id: 8,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "ASSIST",
         order: 5,
         question: "What is a file on a chessboard?",
       },
       {
         id: 9,
-        lessonId: 1,
+        exerciseId: 1,
         challengeType: "ASSIST",
         order: 6,
         question: "What is a diagonal on a chessboard?",
       },
-      // Lesson 2: Pieces
+      // Exercise 2: Pieces
       {
         id: 4,
-        lessonId: 2,
+        exerciseId: 2,
         challengeType: "SELECT",
-        order: 4, // Note: order might be intended to start from 1 for each lesson?
+        order: 4, // Note: order might be intended to start from 1 for each exercise?
         question:
           "What is the starting position of the king in a standard chess game?",
       },
       {
         id: 5,
-        lessonId: 2,
+        exerciseId: 2,
         challengeType: "SELECT",
         order: 5,
         question: "How many points is a queen worth in chess?",
       },
       {
         id: 6,
-        lessonId: 2,
+        exerciseId: 2,
         challengeType: "ASSIST",
         order: 6,
         question: "The knight",
       },
-      // Lesson 3: Opening
+      // Exercise 3: Opening
       {
         id: 10,
-        lessonId: 3,
+        exerciseId: 3,
         challengeType: "SELECT",
         order: 1,
         question: "What is the most common first move in chess?",
       },
       {
         id: 11,
-        lessonId: 3,
+        exerciseId: 3,
         challengeType: "ASSIST",
         order: 2,
         question:
@@ -224,12 +224,12 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
 
     // Insert all challenge options
     await db.insert(schema.challengeOptions).values([
-      // Lesson 1: Challenge 1
+      // Exercise 1: Challenge 1
       { challengeId: 1, correct: true, text: "64" },
       { challengeId: 1, correct: false, text: "54" },
       { challengeId: 1, correct: false, text: "72" },
       { challengeId: 1, correct: false, text: "36" },
-      // Lesson 1: Challenge 2
+      // Exercise 1: Challenge 2
       {
         challengeId: 2,
         correct: true,
@@ -242,7 +242,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         correct: false,
         text: "Moves any number of squares horizontally or vertically",
       },
-      // Lesson 1: Challenge 3
+      // Exercise 1: Challenge 3
       {
         challengeId: 3,
         correct: true,
@@ -259,7 +259,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         correct: false,
         text: "Moves any number of squares in any direction",
       },
-      // Lesson 1: Challenge 7 (Rank)
+      // Exercise 1: Challenge 7 (Rank)
       {
         challengeId: 7,
         correct: true,
@@ -276,7 +276,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         text: "A diagonal line on the chessboard",
       },
       { challengeId: 7, correct: false, text: "The center of the chessboard" },
-      // Lesson 1: Challenge 8 (File)
+      // Exercise 1: Challenge 8 (File)
       {
         challengeId: 8,
         correct: true,
@@ -293,7 +293,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         text: "A diagonal line on the chessboard",
       },
       { challengeId: 8, correct: false, text: "The center of the chessboard" },
-      // Lesson 1: Challenge 9 (Diagonal)
+      // Exercise 1: Challenge 9 (Diagonal)
       {
         challengeId: 9,
         correct: true,
@@ -310,17 +310,17 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         text: "A vertical column on the chessboard",
       },
       { challengeId: 9, correct: false, text: "The center of the chessboard" },
-      // Lesson 2: Challenge 4
+      // Exercise 2: Challenge 4
       { challengeId: 4, correct: true, text: "e1 for White, e8 for Black" },
       { challengeId: 4, correct: false, text: "d1 for White, d8 for Black" },
       { challengeId: 4, correct: false, text: "f1 for White, f8 for Black" },
       { challengeId: 4, correct: false, text: "c1 for White, c8 for Black" },
-      // Lesson 2: Challenge 5
+      // Exercise 2: Challenge 5
       { challengeId: 5, correct: true, text: "9" },
       { challengeId: 5, correct: false, text: "5" },
       { challengeId: 5, correct: false, text: "3" },
       { challengeId: 5, correct: false, text: "1" },
-      // Lesson 2: Challenge 6
+      // Exercise 2: Challenge 6
       { challengeId: 6, correct: true, text: "Moves in an L-shape" },
       {
         challengeId: 6,
@@ -337,7 +337,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         correct: false,
         text: "Moves one or two squares forward on its first move",
       },
-      // Lesson 3: Challenge 10
+      // Exercise 3: Challenge 10
       {
         challengeId: 10,
         correct: true,
@@ -358,7 +358,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         correct: false,
         text: "c4 (English Opening)",
       },
-      // Lesson 3: Challenge 11
+      // Exercise 3: Challenge 11
       {
         challengeId: 11,
         correct: true,

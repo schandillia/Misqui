@@ -7,18 +7,20 @@ import {
   challengeProgress,
   units,
   userProgress,
-  lessons,
+  exercises,
   challenges,
-  userLessonChallengeSubset,
+  userExerciseChallengeSubset,
 } from "@/db/schema"
-import { getLesson } from "@/db/queries/lessons"
 import app from "@/lib/data/app.json"
-import { getOrCreateUserLessonChallengeSubset } from "@/db/queries/lessons"
 import { logger } from "@/lib/logger"
+import {
+  getExercise,
+  getOrCreateUserExerciseChallengeSubset,
+} from "@/db/queries/exercises"
 
-interface LessonChallenge {
+interface ExerciseChallenge {
   id: number
-  lessonId: number
+  exerciseId: number
   challengeType: "SELECT" | "ASSIST"
   question: string
   order: number
@@ -81,8 +83,8 @@ export const getCourseProgress = cache(async () => {
     orderBy: (units, { asc }) => [asc(units.order)],
     where: eq(units.courseId, userProgress.activeCourseId),
     with: {
-      lessons: {
-        orderBy: (lessons, { asc }) => [asc(lessons.order)],
+      exercises: {
+        orderBy: (exercises, { asc }) => [asc(exercises.order)],
         with: {
           unit: true,
           challenges: {
@@ -98,18 +100,18 @@ export const getCourseProgress = cache(async () => {
     },
   })
 
-  const allLessons = unitsInActiveCourse
-    .flatMap((unit) => unit.lessons)
+  const allExercises = unitsInActiveCourse
+    .flatMap((unit) => unit.exercises)
     .sort((a, b) => a.order - b.order)
 
-  let firstIncompleteLesson = undefined
-  for (const lesson of allLessons) {
-    const subsetIds = await getOrCreateUserLessonChallengeSubset(
+  let firstIncompleteExercise = undefined
+  for (const exercise of allExercises) {
+    const subsetIds = await getOrCreateUserExerciseChallengeSubset(
       session.user.id,
-      lesson.id,
-      "lesson"
+      exercise.id,
+      "exercise"
     )
-    const subsetChallenges = lesson.challenges.filter((ch) =>
+    const subsetChallenges = exercise.challenges.filter((ch) =>
       subsetIds.includes(ch.id)
     )
     const isIncomplete = subsetChallenges.some(
@@ -121,56 +123,56 @@ export const getCourseProgress = cache(async () => {
         )
     )
     if (isIncomplete) {
-      firstIncompleteLesson = lesson
+      firstIncompleteExercise = exercise
       break
     }
   }
 
   return {
-    activeLesson: firstIncompleteLesson,
-    activeLessonId: firstIncompleteLesson?.id,
+    activeExercise: firstIncompleteExercise,
+    activeExerciseId: firstIncompleteExercise?.id,
   }
 })
 
-export const getLessonPercentage = cache(async () => {
+export const getExercisePercentage = cache(async () => {
   const courseProgress = await getCourseProgress()
-  if (!courseProgress?.activeLessonId) {
+  if (!courseProgress?.activeExerciseId) {
     return 0
   }
-  const lesson = await getLesson(courseProgress.activeLessonId)
+  const exercise = await getExercise(courseProgress.activeExerciseId)
 
-  if (!lesson) {
+  if (!exercise) {
     return 0
   }
 
-  const completedChallenges = lesson.challenges.filter(
-    (challenge: LessonChallenge) => challenge.completed
+  const completedChallenges = exercise.challenges.filter(
+    (challenge: ExerciseChallenge) => challenge.completed
   )
   const percentage = Math.round(
     100 *
       (completedChallenges.length /
-        Math.min(lesson.challenges.length, app.CHALLENGES_PER_LESSON))
+        Math.min(exercise.challenges.length, app.CHALLENGES_PER_EXERCISE))
   )
 
   return percentage
 })
 
-export const getLessonPercentageForLesson = async (lessonId: number) => {
+export const getExercisePercentageForExercise = async (exerciseId: number) => {
   const session = await auth()
   if (!session?.user?.id) {
     return 0
   }
 
   // Get the persisted subset
-  const subsetIds = await getOrCreateUserLessonChallengeSubset(
+  const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     session.user.id,
-    lessonId,
-    "lesson"
+    exerciseId,
+    "exercise"
   )
 
   // Fetch only those challenges
-  const lesson = await db.query.lessons.findFirst({
-    where: eq(lessons.id, lessonId),
+  const exercise = await db.query.exercises.findFirst({
+    where: eq(exercises.id, exerciseId),
     with: {
       challenges: {
         where: inArray(challenges.id, subsetIds),
@@ -183,11 +185,11 @@ export const getLessonPercentageForLesson = async (lessonId: number) => {
     },
   })
 
-  if (!lesson || !lesson.challenges) {
+  if (!exercise || !exercise.challenges) {
     return 0
   }
 
-  const completedChallenges = lesson.challenges.filter(
+  const completedChallenges = exercise.challenges.filter(
     (challenge) =>
       challenge.challengeProgress &&
       challenge.challengeProgress.length > 0 &&
@@ -202,22 +204,26 @@ export const getLessonPercentageForLesson = async (lessonId: number) => {
   return percentage
 }
 
-export async function resetUserLessonChallengeSubset(
+export async function resetUserExerciseChallengeSubset(
   userId: string,
-  lessonId: number
+  exerciseId: number
 ) {
   // Delete the old subset
   await db
-    .delete(userLessonChallengeSubset)
+    .delete(userExerciseChallengeSubset)
     .where(
       and(
-        eq(userLessonChallengeSubset.userId, userId),
-        eq(userLessonChallengeSubset.lessonId, lessonId),
-        eq(userLessonChallengeSubset.purpose, "lesson")
+        eq(userExerciseChallengeSubset.userId, userId),
+        eq(userExerciseChallengeSubset.exerciseId, exerciseId),
+        eq(userExerciseChallengeSubset.purpose, "exercise")
       )
     )
   // Generate and return a new one
-  return await getOrCreateUserLessonChallengeSubset(userId, lessonId, "lesson")
+  return await getOrCreateUserExerciseChallengeSubset(
+    userId,
+    exerciseId,
+    "exercise"
+  )
 }
 
 export async function updateUserGems(userId: string, delta: number) {
@@ -368,12 +374,12 @@ export async function getUserStreak(userId: string) {
 }
 
 /**
- * Checks if all challenges in a lesson are completed for the user, and if so, updates the streak only if lastActivityDate is not today.
+ * Checks if all challenges in a exercise are completed for the user, and if so, updates the streak only if lastActivityDate is not today.
  */
 // queries/user-progress.ts
-export async function markLessonCompleteAndUpdateStreak(
+export async function markExerciseCompleteAndUpdateStreak(
   userId: string,
-  lessonId: number
+  exerciseId: number
 ) {
   // Fetch user progress to check lastActivityDate
   const progress = await db.query.userProgress.findFirst({
@@ -394,24 +400,27 @@ export async function markLessonCompleteAndUpdateStreak(
     String(now.getDate()).padStart(2, "0")
 
   if (progress.lastActivityDate === todayStr) {
-    logger.info("Streak already updated today, skipping", { userId, lessonId })
+    logger.info("Streak already updated today, skipping", {
+      userId,
+      exerciseId,
+    })
     return // Already updated today
   }
 
-  // Fetch the current subset of challenge IDs for this user and lesson
-  const subsetIds = await getOrCreateUserLessonChallengeSubset(
+  // Fetch the current subset of challenge IDs for this user and exercise
+  const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     userId,
-    lessonId,
-    "lesson"
+    exerciseId,
+    "exercise"
   )
   if (!subsetIds.length) {
-    logger.warn("No subset found for lesson", { userId, lessonId })
+    logger.warn("No subset found for exercise", { userId, exerciseId })
     return
   }
 
-  logger.info("Checking lesson completion", {
+  logger.info("Checking exercise completion", {
     userId,
-    lessonId,
+    exerciseId,
     subsetIds,
   })
 
@@ -426,7 +435,7 @@ export async function markLessonCompleteAndUpdateStreak(
   // Log progress for debugging
   logger.info("Challenge progress for subset", {
     userId,
-    lessonId,
+    exerciseId,
     progressList: progressList.map((p) => ({
       challengeId: p.challengeId,
       completed: p.completed,
@@ -438,11 +447,14 @@ export async function markLessonCompleteAndUpdateStreak(
     progressList.find((p) => p.challengeId === id && p.completed)
   )
   if (!allCompleted) {
-    logger.info("Lesson not fully completed", { userId, lessonId })
+    logger.info("Exercise not fully completed", { userId, exerciseId })
     return
   }
 
   // Update streak
   await updateUserStreak(userId)
-  logger.info("Streak updated after lesson completion", { userId, lessonId })
+  logger.info("Streak updated after exercise completion", {
+    userId,
+    exerciseId,
+  })
 }

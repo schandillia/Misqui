@@ -5,7 +5,7 @@ import { db } from "@/db/drizzle"
 import {
   getUserProgress,
   getUserSubscription,
-  markLessonCompleteAndUpdateStreak,
+  markExerciseCompleteAndUpdateStreak,
 } from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
@@ -47,7 +47,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     throw new Error("Challenge not found")
   }
 
-  const lessonId = challenge.lessonId
+  const exerciseId = challenge.exerciseId
 
   const existingChallengeProgress = await db.query.challengeProgress.findFirst({
     where: and(
@@ -74,7 +74,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     logger.info("Practice challenge completed", {
       userId: session.user.id,
       challengeId,
-      lessonId,
+      exerciseId,
     })
     await db
       .update(challengeProgress)
@@ -91,24 +91,24 @@ export const upsertChallengeProgress = async (challengeId: number) => {
       })
       .where(eq(userProgress.userId, session.user.id))
 
-    // Check if lesson is complete and update streak after updating progress
-    await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+    // Check if exercise is complete and update streak after updating progress
+    await markExerciseCompleteAndUpdateStreak(session.user.id, exerciseId)
 
     revalidatePath("/learn")
-    revalidatePath("/lesson")
+    revalidatePath("/exercise")
     revalidatePath("/missions")
     revalidatePath("/leaderboard")
-    revalidatePath(`/lesson/${lessonId}`)
+    revalidatePath(`/exercise/${exerciseId}`)
 
     logger.info("Practice challenge progress and rewards updated", {
       userId: session.user.id,
       challengeId,
-      lessonId,
+      exerciseId,
     })
     return
   }
 
-  // For non-practice (lesson purpose), insert progress first
+  // For non-practice (exercise purpose), insert progress first
   await db.insert(challengeProgress).values({
     challengeId,
     userId: session.user.id,
@@ -122,18 +122,18 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     })
     .where(eq(userProgress.userId, session.user.id))
 
-  // Check if lesson is complete and update streak after inserting progress
-  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+  // Check if exercise is complete and update streak after inserting progress
+  await markExerciseCompleteAndUpdateStreak(session.user.id, exerciseId)
 
   revalidatePath("/learn")
-  revalidatePath("/lesson")
+  revalidatePath("/exercise")
   revalidatePath("/missions")
   revalidatePath("/leaderboard")
-  revalidatePath(`/lesson/${lessonId}`)
+  revalidatePath(`/exercise/${exerciseId}`)
 
   logger.info("Challenge progress upserted and points updated", {
     userId: session.user.id,
     challengeId,
-    lessonId,
+    exerciseId,
   })
 }

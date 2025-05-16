@@ -8,17 +8,17 @@ import { Promo } from "@/components/promo"
 import { Missions } from "@/components/missions"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
-import { lessons, units, courses } from "@/db/schema"
+import { exercises, units, courses } from "@/db/schema"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-type Lesson = typeof lessons.$inferSelect & {
+type Exercise = typeof exercises.$inferSelect & {
   completed: boolean
   percentage: number
 }
 
 type UnitType = typeof units.$inferSelect & {
-  lessons: Lesson[]
+  exercises: Exercise[]
 }
 
 type ActiveCourse = typeof courses.$inferSelect
@@ -33,13 +33,13 @@ type LearnData = {
   }
   units: UnitType[]
   courseProgress: {
-    activeLesson?:
-      | (typeof lessons.$inferSelect & {
+    activeExercise?:
+      | (typeof exercises.$inferSelect & {
           unit: typeof units.$inferSelect
         })
       | undefined
   }
-  lessonPercentage: number
+  exercisePercentage: number
   userSubscription: { isActive?: boolean } | null
 }
 
@@ -60,7 +60,7 @@ export function LearnClient({ initialData }: Props) {
     userProgress,
     units,
     courseProgress,
-    lessonPercentage,
+    exercisePercentage,
     userSubscription,
   } = data
   const isPro = !!userSubscription?.isActive
@@ -88,9 +88,9 @@ export function LearnClient({ initialData }: Props) {
               order={unit.order}
               description={unit.description}
               title={unit.title}
-              lessons={unit.lessons}
-              activeLesson={courseProgress.activeLesson}
-              activeLessonPercentage={lessonPercentage}
+              exercises={unit.exercises}
+              activeExercise={courseProgress.activeExercise}
+              activeExercisePercentage={exercisePercentage}
               gems={userProgress.gems}
               hasActiveSubscription={isPro}
             />

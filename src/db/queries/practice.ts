@@ -2,26 +2,26 @@ import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, inArray } from "drizzle-orm"
-import { lessons, challenges, challengeProgress } from "@/db/schema"
-import { getOrCreateUserLessonChallengeSubset } from "@/db/queries/lessons"
+import { exercises, challenges, challengeProgress } from "@/db/schema"
+import { getOrCreateUserExerciseChallengeSubset } from "@/db/queries/exercises"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
-export const getPracticeLesson = cache(async (lessonId: number) => {
+export const getPracticeExercise = cache(async (exerciseId: number) => {
   const session = await auth()
 
   if (!session?.user?.id) {
     return null
   }
 
-  const subsetIds = await getOrCreateUserLessonChallengeSubset(
+  const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     session.user.id,
-    lessonId,
+    exerciseId,
     "practice"
   )
 
-  const data = await db.query.lessons.findFirst({
-    where: eq(lessons.id, lessonId),
+  const data = await db.query.exercises.findFirst({
+    where: eq(exercises.id, exerciseId),
     with: {
       challenges: {
         where: inArray(challenges.id, subsetIds),
@@ -53,31 +53,36 @@ export const getPracticeLesson = cache(async (lessonId: number) => {
   return { ...data, challenges: normalizedChallenges }
 })
 
-export async function getPracticeChallenges(lessonId: number, userId: string) {
-  logger.info("Fetching practice challenges", { lessonId, userId })
+export async function getPracticeChallenges(
+  exerciseId: number,
+  userId: string
+) {
+  logger.info("Fetching practice challenges", { exerciseId, userId })
   try {
-    const lesson = await db.query.lessons.findFirst({
-      where: eq(lessons.id, lessonId),
+    const exercise = await db.query.exercises.findFirst({
+      where: eq(exercises.id, exerciseId),
       with: {
         challenges: true,
       },
     })
-    if (!lesson || !lesson.challenges) {
-      logger.warn("Lesson or challenges not found for practice", { lessonId })
+    if (!exercise || !exercise.challenges) {
+      logger.warn("Exercise or challenges not found for practice", {
+        exerciseId,
+      })
       return []
     }
     // Randomize challenges for practice
-    const shuffled = lesson.challenges.sort(() => Math.random() - 0.5)
-    const selected = shuffled.slice(0, app.CHALLENGES_PER_LESSON)
+    const shuffled = exercise.challenges.sort(() => Math.random() - 0.5)
+    const selected = shuffled.slice(0, app.CHALLENGES_PER_EXERCISE)
     logger.info("Practice challenges selected", {
-      lessonId,
+      exerciseId,
       userId,
       challengeIds: selected.map((c) => c.id),
     })
     return selected
   } catch (error) {
     logger.error("Error fetching practice challenges", {
-      lessonId,
+      exerciseId,
       userId,
       error,
     })

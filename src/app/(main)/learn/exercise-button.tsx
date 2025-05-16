@@ -6,7 +6,7 @@ import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import "react-circular-progressbar/dist/styles.css"
-import { LessonButtonWrapper } from "@/app/(main)/learn/lesson-button-wrapper"
+import { ExerciseButtonWrapper } from "@/app/(main)/learn/exercise-button-wrapper"
 import { useGemsModal } from "@/store/use-gems-modal"
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
   isTimed: boolean
 }
 
-export const LessonButton = ({
+export const ExerciseButton = ({
   id,
   index,
   totalCount,
@@ -49,8 +49,8 @@ export const LessonButton = ({
     }
 
     const href = isCompleted
-      ? `/lesson/${id}?purpose=practice`
-      : `/lesson/${id}`
+      ? `/exercise/${id}?purpose=practice`
+      : `/exercise/${id}`
     router.push(href)
   }
 
@@ -64,7 +64,7 @@ export const LessonButton = ({
       aria-disabled={locked}
       style={{ pointerEvents: locked ? "none" : "auto" }}
     >
-      <LessonButtonWrapper
+      <ExerciseButtonWrapper
         index={index}
         totalCount={totalCount}
         isCompleted={isCompleted}
@@ -146,7 +146,7 @@ export const LessonButton = ({
             )}
           </Button>
         )}
-      </LessonButtonWrapper>
+      </ExerciseButtonWrapper>
     </div>
   )
 }

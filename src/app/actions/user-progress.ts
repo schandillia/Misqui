@@ -6,7 +6,7 @@ import {
   getCourseById,
   getUserProgress,
   getUserSubscription,
-  markLessonCompleteAndUpdateStreak,
+  markExerciseCompleteAndUpdateStreak,
 } from "@/db/queries"
 import { challengeProgress, challenges, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
@@ -25,8 +25,8 @@ export const upsertUserProgress = async (courseId: number) => {
     throw new Error("Course not found")
   }
 
-  if (!course.units.length || !course.units[0].lessons.length) {
-    throw new Error("Course has no lessons")
+  if (!course.units.length || !course.units[0].exercises.length) {
+    throw new Error("Course has no exercises")
   }
 
   const existingUserProgress = await getUserProgress()
@@ -66,7 +66,7 @@ export const reduceGems = async (challengeId: number) => {
 
   if (!challenge) throw new Error("Challenge not found")
 
-  const lessonId = challenge.lessonId
+  const exerciseId = challenge.exerciseId
 
   const existingChallengeProgress = await db.query.challengeProgress.findFirst({
     where: and(
@@ -93,7 +93,7 @@ export const reduceGems = async (challengeId: number) => {
   revalidatePath("/learn")
   revalidatePath("/missions")
   revalidatePath("/leaderboard")
-  revalidatePath(`/lesson/${lessonId}`)
+  revalidatePath(`/exercise/${exerciseId}`)
 }
 
 export const refillGems = async () => {
@@ -121,14 +121,14 @@ export const refillGems = async () => {
   revalidatePath("/leaderboard")
 }
 
-export const updateStreakAfterLesson = async (lessonId: number) => {
+export const updateStreakAfterExercise = async (exerciseId: number) => {
   const session = await auth()
   console.log(
-    "SERVER: updateStreakAfterLesson called for",
+    "SERVER: updateStreakAfterExercise called for",
     session?.user?.id,
-    lessonId
+    exerciseId
   )
   if (!session?.user?.id) throw new Error("Unauthorized")
-  await markLessonCompleteAndUpdateStreak(session.user.id, lessonId)
+  await markExerciseCompleteAndUpdateStreak(session.user.id, exerciseId)
   return { success: true }
 }

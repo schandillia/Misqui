@@ -1,5 +1,5 @@
 {
-  "id": "c4ac7809-0a81-4653-8ff6-28f22600cd6c",
+  "id": "1d302b9f-fe1e-45af-8474-34e6fa1894bb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -529,8 +529,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "lesson_id": {
-          "name": "lesson_id",
+        "exercise_id": {
+          "name": "exercise_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -571,12 +571,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "challenges_lesson_id_lessons_id_fk": {
-          "name": "challenges_lesson_id_lessons_id_fk",
+        "challenges_exercise_id_exercises_id_fk": {
+          "name": "challenges_exercise_id_exercises_id_fk",
           "tableFrom": "challenges",
-          "tableTo": "lessons",
+          "tableTo": "exercises",
           "columnsFrom": [
-            "lesson_id"
+            "exercise_id"
           ],
           "columnsTo": [
             "id"
@@ -658,8 +658,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.lessons": {
-      "name": "lessons",
+    "public.exercises": {
+      "name": "exercises",
       "schema": "",
       "columns": {
         "id": {
@@ -710,9 +710,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "lessons_unit_id_units_id_fk": {
-          "name": "lessons_unit_id_units_id_fk",
-          "tableFrom": "lessons",
+        "exercises_unit_id_units_id_fk": {
+          "name": "exercises_unit_id_units_id_fk",
+          "tableFrom": "exercises",
           "tableTo": "units",
           "columnsFrom": [
             "unit_id"
@@ -992,8 +992,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user_lesson_challenge_subset": {
-      "name": "user_lesson_challenge_subset",
+    "public.user_exercise_challenge_subset": {
+      "name": "user_exercise_challenge_subset",
       "schema": "",
       "columns": {
         "id": {
@@ -1008,8 +1008,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "lesson_id": {
-          "name": "lesson_id",
+        "exercise_id": {
+          "name": "exercise_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -1035,8 +1035,8 @@
         }
       },
       "indexes": {
-        "user_lesson_purpose_idx": {
-          "name": "user_lesson_purpose_idx",
+        "user_exercise_purpose_idx": {
+          "name": "user_exercise_purpose_idx",
           "columns": [
             {
               "expression": "user_id",
@@ -1045,7 +1045,7 @@
               "nulls": "last"
             },
             {
-              "expression": "lesson_id",
+              "expression": "exercise_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

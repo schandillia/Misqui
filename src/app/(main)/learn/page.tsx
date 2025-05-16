@@ -1,7 +1,7 @@
 import { LearnClient } from "@/app/(main)/learn/learn-client"
 import {
   getCourseProgress,
-  getLessonPercentage,
+  getExercisePercentage,
   getUnits,
   getUserProgress,
   getUserSubscription,
@@ -13,13 +13,13 @@ const Page = async () => {
     userProgress,
     units,
     courseProgress,
-    lessonPercentage,
+    exercisePercentage,
     userSubscription,
   ] = await Promise.all([
     getUserProgress(),
     getUnits(),
     getCourseProgress(),
-    getLessonPercentage(),
+    getExercisePercentage(),
     getUserSubscription(),
   ])
 
@@ -40,7 +40,7 @@ const Page = async () => {
         },
         units: units.map((u) => ({ notes: null, ...u })),
         courseProgress,
-        lessonPercentage,
+        exercisePercentage,
         userSubscription,
       }}
     />

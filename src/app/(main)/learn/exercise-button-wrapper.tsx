@@ -8,10 +8,7 @@ type Props = {
   current?: boolean
 }
 
-export const LessonButtonWrapper = ({
-  children,
-  current,
-}: Props) => {
+export const ExerciseButtonWrapper = ({ children, current }: Props) => {
   return (
     <div className="relative flex flex-col items-center justify-center h-[102px] pt-0">
       <div className="h-12 mb-2 flex items-end justify-center">
@@ -22,7 +19,7 @@ export const LessonButtonWrapper = ({
             <div className="absolute left-1/2 -bottom-2 size-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-black transform -translate-x-1/2" />
           </div>
         ) : (
-          <div style={{ height: '40px' }} />
+          <div style={{ height: "40px" }} />
         )}
       </div>
       {children}

@@ -1,4 +1,4 @@
-import { ChallengeCard } from "@/app/lesson/challenge-card"
+import { ChallengeCard } from "@/app/exercise/challenge-card"
 import { challengeOptions, challenges } from "@/db/schema"
 
 type Props = {

@@ -38,7 +38,7 @@ export const units = pgTable("units", {
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
-export const lessons = pgTable("lessons", {
+export const exercises = pgTable("exercises", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   unitId: integer("unit_id")
@@ -61,12 +61,12 @@ export const unitsRelations = relations(units, ({ many, one }) => ({
     fields: [units.courseId],
     references: [courses.id],
   }),
-  lessons: many(lessons),
+  exercises: many(exercises),
 }))
 
-export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+export const exercisesRelations = relations(exercises, ({ one, many }) => ({
   unit: one(units, {
-    fields: [lessons.unitId],
+    fields: [exercises.unitId],
     references: [units.id],
   }),
   challenges: many(challenges),

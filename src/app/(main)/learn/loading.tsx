@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 
 const Loading = () => (
   <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -62,11 +62,14 @@ const Loading = () => (
             </div>
             <Skeleton className="w-24 h-10" />
           </div>
-          {/* Lesson buttons skeleton */}
+          {/* Exercise buttons skeleton */}
           <div className="mt-12">
             <div className="flex flex-wrap gap-y-16 justify-between w-full">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-1/2 sm:w-1/4 xl:w-1/6 flex justify-center h-[102px]">
+                <div
+                  key={i}
+                  className="w-1/2 sm:w-1/4 xl:w-1/6 flex justify-center h-[102px]"
+                >
                   <Skeleton className="w-[70px] h-[70px] rounded-3xl" />
                 </div>
               ))}
@@ -76,6 +79,6 @@ const Loading = () => (
       ))}
     </div>
   </div>
-);
+)
 
-export default Loading;
+export default Loading

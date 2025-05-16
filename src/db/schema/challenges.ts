@@ -10,12 +10,12 @@ import {
   uuid,
 } from "drizzle-orm/pg-core"
 import { challengeTypeEnum } from "@/db/schema/types"
-import { lessons } from "@/db/schema/courses"
+import { exercises } from "@/db/schema/courses"
 
 export const challenges = pgTable("challenges", {
   id: serial("id").primaryKey(),
-  lessonId: integer("lesson_id")
-    .references(() => lessons.id, { onDelete: "cascade" })
+  exerciseId: integer("exercise_id")
+    .references(() => exercises.id, { onDelete: "cascade" })
     .notNull(),
   challengeType: challengeTypeEnum("challenge_type").notNull(),
   question: text("question").notNull(),
@@ -50,9 +50,9 @@ export const challengeProgress = pgTable("challenge_progress", {
 
 // Relations
 export const challengesRelations = relations(challenges, ({ one, many }) => ({
-  lesson: one(lessons, {
-    fields: [challenges.lessonId],
-    references: [lessons.id],
+  exercise: one(exercises, {
+    fields: [challenges.exerciseId],
+    references: [exercises.id],
   }),
   challengeOptions: many(challengeOptions),
   challengeProgress: many(challengeProgress),
