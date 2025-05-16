@@ -51,10 +51,10 @@ const Loading = () => (
         <Skeleton className="w-40 h-8" />
         <Skeleton className="w-10 h-8" />
       </div>
-      {/* Units skeleton */}
-      {[...Array(2)].map((_, unitIdx) => (
-        <div key={unitIdx} className="mb-10">
-          {/* UnitBanner skeleton */}
+      {/* Lessons skeleton */}
+      {[...Array(2)].map((_, lessonIdx) => (
+        <div key={lessonIdx} className="mb-10">
+          {/* LessonBanner skeleton */}
           <div className="w-full rounded-2xl bg-muted p-5 flex items-center justify-between mb-8">
             <div className="space-y-2.5">
               <Skeleton className="w-32 h-8 mb-2" />

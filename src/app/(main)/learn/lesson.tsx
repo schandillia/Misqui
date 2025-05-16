@@ -1,8 +1,8 @@
 "use client"
 
 import { ExerciseButton } from "@/app/(main)/learn/exercise-button"
-import { UnitBanner } from "@/app/(main)/learn/unit-banner"
-import { exercises, units } from "@/db/schema"
+import { LessonBanner } from "@/app/(main)/learn/lesson-banner"
+import { exercises, lessons } from "@/db/schema"
 
 type Exercise = typeof exercises.$inferSelect & {
   completed: boolean
@@ -17,7 +17,7 @@ type Props = {
   exercises: Exercise[]
   activeExercise:
     | (typeof exercises.$inferSelect & {
-        unit: typeof units.$inferSelect
+        lesson: typeof lessons.$inferSelect
       })
     | undefined
   activeExercisePercentage: number
@@ -25,7 +25,7 @@ type Props = {
   hasActiveSubscription: boolean
 }
 
-export const Unit = ({
+export const Lesson = ({
   id,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   order,
@@ -39,10 +39,10 @@ export const Unit = ({
 }: Props) => {
   return (
     <>
-      <UnitBanner
+      <LessonBanner
         title={title}
         description={description}
-        unitId={id}
+        lessonId={id}
         firstExerciseId={exercises[0]?.id}
       />
       <div className="mt-12">

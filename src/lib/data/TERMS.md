@@ -24,6 +24,6 @@ You agree to defend, indemnify, and hold harmless {{BRAND_NAME}} and its directo
 
 ## Governing Law
 
-These Terms and Conditions shall be governed by and construed under the laws of the Commonwealth of Pennsylvania, United States of America, excluding any conflict of laws provisions, regardless of your country of origin or where you access the Service.
+These Terms and Conditions shall be governed by and construed under the laws of the Commonwealth of Pennsylvania, Lessoned States of America, excluding any conflict of laws provisions, regardless of your country of origin or where you access the Service.
 
 _Last revised on {{LAST_REVISED_DATE}}_

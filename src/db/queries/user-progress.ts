@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { eq, inArray, and } from "drizzle-orm"
 import {
   challengeProgress,
-  units,
+  lessons,
   userProgress,
   exercises,
   challenges,
@@ -79,14 +79,14 @@ export const getCourseProgress = cache(async () => {
     return null
   }
 
-  const unitsInActiveCourse = await db.query.units.findMany({
-    orderBy: (units, { asc }) => [asc(units.order)],
-    where: eq(units.courseId, userProgress.activeCourseId),
+  const lessonsInActiveCourse = await db.query.lessons.findMany({
+    orderBy: (lessons, { asc }) => [asc(lessons.order)],
+    where: eq(lessons.courseId, userProgress.activeCourseId),
     with: {
       exercises: {
         orderBy: (exercises, { asc }) => [asc(exercises.order)],
         with: {
-          unit: true,
+          lesson: true,
           challenges: {
             orderBy: (challenges, { asc }) => [asc(challenges.order)],
             with: {
@@ -100,8 +100,8 @@ export const getCourseProgress = cache(async () => {
     },
   })
 
-  const allExercises = unitsInActiveCourse
-    .flatMap((unit) => unit.exercises)
+  const allExercises = lessonsInActiveCourse
+    .flatMap((lesson) => lesson.exercises)
     .sort((a, b) => a.order - b.order)
 
   let firstIncompleteExercise = undefined

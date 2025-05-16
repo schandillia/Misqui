@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react"
 import { ChevronDown } from "lucide-react"
 
-export function UnitNotesScroller({ html }: { html: string }) {
+export function LessonNotesScroller({ html }: { html: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showScrollArrow, setShowScrollArrow] = useState(false)
 
@@ -12,7 +12,8 @@ export function UnitNotesScroller({ html }: { html: string }) {
       if (!el) return
       setShowScrollArrow(
         el.scrollHeight > el.clientHeight &&
-        Math.ceil(el.scrollTop + el.clientHeight) < Math.floor(el.scrollHeight)
+          Math.ceil(el.scrollTop + el.clientHeight) <
+            Math.floor(el.scrollHeight)
       )
     }
     checkScroll()
@@ -85,4 +86,4 @@ export function UnitNotesScroller({ html }: { html: string }) {
       `}</style>
     </>
   )
-} 
+}

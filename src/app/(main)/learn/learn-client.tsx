@@ -2,13 +2,13 @@
 
 import useSWR from "swr"
 import { Header } from "@/app/(main)/learn/header"
-import { Unit } from "@/app/(main)/learn/unit"
+import { Lesson } from "@/app/(main)/learn/lesson"
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { Promo } from "@/components/promo"
 import { Missions } from "@/components/missions"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
-import { exercises, units, courses } from "@/db/schema"
+import { exercises, lessons, courses } from "@/db/schema"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -17,7 +17,7 @@ type Exercise = typeof exercises.$inferSelect & {
   percentage: number
 }
 
-type UnitType = typeof units.$inferSelect & {
+type LessonType = typeof lessons.$inferSelect & {
   exercises: Exercise[]
 }
 
@@ -31,11 +31,11 @@ type LearnData = {
     currentStreak: number
     lastActivityDate?: string | null
   }
-  units: UnitType[]
+  lessons: LessonType[]
   courseProgress: {
     activeExercise?:
       | (typeof exercises.$inferSelect & {
-          unit: typeof units.$inferSelect
+          lesson: typeof lessons.$inferSelect
         })
       | undefined
   }
@@ -58,7 +58,7 @@ export function LearnClient({ initialData }: Props) {
 
   const {
     userProgress,
-    units,
+    lessons,
     courseProgress,
     exercisePercentage,
     userSubscription,
@@ -81,14 +81,14 @@ export function LearnClient({ initialData }: Props) {
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
-        {units.map((unit: UnitType) => (
-          <div key={unit.id} className="mb-10">
-            <Unit
-              id={unit.id}
-              order={unit.order}
-              description={unit.description}
-              title={unit.title}
-              exercises={unit.exercises}
+        {lessons.map((lesson: LessonType) => (
+          <div key={lesson.id} className="mb-10">
+            <Lesson
+              id={lesson.id}
+              order={lesson.order}
+              description={lesson.description}
+              title={lesson.title}
+              exercises={lesson.exercises}
               activeExercise={courseProgress.activeExercise}
               activeExercisePercentage={exercisePercentage}
               gems={userProgress.gems}

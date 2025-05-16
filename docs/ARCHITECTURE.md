@@ -47,7 +47,7 @@ graph TD
 
 ```mermaid
 graph TD
-    A[courses] --> B[units]
+    A[courses] --> B[lessons]
     B --> C[exercises]
     C --> D[challenges]
     D --> E[challengeOptions]
@@ -60,9 +60,9 @@ graph TD
 
    - Primary educational content container
    - Contains title, description, and metadata
-   - One-to-many relationship with units
+   - One-to-many relationship with lessons
 
-2. **Units**
+2. **Lessons**
 
    - Logical grouping of exercises
    - Ordered sequence within a course
@@ -71,7 +71,7 @@ graph TD
 3. **Exercises**
 
    - Individual learning modules
-   - Ordered sequence within units
+   - Ordered sequence within lessons
    - Contains challenges and learning content
 
 4. **Challenges**
@@ -103,7 +103,7 @@ graph TD
 ### Learning Flow
 
 1. Course selection and enrollment
-2. Unit and exercise progression
+2. Lesson and exercise progression
 3. Challenge completion tracking
 4. Progress and achievement updates
 
@@ -236,7 +236,7 @@ graph TD
 
 ### Testing Strategy
 
-- Unit tests
+- Lesson tests
 - Integration tests
 - E2E tests
 - Performance tests

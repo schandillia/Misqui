@@ -2,7 +2,7 @@ import { LearnClient } from "@/app/(main)/learn/learn-client"
 import {
   getCourseProgress,
   getExercisePercentage,
-  getUnits,
+  getLessons,
   getUserProgress,
   getUserSubscription,
 } from "@/db/queries"
@@ -11,13 +11,13 @@ import { redirect } from "next/navigation"
 const Page = async () => {
   const [
     userProgress,
-    units,
+    lessons,
     courseProgress,
     exercisePercentage,
     userSubscription,
   ] = await Promise.all([
     getUserProgress(),
-    getUnits(),
+    getLessons(),
     getCourseProgress(),
     getExercisePercentage(),
     getUserSubscription(),
@@ -38,7 +38,7 @@ const Page = async () => {
           ...userProgress,
           activeCourse: userProgress.activeCourse!,
         },
-        units: units.map((u) => ({ notes: null, ...u })),
+        lessons: lessons.map((u) => ({ notes: null, ...u })),
         courseProgress,
         exercisePercentage,
         userSubscription,

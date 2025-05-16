@@ -30,8 +30,8 @@ const main = async () => {
     logger.info("Starting database seeding")
 
     // Clear existing data
-    // Important: Ensure units are deleted before courses if there's a foreign key constraint
-    // and challenges/exercises are deleted before units, etc.
+    // Important: Ensure lessons are deleted before courses if there's a foreign key constraint
+    // and challenges/exercises are deleted before lessons, etc.
     // Reordering delete operations for potential foreign key constraints:
     await Promise.all([
       db.delete(schema.challengeOptions),
@@ -40,7 +40,7 @@ const main = async () => {
       db.delete(schema.challenges),
       db.delete(schema.exercises),
       db.delete(schema.userProgress), // Depends on user/course
-      db.delete(schema.units),
+      db.delete(schema.lessons),
       db.delete(schema.courses),
       db.delete(schema.userSubscription), // Depends on user
     ])
@@ -69,12 +69,12 @@ const main = async () => {
     ])
     logger.debug("Inserted courses")
 
-    // Insert units
-    await db.insert(schema.units).values([
+    // Insert lessons
+    await db.insert(schema.lessons).values([
       {
         id: 1,
         courseId: 1, // Chess
-        title: "Unit 1",
+        title: "Lesson 1",
         description: "Learn the basics of Chess",
         order: 1,
         // --- Added notes field here ---
@@ -98,37 +98,37 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         // --- End of added notes field ---
       },
     ])
-    logger.debug("Inserted units (with notes)")
+    logger.debug("Inserted lessons (with notes)")
 
     // Insert exercises
     await db.insert(schema.exercises).values([
       {
         id: 1,
-        unitId: 1,
+        lessonId: 1,
         order: 1,
         title: "Grid",
       },
       {
         id: 2,
-        unitId: 1,
+        lessonId: 1,
         order: 2,
         title: "Pieces",
       },
       {
         id: 3,
-        unitId: 1,
+        lessonId: 1,
         order: 3,
         title: "Opening",
       },
       {
         id: 4,
-        unitId: 1,
+        lessonId: 1,
         order: 4,
         title: "Pawn",
       },
       {
         id: 5,
-        unitId: 1,
+        lessonId: 1,
         order: 5,
         title: "Rook",
       },

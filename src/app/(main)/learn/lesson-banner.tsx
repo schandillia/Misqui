@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button"
 import { NotebookText, Loader } from "lucide-react"
 import { Modal } from "@/components/ui/modal"
 import { marked } from "marked"
-import { UnitNotesScroller } from "@/app/(main)/learn/unit-notes-scroller"
+import { LessonNotesScroller } from "@/app/(main)/learn/lesson-notes-scroller"
 import Link from "next/link"
 
 type Props = {
   title: string
   description: string
-  unitId: number
+  lessonId: number
   firstExerciseId?: number
   activeExerciseId?: number
 }
@@ -28,10 +28,10 @@ renderer.heading = ({ text, depth }: { text: string; depth: number }) => {
   return `<h${depth} class=\"${className}\">${text}</h${depth}>`
 }
 
-export const UnitBanner = ({
+export const LessonBanner = ({
   title,
   description,
-  unitId,
+  lessonId,
   firstExerciseId,
   activeExerciseId,
 }: Props) => {
@@ -46,7 +46,7 @@ export const UnitBanner = ({
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch(`/api/units/notes/${unitId}`)
+        const res = await fetch(`/api/lessons/notes/${lessonId}`)
         if (!res.ok) throw new Error("Failed to fetch notes")
         const data = await res.json()
         setNotes(data.notes)
@@ -94,7 +94,7 @@ export const UnitBanner = ({
         )}
         {error && <div className="text-red-500">{error}</div>}
         {!loading && !error && notes && (
-          <UnitNotesScroller html={marked(notes, { renderer }) as string} />
+          <LessonNotesScroller html={marked(notes, { renderer }) as string} />
         )}
         <div className="flex gap-2 mt-4">
           <Button

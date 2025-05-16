@@ -1,5 +1,5 @@
 {
-  "id": "1d302b9f-fe1e-45af-8474-34e6fa1894bb",
+  "id": "99332c91-b474-40a7-9ff3-e0068a3ae580",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -674,8 +674,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "unit_id": {
-          "name": "unit_id",
+        "lesson_id": {
+          "name": "lesson_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -710,12 +710,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "exercises_unit_id_units_id_fk": {
-          "name": "exercises_unit_id_units_id_fk",
+        "exercises_lesson_id_lessons_id_fk": {
+          "name": "exercises_lesson_id_lessons_id_fk",
           "tableFrom": "exercises",
-          "tableTo": "units",
+          "tableTo": "lessons",
           "columnsFrom": [
-            "unit_id"
+            "lesson_id"
           ],
           "columnsTo": [
             "id"
@@ -730,8 +730,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.units": {
-      "name": "units",
+    "public.lessons": {
+      "name": "lessons",
       "schema": "",
       "columns": {
         "id": {
@@ -787,9 +787,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "units_course_id_courses_id_fk": {
-          "name": "units_course_id_courses_id_fk",
-          "tableFrom": "units",
+        "lessons_course_id_courses_id_fk": {
+          "name": "lessons_course_id_courses_id_fk",
+          "tableFrom": "lessons",
           "tableTo": "courses",
           "columnsFrom": [
             "course_id"

@@ -38,7 +38,7 @@ export const createStripeUrl = async () => {
             name: subscription.SUBSCRIPTION_PRODUCT,
             description: subscription.SUBSCRIPTION_DESCRIPTION,
           },
-          unit_amount: subscription.SUBSCRIPTION_AMOUNT,
+          lesson_amount: subscription.SUBSCRIPTION_AMOUNT,
           recurring: {
             interval: subscription.SUBSCRIPTION_FREQUENCY as
               | "day"

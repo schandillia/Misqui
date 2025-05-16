@@ -25,7 +25,7 @@ export const courses = pgTable(
   (course) => [index("title_index").on(course.title)]
 )
 
-export const units = pgTable("units", {
+export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -41,8 +41,8 @@ export const units = pgTable("units", {
 export const exercises = pgTable("exercises", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  unitId: integer("unit_id")
-    .references(() => units.id, { onDelete: "cascade" })
+  lessonId: integer("lesson_id")
+    .references(() => lessons.id, { onDelete: "cascade" })
     .notNull(),
   order: integer("order").notNull(),
   isTimed: boolean("is_timed").notNull().default(false),
@@ -53,21 +53,21 @@ export const exercises = pgTable("exercises", {
 // Relations
 export const coursesRelations = relations(courses, ({ many }) => ({
   userProgress: many(userProgress), // Now references the imported userProgress
-  units: many(units),
+  lessons: many(lessons),
 }))
 
-export const unitsRelations = relations(units, ({ many, one }) => ({
+export const lessonsRelations = relations(lessons, ({ many, one }) => ({
   course: one(courses, {
-    fields: [units.courseId],
+    fields: [lessons.courseId],
     references: [courses.id],
   }),
   exercises: many(exercises),
 }))
 
 export const exercisesRelations = relations(exercises, ({ one, many }) => ({
-  unit: one(units, {
-    fields: [exercises.unitId],
-    references: [units.id],
+  lesson: one(lessons, {
+    fields: [exercises.lessonId],
+    references: [lessons.id],
   }),
   challenges: many(challenges),
 }))

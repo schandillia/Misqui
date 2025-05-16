@@ -77,7 +77,7 @@ This document outlines various optimization suggestions for improving the perfor
 
 ## 8. Testing and Monitoring
 
-- Add unit tests for:
+- Add lesson tests for:
   - Database operations
   - API endpoints
   - Business logic

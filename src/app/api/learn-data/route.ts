@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import {
   getCourseProgress,
   getExercisePercentage,
-  getUnits,
+  getLessons,
   getUserProgress,
   getUserSubscription,
 } from "@/db/queries"
@@ -10,13 +10,13 @@ import {
 export async function GET() {
   const [
     userProgress,
-    units,
+    lessons,
     courseProgress,
     exercisePercentage,
     userSubscription,
   ] = await Promise.all([
     getUserProgress(),
-    getUnits(),
+    getLessons(),
     getCourseProgress(),
     getExercisePercentage(),
     getUserSubscription(),
@@ -24,7 +24,7 @@ export async function GET() {
 
   return NextResponse.json({
     userProgress,
-    units,
+    lessons,
     courseProgress,
     exercisePercentage,
     userSubscription,
