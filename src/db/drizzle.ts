@@ -28,7 +28,9 @@ async function retry<T>(
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       return await fn()
-    } catch (err) {
+    } catch (
+      err // eslint-disable-line @typescript-eslint/no-unused-vars
+    ) {
       if (attempt === retries) {
         throw new Error("Database connection failed after retries.")
       }

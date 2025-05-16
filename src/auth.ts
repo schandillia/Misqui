@@ -41,36 +41,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
-  // Custom logger with precise cause extraction
+  // Custom logger with improved cause extraction
   logger: {
     error(error: Error) {
-      let causeMessage = "Unknown error"
-      if (error.cause) {
-        if (error.cause instanceof Error) {
-          causeMessage = error.cause.message
-        } else if (typeof error.cause === "string") {
-          causeMessage = error.cause
-        } else if (typeof error.cause === "object" && error.cause !== null) {
-          const causeObj = error.cause as any
-          causeMessage =
-            causeObj.err?.message || // NeonDbError message
-            causeObj.message ||
-            causeObj.error?.message ||
-            causeObj.details?.message ||
-            causeObj.cause?.message ||
-            "Unknown cause"
-        }
-      }
-      console.error(`[Auth] Error: ${error.message}`, { cause: causeMessage })
-      // Debug cause structure in development
-      if (process.env.NODE_ENV === "development" && error.cause) {
-        console.debug("[Auth] Raw Cause:", error.cause)
-      }
+      const causeMessage =
+        error.cause instanceof Error
+          ? error.cause.message
+          : typeof error.cause === "string"
+          ? error.cause
+          : "Unknown error"
+      console.error(`[Auth] Error: ${error.message}`, {
+        cause: causeMessage,
+      })
     },
     warn(message: string) {
       console.warn(`[Auth] Warning: ${message}`)
     },
-    debug(message: string, metadata?: any) {
+    debug(message: string, metadata?: unknown) {
       if (process.env.NODE_ENV === "development") {
         console.debug(`[Auth] Debug: ${message}`, metadata)
       }
