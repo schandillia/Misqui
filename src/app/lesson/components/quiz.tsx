@@ -248,6 +248,7 @@ export const Quiz = ({
           <Footer
             lessonId={lessonId}
             exerciseId={exerciseId}
+            isTimed={initialIsTimed}
             status="completed"
             onCheck={() => router.push("/learn")}
           />
@@ -296,6 +297,7 @@ export const Quiz = ({
       </div>
       <Footer
         disabled={status === "none" && (pending || !selectedOption)}
+        isTimed={initialIsTimed}
         status={status}
         onCheck={onContinue}
       />

@@ -8,6 +8,7 @@ type Props = {
   status: "correct" | "wrong" | "none" | "completed"
   lessonId?: number
   exerciseId?: number
+  isTimed: boolean
   onCheck: () => void
   className?: string
 }
@@ -17,6 +18,7 @@ export const Footer = ({
   status,
   lessonId,
   exerciseId,
+  isTimed,
   onCheck,
   className,
 }: Props) => {
@@ -53,10 +55,10 @@ export const Footer = ({
               variant="default"
               size={isMobile ? "sm" : "lg"}
               onClick={() =>
-                (window.location.href = `/lesson/${lessonId}/${exerciseId}?isPractice=true`)
+                (window.location.href = `/lesson/${lessonId}/${exerciseId}${isTimed ? "" : "?isPractice=true"}`)
               }
             >
-              Practice again
+              {isTimed ? "Test Again" : "Practice Again"}
             </Button>
             <Button
               disabled={disabled}

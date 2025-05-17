@@ -15,7 +15,7 @@ type Props = {
   })[]
   initialExerciseTitle: string
   initialExerciseNumber: number
-  initialIsTimed: boolean // Add isTimed
+  initialIsTimed: boolean
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
