@@ -1,106 +1,135 @@
-// src/db/queries/lessons.ts
+// @/db/queries/lessons.ts
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq } from "drizzle-orm"
-import { challengeProgress, lessons } from "@/db/schema"
-import { getUserProgress } from "@/db/queries/user-progress"
-import { getExercisePercentageForExercise } from "@/db/queries/user-progress"
+import { eq, inArray } from "drizzle-orm"
+import {
+  lessons,
+  exercises,
+  challengeProgress,
+  challenges,
+  userExerciseChallengeSubset,
+} from "@/db/schema"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 
-export const getLessons = cache(async () => {
-  const session = await auth()
-  const userProgress = await getUserProgress()
+// Define types for the computed data
+type ComputedExercise = typeof exercises.$inferSelect & {
+  challenges: (typeof challenges.$inferSelect & {
+    challengeProgress: (typeof challengeProgress.$inferSelect)[]
+  })[]
+  completed: boolean
+  percentage: number
+}
 
-  if (!session?.user?.id || !userProgress?.activeCourseId) {
-    return []
-  }
+type ComputedLesson = typeof lessons.$inferSelect & {
+  exercises: ComputedExercise[]
+}
 
-  const data = await db.query.lessons.findMany({
-    orderBy: (lessons, { asc }) => [asc(lessons.order)],
-    where: eq(lessons.courseId, userProgress.activeCourseId),
-    columns: {
-      id: true,
-      title: true,
-      description: true,
-      courseId: true,
-      order: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    with: {
-      exercises: {
-        orderBy: (exercises, { asc }) => [asc(exercises.order)],
+export const getLessons = cache(
+  async (courseId: number): Promise<ComputedLesson[]> => {
+    logger.info("Fetching lessons for course", { courseId })
+    const session = await auth()
+    if (!session?.user?.id) {
+      logger.warn("No user session found when fetching lessons", { courseId })
+      return []
+    }
+
+    try {
+      const data = await db.query.lessons.findMany({
+        where: eq(lessons.courseId, courseId),
+        orderBy: (lessons, { asc }) => [asc(lessons.order)],
         with: {
-          challenges: {
-            orderBy: (challenges, { asc }) => [asc(challenges.order)],
-            limit: app.CHALLENGES_PER_EXERCISE,
+          exercises: {
+            orderBy: (exercises, { asc }) => [asc(exercises.order)],
             with: {
-              challengeProgress: {
-                where: eq(challengeProgress.userId, session.user.id),
+              challenges: {
+                orderBy: (challenges, { asc }) => [asc(challenges.order)],
+                with: {
+                  challengeProgress: {
+                    where: eq(challengeProgress.userId, session.user.id),
+                  },
+                },
               },
             },
           },
         },
-      },
-    },
-  })
+      })
 
-  // Compute percentages and completed status for each exercise
-  const normalizedData = await Promise.all(
-    data.map(async (lesson) => {
-      const exercisesWithCompletedStatus = await Promise.all(
-        lesson.exercises.map(async (exercise) => {
-          // Use getExercisePercentageForExercise to compute the percentage
-          const percentage = await getExercisePercentageForExercise(exercise.id)
-          const completed = percentage === 100
-          return { ...exercise, percentage, completed }
+      // Compute completed and percentage for each exercise
+      const lessonsWithComputedExercises = await Promise.all(
+        data.map(async (lesson) => {
+          const exercisesWithComputedFields = await Promise.all(
+            lesson.exercises.map(async (exercise) => {
+              // Fetch the subset of challenge IDs for this exercise
+              const subsetIds =
+                await db.query.userExerciseChallengeSubset.findFirst({
+                  where: eq(
+                    userExerciseChallengeSubset.exerciseId,
+                    exercise.id
+                  ),
+                  columns: { challengeIds: true },
+                })
+
+              const challengeIds = subsetIds
+                ? (JSON.parse(subsetIds.challengeIds) as number[])
+                : []
+
+              // Fetch challenges in the subset
+              const challengesInSubset = exercise.challenges.filter((ch) =>
+                challengeIds.includes(ch.id)
+              )
+
+              // Compute completed
+              const completed = challengesInSubset.every(
+                (challenge) =>
+                  challenge.challengeProgress &&
+                  challenge.challengeProgress.length > 0 &&
+                  challenge.challengeProgress.every(
+                    (progress) => progress.completed
+                  )
+              )
+
+              // Compute percentage
+              const completedChallenges = challengesInSubset.filter(
+                (challenge) =>
+                  challenge.challengeProgress &&
+                  challenge.challengeProgress.length > 0 &&
+                  challenge.challengeProgress.every(
+                    (progress) => progress.completed
+                  )
+              )
+              const percentage = Math.round(
+                (100 * completedChallenges.length) /
+                  Math.min(
+                    challengesInSubset.length,
+                    app.CHALLENGES_PER_EXERCISE
+                  )
+              )
+
+              return {
+                ...exercise,
+                completed,
+                percentage,
+              }
+            })
+          )
+
+          return {
+            ...lesson,
+            exercises: exercisesWithComputedFields,
+          }
         })
       )
-      return { ...lesson, exercises: exercisesWithCompletedStatus }
-    })
-  )
 
-  return normalizedData
-})
-
-export async function getLessonsByCourse(courseId: number) {
-  logger.info("Fetching lessons for course", { courseId })
-  try {
-    const data = await db.query.lessons.findMany({
-      where: eq(lessons.courseId, courseId),
-      columns: {
-        id: true,
-        title: true,
-        description: true,
-        courseId: true,
-        order: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    })
-    if (!data || data.length === 0) {
-      logger.warn("No lessons found for course", { courseId })
-      return []
+      logger.info("Lessons fetched", {
+        courseId,
+        count: lessonsWithComputedExercises.length,
+      })
+      return lessonsWithComputedExercises
+    } catch (error) {
+      logger.error("Error fetching lessons", { courseId, error })
+      throw error
     }
-    logger.info("Lessons fetched for course", {
-      courseId,
-      lessonCount: data.length,
-    })
-    return data
-  } catch (error) {
-    logger.error("Error fetching lessons for course", { courseId, error })
-    throw error
   }
-}
-
-export const getLessonNotes = cache(async (lessonId: number) => {
-  const data = await db.query.lessons.findFirst({
-    where: eq(lessons.id, lessonId),
-    columns: {
-      notes: true,
-    },
-  })
-  return data?.notes || null
-})
+)

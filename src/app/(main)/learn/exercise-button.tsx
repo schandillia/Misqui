@@ -37,7 +37,6 @@ export const ExerciseButton = ({
   lessonId,
   exerciseNumber,
 }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLast = index === totalCount
   const isCompleted = !current && !locked
   const buttonNumber = index + 1
@@ -127,7 +126,8 @@ export const ExerciseButton = ({
             <Button
               variant={locked ? "locked" : "secondary"}
               className={cn(
-                "relative size-[70px] rounded-full border-4",
+                "relative size-[70px] border-4",
+                current ? "rounded-full" : "rounded-3xl", // Conditional rounding
                 !locked && "dark:border-emerald-600"
               )}
             >

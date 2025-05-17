@@ -1,3 +1,4 @@
+// @/app/(main)/learn/page.tsx
 import { LearnClient } from "@/app/(main)/learn/learn-client"
 import {
   getCourseProgress,
@@ -9,28 +10,23 @@ import {
 import { redirect } from "next/navigation"
 
 const Page = async () => {
-  const [
-    userProgress,
-    lessons,
-    courseProgress,
-    exercisePercentage,
-    userSubscription,
-  ] = await Promise.all([
-    getUserProgress(),
-    getLessons(),
-    getCourseProgress(),
-    getExercisePercentage(),
-    getUserSubscription(),
-  ])
-
+  const userProgress = await getUserProgress()
   if (!userProgress || !userProgress.activeCourse) {
     redirect("/courses")
   }
+
+  const [lessons, courseProgress, exercisePercentage, userSubscription] =
+    await Promise.all([
+      getLessons(userProgress.activeCourse.id),
+      getCourseProgress(),
+      getExercisePercentage(),
+      getUserSubscription(),
+    ])
+
   if (!courseProgress) {
     redirect("/courses")
   }
 
-  // Pass all data as initialData to the client component
   return (
     <LearnClient
       initialData={{
@@ -38,7 +34,7 @@ const Page = async () => {
           ...userProgress,
           activeCourse: userProgress.activeCourse!,
         },
-        lessons: lessons.map((u) => ({ notes: null, ...u })),
+        lessons,
         courseProgress,
         exercisePercentage,
         userSubscription,
@@ -46,4 +42,5 @@ const Page = async () => {
     />
   )
 }
+
 export default Page
