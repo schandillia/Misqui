@@ -37,6 +37,7 @@ export const ExerciseButton = ({
   lessonId,
   exerciseNumber,
 }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLast = index === totalCount
   const isCompleted = !current && !locked
   const buttonNumber = index + 1
