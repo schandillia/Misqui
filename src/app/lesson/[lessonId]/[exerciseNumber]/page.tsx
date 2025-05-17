@@ -7,6 +7,12 @@ import {
 } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
+import {
+  exercises,
+  challenges,
+  challengeOptions,
+  challengeProgress,
+} from "@/db/schema" // Add challengeProgress import
 
 const Page = async ({
   params,
@@ -26,7 +32,17 @@ const Page = async ({
     lessonIdNumber,
     exerciseNumberInt,
     exerciseIsPractice
-  )
+  ) as Promise<
+    | (typeof exercises.$inferSelect & {
+        challenges: (typeof challenges.$inferSelect & {
+          completed: boolean
+          challengeOptions: (typeof challengeOptions.$inferSelect)[]
+          challengeProgress?: (typeof challengeProgress.$inferSelect)[] // Replace any[] with proper type
+        })[]
+        lesson: { id: number; title: string }
+      })
+    | null
+  >
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
@@ -53,6 +69,7 @@ const Page = async ({
       initialPercentage={initialPercentage}
       initialExerciseTitle={exercise.title}
       initialExerciseNumber={exercise.exercise_number}
+      initialIsTimed={exercise.isTimed}
       userSubscription={userSubscription}
       isPractice={exerciseIsPractice}
     />

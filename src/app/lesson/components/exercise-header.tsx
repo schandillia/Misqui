@@ -3,13 +3,16 @@ import { Progress } from "@/components/ui/progress"
 import { useExitModal } from "@/store/use-exit-modal"
 import { InfinityIcon, X } from "lucide-react"
 import Image from "next/image"
+import { Timer } from "@/components/timer"
 
 type Props = {
   gems: number
   percentage: number
   hasActiveSubscription: boolean
-  exerciseTitle?: string // Add title, optional
-  exerciseNumber?: number // Add exercise_number, optional
+  exerciseTitle?: string
+  exerciseNumber?: number
+  isTimed: boolean
+  isExerciseCompleted: boolean
 }
 
 export const ExerciseHeader = ({
@@ -18,18 +21,26 @@ export const ExerciseHeader = ({
   hasActiveSubscription,
   exerciseTitle,
   exerciseNumber,
+  isTimed,
+  isExerciseCompleted,
 }: Props) => {
   const { open } = useExitModal()
 
   return (
     <header className="mx-auto flex w-full max-w-[1140px] flex-col items-start gap-y-4 px-10 pt-[20px] lg:pt-[50px]">
-      {/* Exercise Title */}
-      {exerciseTitle && (
-        <h1 className="w-full text-center text-lg font-bold text-neutral-700 lg:text-xl dark:text-neutral-300">
-          {exerciseNumber
-            ? `Exercise ${exerciseNumber}: ${exerciseTitle}`
-            : exerciseTitle}
-        </h1>
+      {/* Conditionally render Timer or Exercise Title */}
+      {isTimed ? (
+        <div className="flex w-full justify-center">
+          <Timer isExerciseCompleted={isExerciseCompleted} />
+        </div>
+      ) : (
+        exerciseTitle && (
+          <h1 className="w-full text-center text-lg font-bold text-neutral-700 lg:text-xl dark:text-neutral-300">
+            {exerciseNumber
+              ? `${exerciseNumber}. ${exerciseTitle}`
+              : exerciseTitle}
+          </h1>
+        )
       )}
       {/* Progress Bar and Gems */}
       <div className="flex w-full items-center justify-between gap-x-7">

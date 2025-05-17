@@ -32,6 +32,7 @@ type Props = {
   })[]
   initialExerciseTitle: string
   initialExerciseNumber: number
+  initialIsTimed: boolean // Add isTimed
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
@@ -48,6 +49,7 @@ export const Quiz = ({
   initialExerciseChallenges,
   initialExerciseTitle,
   initialExerciseNumber,
+  initialIsTimed,
   userSubscription,
   isPractice = false,
 }: Props) => {
@@ -203,6 +205,8 @@ export const Quiz = ({
     }
   }, [challenge, playFinish])
 
+  const isExerciseCompleted = !challenge
+
   if (!challenge) {
     return (
       <>
@@ -263,6 +267,8 @@ export const Quiz = ({
         hasActiveSubscription={!!userSubscription?.isActive}
         exerciseTitle={initialExerciseTitle}
         exerciseNumber={initialExerciseNumber}
+        isTimed={initialIsTimed}
+        isExerciseCompleted={isExerciseCompleted}
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">

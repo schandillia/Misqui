@@ -9,7 +9,7 @@ type Props = {
   lessonId?: number
   exerciseId?: number
   onCheck: () => void
-  className?: string // Added to allow custom className
+  className?: string
 }
 
 export const Footer = ({
@@ -26,12 +26,12 @@ export const Footer = ({
   return (
     <footer
       className={cn(
-        "h-[100px] border-t-2 lg:h-[140px]",
+        "h-[70px] border-t-2 lg:h-[90px]",
         status === "correct" &&
           "border-transparent bg-emerald-100 dark:bg-emerald-950/90",
         status === "wrong" &&
           "border-transparent bg-rose-100 dark:bg-rose-950/90",
-        className // Apply custom className
+        className
       )}
     >
       <div className="mx-auto flex h-full max-w-[1140px] items-center px-6 lg:px-10">
