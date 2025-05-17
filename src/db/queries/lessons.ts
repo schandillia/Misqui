@@ -1,8 +1,8 @@
-// @/db/queries/lessons.ts
+// src/db/queries/lessons.ts
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq, inArray } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import {
   lessons,
   exercises,
@@ -131,5 +131,17 @@ export const getLessons = cache(
       logger.error("Error fetching lessons", { courseId, error })
       throw error
     }
+  }
+)
+
+export const getLessonNotes = cache(
+  async (lessonId: number): Promise<string | null> => {
+    logger.info("Fetching notes for lesson", { lessonId })
+    const lesson = await db.query.lessons.findFirst({
+      where: eq(lessons.id, lessonId),
+      columns: { notes: true },
+    })
+
+    return lesson?.notes ?? null
   }
 )
