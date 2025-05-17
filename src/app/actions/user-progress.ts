@@ -123,7 +123,7 @@ export const refillGems = async () => {
 
 export const updateStreakAfterExercise = async (exerciseId: number) => {
   const session = await auth()
-  console.log(
+  console.info(
     "SERVER: updateStreakAfterExercise called for",
     session?.user?.id,
     exerciseId

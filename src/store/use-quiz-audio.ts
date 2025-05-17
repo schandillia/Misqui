@@ -19,18 +19,18 @@ let correctAudio: HTMLAudioElement | null = null
 let incorrectAudio: HTMLAudioElement | null = null
 
 const getAudio = (type: keyof typeof AUDIO_FILES): HTMLAudioElement => {
-  if (typeof window === 'undefined') {
-    throw new Error('Audio can only be used in browser environment')
+  if (typeof window === "undefined") {
+    throw new Error("Audio can only be used in browser environment")
   }
 
   switch (type) {
-    case 'finish':
+    case "finish":
       if (!finishAudio) finishAudio = new Audio(AUDIO_FILES.finish)
       return finishAudio
-    case 'correct':
+    case "correct":
       if (!correctAudio) correctAudio = new Audio(AUDIO_FILES.correct)
       return correctAudio
-    case 'incorrect':
+    case "incorrect":
       if (!incorrectAudio) incorrectAudio = new Audio(AUDIO_FILES.incorrect)
       return incorrectAudio
   }
@@ -39,8 +39,8 @@ const getAudio = (type: keyof typeof AUDIO_FILES): HTMLAudioElement => {
 export const useQuizAudio = create<QuizAudioState>(() => {
   const playAudio = (type: keyof typeof AUDIO_FILES) => {
     try {
-      if (typeof window === 'undefined') return
-      
+      if (typeof window === "undefined") return
+
       const audio = getAudio(type)
       // Reset the audio to the beginning
       audio.currentTime = 0
@@ -57,4 +57,4 @@ export const useQuizAudio = create<QuizAudioState>(() => {
     playCorrect: () => playAudio("correct"),
     playIncorrect: () => playAudio("incorrect"),
   }
-}) 
+})

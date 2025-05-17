@@ -42,7 +42,7 @@ const Page = async () => {
         <Missions points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
-        <div className="w-full flex flex-col items-center cursor-default">
+        <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/leaderboard.svg"
             imageAlt="Leaderboard"
@@ -53,22 +53,22 @@ const Page = async () => {
           {leaderboard.map((userProgress, index) => (
             <div
               key={userProgress.userId}
-              className="flex items-center w-full p-2 px-4 rounded-2xl hover:bg-brand-200/50 dark:hover:bg-brand-500/10"
+              className="hover:bg-brand-200/50 dark:hover:bg-brand-500/10 flex w-full items-center rounded-3xl p-2 px-4"
             >
               {index < 3 ? (
                 <span
-                  className={`flex items-center justify-center size-8 rounded-full border-2 relative overflow-hidden ${
+                  className={`relative flex size-8 items-center justify-center overflow-hidden rounded-full border-2 ${
                     index === 0
-                      ? "bg-yellow-500 border-yellow-200"
+                      ? "border-yellow-200 bg-yellow-500"
                       : index === 1
-                      ? "bg-gray-300 border-gray-100"
-                      : "bg-orange-500 border-orange-300"
+                        ? "border-gray-100 bg-gray-300"
+                        : "border-orange-300 bg-orange-500"
                   }`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shine" />
+                  <div className="animate-shine absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent" />
                   <p
-                    className={`font-bold text-sm relative z-10 ${
+                    className={`relative z-10 text-sm font-bold ${
                       index === 2 ? "text-neutral-300" : "text-neutral-700"
                     }`}
                   >
@@ -76,16 +76,16 @@ const Page = async () => {
                   </p>
                 </span>
               ) : (
-                <p className="font-bold text-neutral-500 dark:text-neutral-400 text-xl w-8 text-center">
+                <p className="w-8 text-center text-xl font-bold text-neutral-500 dark:text-neutral-400">
                   {index + 1}
                 </p>
               )}
               <UserAvatar
                 image={userProgress.image}
                 name={userProgress.name}
-                className="size-12 cursor-pointer mr-6 ml-5"
+                className="mr-6 ml-5 size-12 cursor-pointer"
               />
-              <p className="text-natural-800 font-bold flex-1">
+              <p className="text-natural-800 flex-1 font-bold">
                 {userProgress.name}
               </p>
               <p className="text-muted-foreground">

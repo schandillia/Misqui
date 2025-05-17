@@ -9,22 +9,22 @@ export default async function Home() {
   const session = await auth()
 
   return (
-    <div className="max-w-[988px] mx-auto flex-1 w-full flex flex-col lg:flex-row items-center justify-center p-4 gap-8">
-      <div className="relative w-[240px] h-[240px] lg:w-[424px] lg:h-[424px] shrink-0">
+    <div className="mx-auto flex w-full max-w-[988px] flex-1 flex-col items-center justify-center gap-8 p-4 lg:flex-row">
+      <div className="relative h-[240px] w-[240px] shrink-0 lg:h-[424px] lg:w-[424px]">
         <Image src="images/backgrounds/hero.svg" alt="Mascot" fill priority />
       </div>
 
-      <div className="flex flex-col items-center gap-8 max-w-[480px] w-full">
-        <h1 className="text-xl lg:text-3xl font-bold text-neutral-600 dark:text-neutral-300 text-center">
+      <div className="flex w-full max-w-[480px] flex-col items-center gap-8">
+        <h1 className="text-center text-xl font-bold text-neutral-600 lg:text-3xl dark:text-neutral-300">
           Learn, practice, and master new skills with {brand.BRAND}
         </h1>
 
-        <div className="flex flex-col items-center gap-y-3 max-w-[330px]">
+        <div className="flex max-w-[330px] flex-col items-center gap-y-3">
           {session?.user ? (
             <Button
               size="lg"
               variant="primary"
-              className="w-full button-shine-effect"
+              className="button-shine-effect w-full"
               asChild
             >
               <Link href="/learn">Continue learning</Link>
@@ -32,7 +32,7 @@ export default async function Home() {
           ) : (
             <AuthButton
               variant="primary"
-              className="w-full button-shine-effect"
+              className="button-shine-effect w-full"
               label="Get Started"
             />
           )}

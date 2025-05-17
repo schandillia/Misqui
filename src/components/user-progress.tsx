@@ -26,7 +26,7 @@ export const UserProgress = ({
   const isTodayCompleted = lastActivityDate ? lastActivityDate === today : false
 
   return (
-    <div className="flex items-center justify-between gap-x-2 w-full">
+    <div className="flex w-full items-center justify-between gap-x-2">
       <Link href="/courses">
         <Button variant="ghost">
           <Image

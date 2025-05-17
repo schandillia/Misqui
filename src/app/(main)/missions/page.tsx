@@ -38,7 +38,7 @@ const Page = async () => {
         {!isPro && <Promo />}
       </StickyWrapper>
       <FeedWrapper>
-        <div className="w-full flex flex-col items-center cursor-default">
+        <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/missions.svg"
             imageAlt="Missions"
@@ -51,7 +51,7 @@ const Page = async () => {
               return (
                 <div
                   key={mission.TITLE}
-                  className="flex items-center w-full p-4 gap-x-4 border-t-2"
+                  className="flex w-full items-center gap-x-4 border-t-2 p-4"
                 >
                   <Image
                     src="/images/icons/points.svg"
@@ -59,8 +59,8 @@ const Page = async () => {
                     height={60}
                     alt="Points"
                   />
-                  <div className="flex flex-col w-full gap-y-2">
-                    <p className="text-neutral-700 dark:text-neutral-300 font-bold text-xl">
+                  <div className="flex w-full flex-col gap-y-2">
+                    <p className="text-xl font-bold text-neutral-700 dark:text-neutral-300">
                       {mission.TITLE}
                     </p>
                     <Progress value={progress} className="h-3" />

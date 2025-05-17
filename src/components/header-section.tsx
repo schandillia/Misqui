@@ -17,7 +17,7 @@ export const HeaderSection = ({
   separator = false,
 }: HeaderSectionProps) => {
   return (
-    <div className="w-full flex flex-col items-center cursor-default px-4 sm:px-6">
+    <div className="flex w-full cursor-default flex-col items-center px-4 sm:px-6">
       <Image
         src={imageSrc}
         alt={imageAlt}
@@ -25,14 +25,14 @@ export const HeaderSection = ({
         width={80}
         className="mb-2"
       />
-      <h1 className="text-center font-bold text-neutral-700 dark:text-neutral-400 text-2xl mt-2 mb-1 sm:text-3xl">
+      <h1 className="mt-2 mb-1 text-center text-2xl font-bold text-neutral-700 sm:text-3xl dark:text-neutral-400">
         {title}
       </h1>
-      <p className="text-muted-foreground text-center text-base sm:text-lg max-w-2xl mb-6">
+      <p className="text-muted-foreground mb-6 max-w-2xl text-center text-base sm:text-lg">
         {description}
       </p>
       {separator && (
-        <Separator className="w-full max-w-md h-0.5 rounded-full mb-6" />
+        <Separator className="mb-6 h-0.5 w-full max-w-md rounded-full" />
       )}
     </div>
   )

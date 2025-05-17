@@ -36,7 +36,7 @@ const Page = async () => {
         <Missions points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
-        <div className="w-full flex flex-col items-center">
+        <div className="flex w-full flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/store.svg"
             imageAlt="Store"

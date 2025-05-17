@@ -13,16 +13,16 @@ export const ResultCard = ({ value, variant }: Props) => {
   return (
     <div
       className={cn(
-        "rounded-2xl border-2 w-full",
+        "w-full rounded-2xl border-2",
         variant === "points" &&
-          "bg-orange-400 dark:bg-orange-900 border-orange-400 dark:border-orange-900",
+          "border-orange-400 bg-orange-400 dark:border-orange-900 dark:bg-orange-900",
         variant === "gems" &&
-          "bg-blue-400 dark:bg-blue-900 border-blue-400 dark:border-blue-900"
+          "border-blue-400 bg-blue-400 dark:border-blue-900 dark:bg-blue-900"
       )}
     >
       <div
         className={cn(
-          "p-1.5 text-white rounded-t-xl font-bold text-center uppercase text-xs",
+          "rounded-t-xl p-1.5 text-center text-xs font-bold text-white uppercase",
           variant === "points" && "bg-orange-400 dark:bg-orange-900",
           variant === "gems" && "bg-blue-400 dark:bg-blue-900"
         )}
@@ -31,7 +31,7 @@ export const ResultCard = ({ value, variant }: Props) => {
       </div>
       <div
         className={cn(
-          "rounded-2xl bg-white dark:bg-black items-center justify-center flex p-6 font-bold text-lg",
+          "flex items-center justify-center rounded-2xl bg-white p-6 text-lg font-bold dark:bg-black",
           variant === "points" && "text-orange-500 dark:text-orange-400",
           variant === "gems" && "text-blue-500 dark:text-blue-400"
         )}

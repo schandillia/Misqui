@@ -29,7 +29,7 @@ export const GemsModal = () => {
       description="Get Pro for unlimited gems, or purchase them in the store."
     >
       <div className="w-full space-y-6">
-        <div className="flex w-full items-center mb-5 justify-center">
+        <div className="mb-5 flex w-full items-center justify-center">
           <Image
             src="/images/mascots/mascot-bad.svg"
             alt="Mascot"
@@ -37,7 +37,7 @@ export const GemsModal = () => {
             width={80}
           />
         </div>
-        <div className="flex flex-col gap-y-4 w-full">
+        <div className="flex w-full flex-col gap-y-4">
           <Button
             variant="primary"
             className="w-full"

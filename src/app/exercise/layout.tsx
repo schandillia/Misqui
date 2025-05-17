@@ -13,8 +13,8 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   return (
-    <div className="h-full flex flex-con">
-      <div className="flex flex-col h-full w-full">{children}</div>
+    <div className="flex-con flex h-full">
+      <div className="flex h-full w-full flex-col">{children}</div>
     </div>
   )
 }

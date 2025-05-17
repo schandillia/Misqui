@@ -48,8 +48,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         error.cause instanceof Error
           ? error.cause.message
           : typeof error.cause === "string"
-          ? error.cause
-          : "Unknown error"
+            ? error.cause
+            : "Unknown error"
       console.error(`[Auth] Error: ${error.message}`, {
         cause: causeMessage,
       })

@@ -19,7 +19,7 @@ const getInitials = (name?: string | null) =>
 export const UserAvatar: FC<UserAvatarProps> = ({ name, image, className }) => (
   <Avatar className={className}>
     <AvatarImage src={image ?? ""} alt={name ?? ""} />
-    <AvatarFallback className="bg-gradient-to-br from-brand-100 to-brand-200 text-brand-600">
+    <AvatarFallback className="from-brand-100 to-brand-200 text-brand-600 bg-gradient-to-br">
       {getInitials(name)}
     </AvatarFallback>
   </Avatar>

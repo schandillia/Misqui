@@ -204,7 +204,7 @@ export const Quiz = ({
           numberOfPieces={500}
           tweenDuration={10000}
         />
-        <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center justify-center items-center h-full">
+        <div className="mx-auto flex h-full max-w-lg flex-col items-center justify-center gap-y-4 text-center lg:gap-y-8">
           <Image
             src="/images/icons/finish.svg"
             height={100}
@@ -219,12 +219,12 @@ export const Quiz = ({
             alt="Finish"
             className="block lg:hidden"
           />
-          <h1 className="text-xl lg:text-3xl font-bold text-neutral-700 dark:text-neutral-300">
+          <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
             Great job!
             <br />
             You’ve completed the exercise.
           </h1>
-          <div className="flex items-center gap-x-4 w-full">
+          <div className="flex w-full items-center gap-x-4">
             <ResultCard variant="points" value={challenges.length * 10} />
             <ResultCard variant="gems" value={gems} />
           </div>
@@ -251,9 +251,9 @@ export const Quiz = ({
         hasActiveSubscription={!!userSubscription?.isActive}
       />
       <div className="flex-1">
-        <div className="h-full items-center justify-center flex">
-          <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
-            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700 dark:text-neutral-300">
+        <div className="flex h-full items-center justify-center">
+          <div className="flex w-full flex-col gap-y-12 px-6 lg:min-h-[350px] lg:w-[600px] lg:px-0">
+            <h1 className="text-center text-lg font-bold text-neutral-700 lg:text-start lg:text-3xl dark:text-neutral-300">
               {title}
             </h1>
             <div>

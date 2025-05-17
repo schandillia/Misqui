@@ -23,14 +23,14 @@ export const Card = ({
     <div
       onClick={() => onClick(id)}
       className={cn(
-        "h-full border-2 rounded-2xl border-b-4 hover:bg-black/5 dark:hover:bg-neutral-800 cursor-pointer active:border-b-2 flex flex-col items-center justify-between p-3 pb-6 min-h-[217px] min-w-[200px]",
+        "flex h-full min-h-[217px] min-w-[200px] cursor-pointer flex-col items-center justify-between rounded-3xl border-2 border-b-4 p-3 pb-6 hover:bg-black/5 active:border-b-2 dark:hover:bg-neutral-800",
         disabled && "pointer-events-none opacity-50"
       )}
     >
-      <div className="w-full min-h-[24px] justify-end flex items-center">
+      <div className="flex min-h-[24px] w-full items-center justify-end">
         {active && (
-          <div className="rounded-full bg-brand-600 p-1.5 justify-center items-center flex">
-            <Check className="text-white stroke-[4] size-4" />
+          <div className="bg-brand-600 flex items-center justify-center rounded-full p-1.5">
+            <Check className="size-4 stroke-[4] text-white" />
           </div>
         )}
       </div>
@@ -40,9 +40,9 @@ export const Card = ({
         alt={title}
         height={70}
         width={93.33}
-        className="rounded-lg drop-shadow-md border object-cover"
+        className="rounded-lg border object-cover drop-shadow-md"
       />
-      <p className="text-neutral-700 dark:text-neutral-400 text-center mt-3 font-bold">
+      <p className="mt-3 text-center font-bold text-neutral-700 dark:text-neutral-400">
         {title}
       </p>
     </div>

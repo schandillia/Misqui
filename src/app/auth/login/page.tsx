@@ -23,7 +23,7 @@ const Page = () => {
   }, [callbackUrl, intent])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950 text-center px-6">
+    <div className="bg-brand-50 dark:bg-brand-950 flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <Image
         src="/images/mascots/mascot.svg"
         alt="Mascot"
@@ -31,17 +31,17 @@ const Page = () => {
         height={160}
         className="mb-6 animate-bounce"
       />
-      <h1 className="text-4xl font-bold text-brand-700 dark:text-brand-100 mb-2">
+      <h1 className="text-brand-700 dark:text-brand-100 mb-2 text-4xl font-bold">
         Welcome Back!
       </h1>
-      <p className="text-lg text-brand-600 dark:text-brand-200 mb-6">
+      <p className="text-brand-600 dark:text-brand-200 mb-6 text-lg">
         Choose a method to sign in and continue to your destination.
       </p>
 
       <div className="w-full max-w-sm space-y-4">
         <Button
           variant="primaryOutline"
-          className="flex items-center justify-center gap-2 h-12 w-full"
+          className="flex h-12 w-full items-center justify-center gap-2"
           onClick={() => signInWithGoogle(redirectUrl)}
         >
           <FcGoogle className="size-5" />
@@ -50,26 +50,26 @@ const Page = () => {
 
         <Button
           variant="primaryOutline"
-          className="flex items-center justify-center gap-2 h-12 w-full"
+          className="flex h-12 w-full items-center justify-center gap-2"
         >
-          <FaApple className="size-5 text-brand-950 dark:text-brand-100" />
+          <FaApple className="text-brand-950 dark:text-brand-100 size-5" />
           <span>Continue with Apple</span>
         </Button>
       </div>
 
-      <div className="text-center text-xs text-brand-600 dark:text-brand-300 pt-6 max-w-xs">
+      <div className="text-brand-600 dark:text-brand-300 max-w-xs pt-6 text-center text-xs">
         <p>
           By continuing, you agree to {brand.BRAND}{" "}
           <Link
             href="/terms"
-            className="font-medium text-brand-500 dark:text-brand-400"
+            className="text-brand-500 dark:text-brand-400 font-medium"
           >
             Terms of Service
           </Link>{" "}
           and{" "}
           <Link
             href="/privacy"
-            className="font-medium text-brand-500 dark:text-brand-400"
+            className="text-brand-500 dark:text-brand-400 font-medium"
           >
             Privacy Policy
           </Link>

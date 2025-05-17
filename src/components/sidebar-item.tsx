@@ -43,7 +43,7 @@ export const SidebarItem = ({ label, iconSrc, href }: Props) => {
     <Button
       // Use the state-derived variant
       variant={variant}
-      className="justify-start h-[52px]"
+      className="h-[52px] justify-start"
       asChild
       // You could add suppressHydrationWarning here as a fallback,
       // but the mounted state pattern should prevent the need for it.

@@ -25,16 +25,16 @@ export const Footer = ({ disabled, status, exerciseId, onCheck }: Props) => {
           "border-transparent bg-rose-100 dark:bg-rose-950/90"
       )}
     >
-      <div className="max-w-[1140px] h-full mx-auto flex items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-full max-w-[1140px] items-center justify-between px-6 lg:px-10">
         {status === "correct" && (
-          <div className="text-emerald-500 font-bold text-base lg:text-2xl flex items-center">
-            <CheckCircle className="size-6 lg:size-10 mr-4" />
+          <div className="flex items-center text-base font-bold text-emerald-500 lg:text-2xl">
+            <CheckCircle className="mr-4 size-6 lg:size-10" />
             Nicely done!
           </div>
         )}
         {status === "wrong" && (
-          <div className="text-rose-500 font-bold text-base lg:text-2xl flex items-center">
-            <XCircle className="size-6 lg:size-10 mr-4" />
+          <div className="flex items-center text-base font-bold text-rose-500 lg:text-2xl">
+            <XCircle className="mr-4 size-6 lg:size-10" />
             Try again.
           </div>
         )}

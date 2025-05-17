@@ -22,7 +22,7 @@ export const PracticeModal = () => {
       description="Use practice sessions to regain gems and points. You cannot lose gems or points in practice exercises."
     >
       <div className="w-full space-y-6">
-        <div className="flex w-full items-center mb-5 justify-center">
+        <div className="mb-5 flex w-full items-center justify-center">
           <Image
             src="/images/icons/gem.svg"
             alt="Gem"
@@ -30,7 +30,7 @@ export const PracticeModal = () => {
             width={100}
           />
         </div>
-        <div className="flex flex-col gap-y-4 w-full">
+        <div className="flex w-full flex-col gap-y-4">
           <Button
             variant="primary"
             className="w-full"

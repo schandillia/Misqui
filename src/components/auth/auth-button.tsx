@@ -63,7 +63,7 @@ export const AuthButton = ({
             <div className="grid gap-4">
               <Button
                 variant="primaryOutline"
-                className="flex items-center justify-center gap-2 h-12"
+                className="flex h-12 items-center justify-center gap-2"
                 onClick={() => signInWithGoogle(redirectUrl)}
               >
                 <FcGoogle className="size-5" />
@@ -72,21 +72,21 @@ export const AuthButton = ({
 
               <Button
                 variant="primaryOutline"
-                className="flex items-center justify-center gap-2 h-12"
+                className="flex h-12 items-center justify-center gap-2"
               >
                 <FaApple className="size-5 text-black dark:text-white" />
                 <span>Continue with Apple</span>
               </Button>
             </div>
 
-            <div className="text-center text-xs text-muted-foreground pt-4">
+            <div className="text-muted-foreground pt-4 text-center text-xs">
               <p>
                 By continuing, you agree to {brand.BRAND}{" "}
-                <Link href={"/terms"} className="font-medium text-brand-500">
+                <Link href={"/terms"} className="text-brand-500 font-medium">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href={"/privacy"} className="font-medium text-brand-500">
+                <Link href={"/privacy"} className="text-brand-500 font-medium">
                   Privacy Policy
                 </Link>
                 .

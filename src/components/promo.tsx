@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export const Promo = () => {
   return (
-    <div className="rounded-xl p-4 border-2 space-y-4">
+    <div className="space-y-4 rounded-3xl border-2 p-4">
       <div className="space-y-2">
         <div className="flex items-center gap-x-2">
           <Image
@@ -13,7 +13,7 @@ export const Promo = () => {
             height={26}
             width={26}
           />
-          <h3 className="font-bold text-lg dark:text-neutral-300">
+          <h3 className="text-lg font-bold dark:text-neutral-300">
             Upgrade to Pro
           </h3>
         </div>

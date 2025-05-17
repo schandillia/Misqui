@@ -17,7 +17,7 @@ export const getPracticeExercise = cache(async (exerciseId: number) => {
   const subsetIds = await getOrCreateUserExerciseChallengeSubset(
     session.user.id,
     exerciseId,
-    "practice"
+    true
   )
 
   const data = await db.query.exercises.findFirst({

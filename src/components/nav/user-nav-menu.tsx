@@ -28,11 +28,11 @@ const UserInfo: FC<{ name?: string | null; email?: string | null }> = ({
   name,
   email,
 }) => (
-  <div className="flex flex-col space-y-1 uppercase text-left">
-    <p className="text-sm font-medium leading-none text-brand-600 dark:text-brand-400">
+  <div className="flex flex-col space-y-1 text-left uppercase">
+    <p className="text-brand-600 dark:text-brand-400 text-sm leading-none font-medium">
       {name}
     </p>
-    <p className="text-xs leading-none text-muted-foreground font-bold">
+    <p className="text-muted-foreground text-xs leading-none font-bold">
       {email}
     </p>
   </div>
@@ -45,7 +45,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
         {position === "bottom" ? (
-          <div className="flex gap-x-2 p-2 cursor-pointer w-full">
+          <div className="flex w-full cursor-pointer gap-x-2 p-2">
             <UserAvatar
               name={user.name}
               image={user.image}
@@ -63,7 +63,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-56 mt-4 z-50"
+        className="z-50 mt-4 w-56"
         side={position}
       >
         <DropdownMenuLabel>

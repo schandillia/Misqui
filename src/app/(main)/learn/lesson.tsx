@@ -46,7 +46,7 @@ export const Lesson = ({
         firstExerciseId={exercises[0]?.id}
       />
       <div className="mt-12">
-        <div className="flex flex-wrap gap-y-16 justify-between w-full">
+        <div className="flex w-full flex-wrap justify-between gap-y-16">
           {exercises.length > 0 ? (
             exercises.map((exercise, index) => {
               const isCurrent = exercise.id === activeExercise?.id
@@ -54,13 +54,13 @@ export const Lesson = ({
               const percentage = isCurrent
                 ? activeExercisePercentage
                 : exercise.completed
-                ? 100
-                : exercise.percentage || 0
+                  ? 100
+                  : exercise.percentage || 0
 
               return (
                 <div
                   key={exercise.id}
-                  className="w-1/2 sm:w-1/4 xl:w-1/6 flex justify-center h-[102px]"
+                  className="flex h-[102px] w-1/2 justify-center sm:w-1/4 xl:w-1/6"
                 >
                   <ExerciseButton
                     id={exercise.id}
@@ -77,7 +77,7 @@ export const Lesson = ({
               )
             })
           ) : (
-            <div className="text-center w-full">No exercises available</div>
+            <div className="w-full text-center">No exercises available</div>
           )}
         </div>
       </div>

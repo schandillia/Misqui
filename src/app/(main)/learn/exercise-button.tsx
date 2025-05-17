@@ -71,7 +71,7 @@ export const ExerciseButton = ({
         current={current}
       >
         {current ? (
-          <div className="h-[102px] w-[102px] relative">
+          <div className="relative h-[102px] w-[102px]">
             <div className="text-neutral-300 dark:text-neutral-700">
               <CircularProgressbarWithChildren
                 value={Number.isNaN(percentage) ? 0 : percentage}
@@ -88,7 +88,7 @@ export const ExerciseButton = ({
                   size={locked ? "default" : "rounded"}
                   variant={locked ? "locked" : "secondary"}
                   className={cn(
-                    "size-[70px] border-4 dark:border-emerald-600 relative",
+                    "relative size-[70px] border-4 dark:border-emerald-600",
                     locked ? "rounded-3xl" : ""
                   )}
                 >
@@ -97,7 +97,7 @@ export const ExerciseButton = ({
                       className={cn(
                         "size-10",
                         locked
-                          ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
+                          ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
                           : "fill-primary-foreground text-primary-foreground",
                         isCompleted && "fill-none stroke-[4]"
                       )}
@@ -120,7 +120,7 @@ export const ExerciseButton = ({
           <Button
             variant={locked ? "locked" : "secondary"}
             className={cn(
-              "size-[70px] border-4 rounded-3xl relative",
+              "relative size-[70px] rounded-3xl border-4",
               !locked && "dark:border-emerald-600"
             )}
           >
@@ -129,7 +129,7 @@ export const ExerciseButton = ({
                 className={cn(
                   "size-10",
                   locked
-                    ? "fill-neutral-400 text-neutral-400 stroke-neutral-400"
+                    ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
                     : "fill-primary-foreground text-primary-foreground",
                   isCompleted && "fill-none stroke-[4]"
                 )}

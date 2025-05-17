@@ -17,10 +17,10 @@ export const MobileSidebar = () => {
       <SheetTrigger className="cursor-pointer">
         <Menu className="text-white" />
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 z-100">
+      <SheetContent side="left" className="z-100 p-0">
         <SheetHeader>
           <SheetTitle>
-            <div className="pl-4 gap-x-3 flex items-center">
+            <div className="flex items-center gap-x-3 pl-4">
               <Image
                 src="/images/mascots/mascot.svg"
                 alt="Mascot"
@@ -28,7 +28,7 @@ export const MobileSidebar = () => {
                 height={25}
                 className="align-middle"
               />
-              <h1 className="text-2xl font-extrabold tracking-wide text-brand-500">
+              <h1 className="text-brand-500 text-2xl font-extrabold tracking-wide">
                 {brand.BRAND}
               </h1>
             </div>

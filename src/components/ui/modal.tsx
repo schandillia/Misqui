@@ -72,7 +72,7 @@ export const Modal = ({
 
     return createPortal(
       <div
-        className="fixed inset-0 bg-black opacity-70 backdrop-blur z-50"
+        className="fixed inset-0 z-50 bg-black opacity-70 backdrop-blur"
         onClick={() => {
           if (!preventDefaultClose && setShowModal) {
             setShowModal(false)
@@ -101,7 +101,7 @@ export const Modal = ({
           <Drawer.Portal>
             <Drawer.Content
               className={cn(
-                "fixed bottom-0 left-0 right-0 z-60 rounded-t-[20px] border-t border-gray-200 dark:border-brand-800 bg-white dark:bg-brand-950",
+                "dark:border-brand-800 dark:bg-brand-950 fixed right-0 bottom-0 left-0 z-60 rounded-t-[20px] border-t border-gray-200 bg-white",
                 className
               )}
             >
@@ -112,7 +112,7 @@ export const Modal = ({
               <div className="justify-between gap-4 p-4">
                 <Drawer.Title
                   className={cn(
-                    title ? "text-2xl font-bold text-center" : "sr-only"
+                    title ? "text-center text-2xl font-bold" : "sr-only"
                   )}
                 >
                   {title || ""}
@@ -120,7 +120,7 @@ export const Modal = ({
                 <Drawer.Description
                   className={cn(
                     description
-                      ? "text-center text-muted-foreground"
+                      ? "text-muted-foreground text-center"
                       : "sr-only"
                   )}
                 >
@@ -153,7 +153,7 @@ export const Modal = ({
       >
         <DialogHeader>
           <DialogTitle
-            className={cn(title ? "text-2xl font-bold text-center" : "sr-only")}
+            className={cn(title ? "text-center text-2xl font-bold" : "sr-only")}
           >
             {title || ""}
           </DialogTitle>

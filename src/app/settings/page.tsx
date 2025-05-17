@@ -28,7 +28,7 @@ const Page = async () => {
   const isPro = !!userSubscription?.isActive
 
   return (
-    <div className="flex flex-col lg:flex-row-reverse gap-6 lg:gap-[48px] px-4 lg:px-6">
+    <div className="flex flex-col gap-6 px-4 lg:flex-row-reverse lg:gap-[48px] lg:px-6">
       <StickyWrapper>
         <UserProgress
           activeCourse={userProgress.activeCourse}
@@ -55,13 +55,13 @@ const Page = async () => {
               <CardTitle>Profile Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex flex-col items-center gap-4 sm:flex-row">
                 <UserAvatar
                   name={session?.user?.name}
                   image={session?.user?.image}
                   className="size-16"
                 />
-                <button className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+                <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
                   Change Avatar
                 </button>
               </div>
@@ -88,28 +88,28 @@ const Page = async () => {
               <CardTitle>Learning Progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
                 <div>
                   <Label>Current Course</Label>
-                  <p className="text-sm font-medium mt-1">
+                  <p className="mt-1 text-sm font-medium">
                     {userProgress.activeCourse.title}
                   </p>
                 </div>
                 <div>
                   <Label>Total Points</Label>
-                  <p className="text-sm font-medium mt-1">
+                  <p className="mt-1 text-sm font-medium">
                     {userProgress.points}
                   </p>
                 </div>
                 <div>
                   <Label>Current Streak</Label>
-                  <p className="text-sm font-medium mt-1">
+                  <p className="mt-1 text-sm font-medium">
                     {userProgress.currentStreak} days
                   </p>
                 </div>
                 <div>
                   <Label>Longest Streak</Label>
-                  <p className="text-sm font-medium mt-1">
+                  <p className="mt-1 text-sm font-medium">
                     {userProgress.longestStreak} days
                   </p>
                 </div>
@@ -123,18 +123,18 @@ const Page = async () => {
               <CardTitle>Subscription</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <p className="font-medium">Current Plan</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {isPro ? "Pro Plan" : "Free Plan"}
                   </p>
                 </div>
                 <button
-                  className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`w-full rounded-lg px-4 py-2 font-medium transition-colors sm:w-auto ${
                     isPro
                       ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                      : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600"
                   }`}
                 >
                   {isPro ? "Manage Subscription" : "Upgrade to Pro"}
@@ -149,19 +149,19 @@ const Page = async () => {
               <CardTitle>Account Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Dark Mode</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Toggle dark mode appearance
                   </p>
                 </div>
                 <ThemeToggle />
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Sound Effects</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Enable sound effects during exercises
                   </p>
                 </div>
@@ -176,14 +176,14 @@ const Page = async () => {
               <CardTitle>Security</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Connected Account</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Google Account
                   </p>
                 </div>
-                <button className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+                <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
                   Manage
                 </button>
               </div>
@@ -196,10 +196,10 @@ const Page = async () => {
               <CardTitle>Data & Privacy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <button className="w-full px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+              <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
                 Export Data
               </button>
-              <button className="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
+              <button className="w-full rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600">
                 Delete Account
               </button>
             </CardContent>

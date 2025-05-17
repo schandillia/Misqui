@@ -14,9 +14,9 @@ type Props = {
 
 export const Missions = ({ points }: Props) => {
   return (
-    <div className="rounded-xl p-4 border-2 space-y-4">
-      <div className="flex items-center justify-between w-full space-y-2">
-        <h3 className="font-bold text-lg dark:text-neutral-300">Missions</h3>
+    <div className="space-y-4 rounded-3xl border-2 p-4">
+      <div className="flex w-full items-center justify-between space-y-2">
+        <h3 className="text-lg font-bold dark:text-neutral-300">Missions</h3>
         <Link href="/missions">
           <Button size="sm" variant="primaryOutline">
             View all
@@ -32,7 +32,7 @@ export const Missions = ({ points }: Props) => {
             return (
               <div
                 key={mission.TITLE}
-                className="flex items-center w-full pb-4 gap-x-3"
+                className="flex w-full items-center gap-x-3 pb-4"
               >
                 <Image
                   src="/images/icons/points.svg"
@@ -40,8 +40,8 @@ export const Missions = ({ points }: Props) => {
                   height={40}
                   alt="Points"
                 />
-                <div className="flex flex-col w-full gap-y-2">
-                  <p className="text-neutral-700 dark:text-neutral-400 font-bold text-sm">
+                <div className="flex w-full flex-col gap-y-2">
+                  <p className="text-sm font-bold text-neutral-700 dark:text-neutral-400">
                     {mission.TITLE}
                   </p>
                   <Progress value={progress} className="h-2" />

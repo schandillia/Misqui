@@ -18,7 +18,7 @@ test.describe("Quiz Audio Store", () => {
   test("should have audio playback functions", async ({ page }) => {
     await page.goto("/")
     const store = useQuizAudio.getState()
-    
+
     expect(store.playFinish).toBeDefined()
     expect(store.playCorrect).toBeDefined()
     expect(store.playIncorrect).toBeDefined()
@@ -27,7 +27,7 @@ test.describe("Quiz Audio Store", () => {
   test("should handle finish audio playback", async ({ page }) => {
     await page.goto("/")
     const store = useQuizAudio.getState()
-    
+
     // Verify the function exists and is callable
     expect(() => store.playFinish()).not.toThrow()
   })
@@ -35,14 +35,14 @@ test.describe("Quiz Audio Store", () => {
   test("should handle correct audio playback", async ({ page }) => {
     await page.goto("/")
     const store = useQuizAudio.getState()
-    
+
     expect(() => store.playCorrect()).not.toThrow()
   })
 
   test("should handle incorrect audio playback", async ({ page }) => {
     await page.goto("/")
     const store = useQuizAudio.getState()
-    
+
     expect(() => store.playIncorrect()).not.toThrow()
   })
-}) 
+})

@@ -2,7 +2,7 @@ import { MobileSidebar } from "@/components/mobile-sidebar"
 
 export const MobileHeader = () => {
   return (
-    <nav className="lg:hidden px-6 h-[50px] flex items-center bg-brand-500 border-b fixed top-0 w-full z-50">
+    <nav className="bg-brand-500 fixed top-0 z-50 flex h-[50px] w-full items-center border-b px-6 lg:hidden">
       <MobileSidebar />
     </nav>
   )

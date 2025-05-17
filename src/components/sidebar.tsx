@@ -33,12 +33,12 @@ export const Sidebar = async ({ className }: Props) => {
   return (
     <div
       className={cn(
-        "flex h-full lg:w-[256px] lg:fixed left-0 top-0 px-4 border-r-2 flex-col truncate",
+        "top-0 left-0 flex h-full flex-col truncate border-r-2 px-4 lg:fixed lg:w-[256px]",
         className
       )}
     >
       <Link href="/learn">
-        <div className="hidden lg:flex pt-4 pl-4 pb-7 gap-x-3 items-center">
+        <div className="hidden items-center gap-x-3 pt-4 pb-7 pl-4 lg:flex">
           <Image
             src="/images/mascots/mascot.svg"
             alt="Mascot"
@@ -46,13 +46,13 @@ export const Sidebar = async ({ className }: Props) => {
             height={35}
             className="align-middle"
           />
-          <h1 className="text-2xl font-extrabold tracking-wide text-brand-500">
+          <h1 className="text-brand-500 text-2xl font-extrabold tracking-wide">
             {brand.BRAND}
           </h1>
         </div>
       </Link>
 
-      <div className="flex flex-col gap-y-2 flex-1">
+      <div className="flex flex-1 flex-col gap-y-2">
         {sidebarItems.map((item) => (
           <SidebarItem
             key={item.href}
@@ -65,7 +65,7 @@ export const Sidebar = async ({ className }: Props) => {
       <div className="flex justify-center py-2">
         <ThemeToggle />
       </div>
-      <div className="p-4 flex flex-col items-center gap-y-2">
+      <div className="flex flex-col items-center gap-y-2 p-4">
         {session?.user ? (
           <UserNavMenu user={session.user} position="bottom" />
         ) : (

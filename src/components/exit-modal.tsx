@@ -58,7 +58,7 @@ export const ExitModal = () => {
       description={randomMessage.description}
     >
       <div className="w-full space-y-6">
-        <div className="flex w-full items-center mb-5 justify-center">
+        <div className="mb-5 flex w-full items-center justify-center">
           <Image
             src="/images/mascots/mascot-sad.svg"
             alt="Mascot"
@@ -66,10 +66,10 @@ export const ExitModal = () => {
             width={80}
           />
         </div>
-        <div className="flex flex-col gap-y-4 w-full">
+        <div className="flex w-full flex-col gap-y-4">
           <Button
             variant="primary"
-            className="w-full button-shine-effect"
+            className="button-shine-effect w-full"
             size="lg"
             onClick={close}
           >

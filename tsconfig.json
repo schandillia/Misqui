@@ -13,7 +13,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["node"],
+    "types": ["node", "@playwright/test"],
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
@@ -30,5 +31,5 @@
     ".next/types/**/*.ts",
     "scripts/*.cts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next", "dist", "coverage"]
 }

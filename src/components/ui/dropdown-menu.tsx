@@ -45,7 +45,7 @@ function DropdownMenuContent({
           "bg-white dark:bg-black",
           "text-brand-900 dark:text-brand-400 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto",
-          "rounded-2xl border-2 border-brand-200 dark:border-neutral-800 p-2 shadow-md",
+          "border-brand-200 rounded-3xl border-2 p-2 shadow-md dark:border-neutral-800",
           "transition-all duration-300 ease-in-out",
           className
         )}
@@ -79,8 +79,8 @@ function DropdownMenuItem({
       data-variant={variant}
       className={cn(
         "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-sm font-medium outline-hidden select-none",
-        "hover:bg-brand-100 hover:text-brand-900 dark:hover:bg-neutral-800 dark:hover:text-brand-500 hover:scale-[1.02] transition-all duration-200",
-        "data-[variant=destructive]:text-rose-500 dark:data-[variant=destructive]:text-rose-400 data-[variant=destructive]:hover:bg-rose-50 data-[variant=destructive]:dark:hover:text-rose-500",
+        "hover:bg-brand-100 hover:text-brand-900 dark:hover:text-brand-500 transition-all duration-200 hover:scale-[1.02] dark:hover:bg-neutral-800",
+        "data-[variant=destructive]:text-rose-500 data-[variant=destructive]:hover:bg-rose-50 dark:data-[variant=destructive]:text-rose-400 data-[variant=destructive]:dark:hover:text-rose-500",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
@@ -101,7 +101,7 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
         "relative flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-8 text-sm font-medium outline-hidden select-none",
-        "hover:bg-brand-100 hover:text-brand-900 hover:scale-[1.02] transition-all duration-200",
+        "hover:bg-brand-100 hover:text-brand-900 transition-all duration-200 hover:scale-[1.02]",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
@@ -109,9 +109,9 @@ function DropdownMenuCheckboxItem({
       checked={checked}
       {...props}
     >
-      <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center rounded-sm border-2 border-brand-300 bg-brand-50">
+      <span className="border-brand-300 bg-brand-50 pointer-events-none absolute left-2 flex size-4 items-center justify-center rounded-sm border-2">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CheckIcon className="size-3.5 text-brand-600" />
+          <CheckIcon className="text-brand-600 size-3.5" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -140,16 +140,16 @@ function DropdownMenuRadioItem({
       data-slot="dropdown-menu-radio-item"
       className={cn(
         "relative flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-8 text-sm font-medium outline-hidden select-none",
-        "hover:bg-brand-100 hover:text-brand-900 hover:scale-[1.02] transition-all duration-200",
+        "hover:bg-brand-100 hover:text-brand-900 transition-all duration-200 hover:scale-[1.02]",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center rounded-full border-2 border-brand-300 bg-brand-50">
+      <span className="border-brand-300 bg-brand-50 pointer-events-none absolute left-2 flex size-4 items-center justify-center rounded-full border-2">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CircleIcon className="size-2.5 fill-brand-600 text-brand-600" />
+          <CircleIcon className="fill-brand-600 text-brand-600 size-2.5" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -169,7 +169,7 @@ function DropdownMenuLabel({
       data-slot="dropdown-menu-label"
       data-inset={inset}
       className={cn(
-        "px-3 py-2 text-sm font-bold uppercase tracking-wide text-brand-700",
+        "text-brand-700 px-3 py-2 text-sm font-bold tracking-wide uppercase",
         "data-[inset]:pl-8",
         className
       )}
@@ -186,7 +186,7 @@ function DropdownMenuSeparator({
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
       className={cn(
-        "-mx-1 my-1.5 h-0.5 rounded-full bg-brand-100 dark:bg-neutral-800",
+        "bg-brand-100 -mx-1 my-1.5 h-0.5 rounded-full dark:bg-neutral-800",
         className
       )}
       {...props}
@@ -202,7 +202,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "ml-auto text-xs font-medium tracking-widest text-brand-400",
+        "text-brand-400 ml-auto text-xs font-medium tracking-widest",
         className
       )}
       {...props}
@@ -230,7 +230,7 @@ function DropdownMenuSubTrigger({
       data-inset={inset}
       className={cn(
         "flex cursor-pointer items-center rounded-md px-3 py-2 text-sm font-medium outline-hidden select-none",
-        "hover:bg-brand-100 hover:text-brand-900 hover:scale-[1.02] transition-all duration-200",
+        "hover:bg-brand-100 hover:text-brand-900 transition-all duration-200 hover:scale-[1.02]",
         "data-[state=open]:bg-brand-100 data-[state=open]:text-brand-900",
         "data-[inset]:pl-8",
         className
@@ -238,7 +238,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto size-4 text-brand-500" />
+      <ChevronRightIcon className="text-brand-500 ml-auto size-4" />
     </DropdownMenuPrimitive.SubTrigger>
   )
 }
@@ -251,9 +251,9 @@ function DropdownMenuSubContent({
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        "bg-white text-brand-900 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "text-brand-900 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-white",
         "z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden",
-        "rounded-lg border-2 border-brand-200 p-2 shadow-md",
+        "border-brand-200 rounded-lg border-2 p-2 shadow-md",
         "transition-all duration-300 ease-in-out",
         className
       )}

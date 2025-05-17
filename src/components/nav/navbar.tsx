@@ -9,9 +9,9 @@ export const Navbar = async () => {
   const session = await auth()
 
   return (
-    <nav className="h-20 w-full border-b-2 border-neutral-200 dark:border-neutral-800 px-4">
-      <div className="lg:max-w-screen-lg mx-auto flex items-center justify-between h-full">
-        <div className="pl-4 gap-x-3 flex items-center">
+    <nav className="h-20 w-full border-b-2 border-neutral-200 px-4 dark:border-neutral-800">
+      <div className="mx-auto flex h-full items-center justify-between lg:max-w-screen-lg">
+        <div className="flex items-center gap-x-3 pl-4">
           <Image
             src="/images/mascots/mascot.svg"
             alt="Mascot"
@@ -19,7 +19,7 @@ export const Navbar = async () => {
             height={40}
             className="align-middle"
           />
-          <h1 className="text-2xl font-extrabold text-brand-500 tracking-wide">
+          <h1 className="text-brand-500 text-2xl font-extrabold tracking-wide">
             {brand.BRAND}
           </h1>
         </div>

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 
 export default function Home() {
   return (
-    <div className="p-4 space-y-4 flex flex-col max-w-[200px]">
+    <div className="flex max-w-[200px] flex-col space-y-4 p-4">
       <p className="text-brand-500">this is a text</p>
       <Button>default</Button>
       <Button variant="primary">Primary</Button>

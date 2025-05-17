@@ -69,7 +69,7 @@ export const LessonBanner = ({
   }
 
   return (
-    <div className="w-full rounded-2xl bg-brand-500 dark:bg-brand-800 p-5 flex items-center justify-between">
+    <div className="bg-brand-500 dark:bg-brand-800 flex w-full items-center justify-between rounded-3xl p-5">
       <div className="space-y-2.5 text-white dark:text-neutral-300">
         <h3 className="text-2xl font-bold">{title}</h3>
         <p className="text-lg">{description}</p>
@@ -82,21 +82,21 @@ export const LessonBanner = ({
         showModal={open}
         setShowModal={setOpen}
         title={title}
-        className="max-w-2xl w-full"
+        className="w-full max-w-2xl"
       >
         {loading && (
           <div
-            className="flex justify-center items-center w-full"
+            className="flex w-full items-center justify-center"
             style={{ minHeight: 64 }}
           >
-            <Loader className="size-8 animate-spin text-muted-foreground" />
+            <Loader className="text-muted-foreground size-8 animate-spin" />
           </div>
         )}
         {error && <div className="text-red-500">{error}</div>}
         {!loading && !error && notes && (
           <LessonNotesScroller html={marked(notes, { renderer }) as string} />
         )}
-        <div className="flex gap-2 mt-4">
+        <div className="mt-4 flex gap-2">
           <Button
             variant="dangerOutline"
             onClick={() => setOpen(false)}
@@ -108,7 +108,7 @@ export const LessonBanner = ({
             <Button
               asChild
               variant="primary"
-              className="flex-1 button-shine-effect"
+              className="button-shine-effect flex-1"
             >
               <Link href={firstExerciseUrl}>Quiz</Link>
             </Button>

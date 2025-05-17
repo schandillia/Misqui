@@ -40,7 +40,7 @@ export function LessonNotesScroller({ html }: { html: string }) {
       <div className="relative max-h-[60vh]" style={{ minHeight: 80 }}>
         <div
           ref={containerRef}
-          className="overflow-y-auto px-1 py-2 custom-notes-scrollbar h-full"
+          className="custom-notes-scrollbar h-full overflow-y-auto px-1 py-2"
         >
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
@@ -48,7 +48,7 @@ export function LessonNotesScroller({ html }: { html: string }) {
           <button
             type="button"
             onClick={handleScrollDown}
-            className="absolute left-1/2 -translate-x-1/2 bottom-2 z-10 bg-neutral-500/80 dark:bg-neutral-300/80 rounded-full p-2 shadow animate-bounce cursor-pointer"
+            className="absolute bottom-2 left-1/2 z-10 -translate-x-1/2 animate-bounce cursor-pointer rounded-full bg-neutral-500/80 p-2 shadow dark:bg-neutral-300/80"
             aria-label="Scroll down"
           >
             <ChevronDown className="size-6 text-neutral-50 dark:text-neutral-700" />

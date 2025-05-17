@@ -9,8 +9,8 @@ const footerButtons = [
 
 export const Footer = () => {
   return (
-    <footer className="hidden lg:block h-20 w-full border-t-2 border-neutral-200 dark:border-neutral-800 p-2">
-      <div className="max-w-screen-lg mx-auto flex items-center justify-evenly h-full">
+    <footer className="hidden h-20 w-full border-t-2 border-neutral-200 p-2 lg:block dark:border-neutral-800">
+      <div className="mx-auto flex h-full max-w-screen-lg items-center justify-evenly">
         {footerButtons.map(({ src, alt, label }) => (
           <Button key={label} size="lg" variant="sidebar">
             <Image
