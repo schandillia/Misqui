@@ -1,3 +1,4 @@
+// @/app/(main)/learn/exercise-button.tsx
 "use client"
 
 import { useRouter } from "next/navigation"
@@ -107,15 +108,16 @@ export const ExerciseButton = ({
                         "size-10",
                         locked
                           ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
-                          : "fill-primary-foreground text-primary-foreground",
-                        isCompleted && "fill-none stroke-[4]"
+                          : "fill-primary-foreground text-primary-foreground"
+                        // Removed isCompleted conditional styling
                       )}
                     />
                   ) : (
                     <span
                       className={cn(
                         "text-2xl font-bold",
-                        locked ? "text-neutral-400" : "text-primary-foreground"
+                        locked ? "text-neutral-400" : "text-primary-foreground",
+                        isCompleted && "text-emerald-500" // Optional: Add a different style for completed numbers
                       )}
                     >
                       {buttonNumber}
@@ -139,15 +141,16 @@ export const ExerciseButton = ({
                   "size-10",
                   locked
                     ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
-                    : "fill-primary-foreground text-primary-foreground",
-                  isCompleted && "fill-none stroke-[4]"
+                    : "fill-primary-foreground text-primary-foreground"
+                  // Removed isCompleted conditional styling
                 )}
               />
             ) : (
               <span
                 className={cn(
                   "text-2xl font-bold",
-                  locked ? "text-neutral-400" : "text-primary-foreground"
+                  locked ? "text-neutral-400" : "text-primary-foreground",
+                  isCompleted && "text-emerald-500"
                 )}
               >
                 {buttonNumber}
