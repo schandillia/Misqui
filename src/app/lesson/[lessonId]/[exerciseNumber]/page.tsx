@@ -37,7 +37,7 @@ const Page = async ({
         challenges: (typeof challenges.$inferSelect & {
           completed: boolean
           challengeOptions: (typeof challengeOptions.$inferSelect)[]
-          challengeProgress?: (typeof challengeProgress.$inferSelect)[] // Replace any[] with proper type
+          challengeProgress?: (typeof challengeProgress.$inferSelect)[]
         })[]
         lesson: { id: number; title: string }
       })
@@ -66,6 +66,7 @@ const Page = async ({
       initialExerciseId={exercise.id}
       initialExerciseChallenges={exercise.challenges}
       initialGems={userProgress.gems}
+      initialPoints={userProgress.points || 0} // Add initialPoints
       initialPercentage={initialPercentage}
       initialExerciseTitle={exercise.title}
       initialExerciseNumber={exercise.exercise_number}

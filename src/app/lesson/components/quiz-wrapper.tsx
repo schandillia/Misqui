@@ -8,6 +8,7 @@ type Props = {
   initialLessonId: number
   initialExerciseId: number
   initialGems: number
+  initialPoints: number
   initialPercentage: number
   initialExerciseChallenges: (typeof challenges.$inferSelect & {
     completed: boolean

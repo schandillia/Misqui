@@ -25,6 +25,7 @@ type Props = {
   initialLessonId: number
   initialExerciseId: number
   initialGems: number
+  initialPoints: number
   initialPercentage: number
   initialExerciseChallenges: (typeof challenges.$inferSelect & {
     completed: boolean
@@ -45,6 +46,7 @@ export const Quiz = ({
   initialLessonId,
   initialExerciseId,
   initialGems,
+  initialPoints,
   initialPercentage,
   initialExerciseChallenges,
   initialExerciseTitle,
@@ -85,6 +87,7 @@ export const Quiz = ({
   const [exerciseId] = useState(initialExerciseId)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
+  const [points, setPoints] = useState(initialPoints)
   const [percentage, setPercentage] = useState(() =>
     initialPercentage === 100 ? 0 : initialPercentage
   )
@@ -134,6 +137,7 @@ export const Quiz = ({
       playCorrect()
       setStatus("correct")
       setPercentage((prev) => prev + 100 / challenges.length)
+      setPoints((prev) => prev + app.POINTS_PER_CHALLENGE)
 
       if (isPractice || initialPercentage === 100) {
         setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
@@ -146,6 +150,7 @@ export const Quiz = ({
             setStatus("none")
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
+            setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
             if (isPractice || initialPercentage === 100) {
               setGems((prev) => Math.max(prev - 1, 0))
             }
@@ -157,6 +162,7 @@ export const Quiz = ({
           setStatus("none")
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
+          setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
           if (isPractice || initialPercentage === 100) {
             setGems((prev) => Math.max(prev - 1, 0))
           }
@@ -241,7 +247,8 @@ export const Quiz = ({
               You’ve completed the exercise.
             </h1>
             <div className="flex w-full items-center gap-x-4">
-              <ResultCard variant="points" value={challenges.length * 10} />
+              <ResultCard variant="points" value={points} />{" "}
+              {/* Use total points */}
               <ResultCard variant="gems" value={gems} />
             </div>
           </div>
