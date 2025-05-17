@@ -19,6 +19,8 @@ type Props = {
   gems: number
   hasActiveSubscription: boolean
   isTimed: boolean
+  lessonId?: number
+  exerciseNumber?: number
 }
 
 export const ExerciseButton = ({
@@ -31,6 +33,8 @@ export const ExerciseButton = ({
   gems,
   hasActiveSubscription,
   isTimed,
+  lessonId,
+  exerciseNumber,
 }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLast = index === totalCount
@@ -48,10 +52,15 @@ export const ExerciseButton = ({
       return
     }
 
-    const href = isCompleted
-      ? `/exercise/${id}?isPractice=true`
-      : `/exercise/${id}`
-    router.push(href)
+    // Use the new URL format if lessonId and exerciseNumber are available
+    if (lessonId && exerciseNumber) {
+      const href = isCompleted
+        ? `/lesson/${lessonId}/${exerciseNumber}?isPractice=true`
+        : `/lesson/${lessonId}/${exerciseNumber}`
+      router.push(href)
+    } else {
+      console.warn(`Missing lessonId or exerciseNumber for exercise: ${id}`)
+    }
   }
 
   // Show crown only if isTimed is true

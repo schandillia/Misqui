@@ -1,27 +1,28 @@
-// @/app/exercise/quiz.tsx
+// @/app/lesson/components/quiz.tsx
 "use client"
 
 import { useRef } from "react"
-import { QuestionBubble } from "@/app/exercise/question-bubble"
+import { QuestionBubble } from "@/app/lesson/components/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 import { useState, useTransition, useEffect, useMemo } from "react"
-import { Challenge } from "@/app/exercise/challenge"
-import { Footer } from "@/app/exercise/footer"
+import { Challenge } from "@/app/lesson/components/challenge"
+import { Footer } from "@/app/lesson/components/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
 import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
 import { useWindowSize, useMount } from "react-use"
 import Image from "next/image"
-import { ResultCard } from "@/app/exercise/result-card"
+import { ResultCard } from "@/app/lesson/components/result-card"
 import { useRouter } from "next/navigation"
 import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
 import { useQuizAudio } from "@/store/use-quiz-audio"
-import { ExerciseHeader } from "@/app/exercise/exercise-header"
+import { ExerciseHeader } from "@/app/lesson/components/exercise-header"
 
 type Props = {
+  initialLessonId: number
   initialExerciseId: number
   initialGems: number
   initialPercentage: number
@@ -29,8 +30,8 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
-  initialExerciseTitle: string // Add title
-  initialExerciseNumber: number // Add exercise_number
+  initialExerciseTitle: string
+  initialExerciseNumber: number
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
@@ -40,12 +41,13 @@ type Props = {
 }
 
 export const Quiz = ({
+  initialLessonId,
   initialExerciseId,
   initialGems,
   initialPercentage,
   initialExerciseChallenges,
-  initialExerciseTitle, // New prop
-  initialExerciseNumber, // New prop
+  initialExerciseTitle,
+  initialExerciseNumber,
   userSubscription,
   isPractice = false,
 }: Props) => {
@@ -77,6 +79,7 @@ export const Quiz = ({
   const [pending] = useTransition()
   const [serverPending, setServerPending] = useState(false)
   const [exerciseId] = useState(initialExerciseId)
+  const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
   const [percentage, setPercentage] = useState(() =>
     initialPercentage === 100 ? 0 : initialPercentage
@@ -145,7 +148,8 @@ export const Quiz = ({
             openGemsModal()
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error("Error in upsertChallengeProgress:", error)
           setStatus("none")
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
@@ -177,7 +181,8 @@ export const Quiz = ({
             openGemsModal()
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error("Error in reduceGems:", error)
           setStatus("none")
           setSelectedOption(undefined)
           if (!isPractice && !userSubscription?.isActive) {
@@ -191,7 +196,6 @@ export const Quiz = ({
     }
   }
 
-  // Play finish audio once when exercise is completed
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio.current) {
       hasPlayedFinishAudio.current = true
@@ -209,36 +213,39 @@ export const Quiz = ({
           numberOfPieces={500}
           tweenDuration={10000}
         />
-        <div className="mx-auto flex h-full max-w-lg flex-col items-center justify-center gap-y-4 text-center lg:gap-y-8">
-          <Image
-            src="/images/icons/finish.svg"
-            height={100}
-            width={100}
-            alt="Finish"
-            className="hidden lg:block"
-          />
-          <Image
-            src="/images/icons/finish.svg"
-            height={50}
-            width={50}
-            alt="Finish"
-            className="block lg:hidden"
-          />
-          <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-            Great job!
-            <br />
-            You’ve completed the exercise.
-          </h1>
-          <div className="flex w-full items-center gap-x-4">
-            <ResultCard variant="points" value={challenges.length * 10} />
-            <ResultCard variant="gems" value={gems} />
+        <div className="flex min-h-screen flex-col">
+          <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4 text-center lg:gap-y-8">
+            <Image
+              src="/images/icons/finish.svg"
+              height={100}
+              width={100}
+              alt="Finish"
+              className="hidden lg:block"
+            />
+            <Image
+              src="/images/icons/finish.svg"
+              height={50}
+              width={50}
+              alt="Finish"
+              className="block lg:hidden"
+            />
+            <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
+              Great job!
+              <br />
+              You’ve completed the exercise.
+            </h1>
+            <div className="flex w-full items-center gap-x-4">
+              <ResultCard variant="points" value={challenges.length * 10} />
+              <ResultCard variant="gems" value={gems} />
+            </div>
           </div>
+          <Footer
+            lessonId={lessonId}
+            exerciseId={exerciseId}
+            status="completed"
+            onCheck={() => router.push("/learn")}
+          />
         </div>
-        <Footer
-          exerciseId={exerciseId}
-          status="completed"
-          onCheck={() => router.push("/learn")}
-        />
       </>
     )
   }
@@ -254,8 +261,8 @@ export const Quiz = ({
         gems={gems}
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
-        exerciseTitle={initialExerciseTitle} // Pass title to header
-        exerciseNumber={initialExerciseNumber} // Pass exercise_number to header
+        exerciseTitle={initialExerciseTitle}
+        exerciseNumber={initialExerciseNumber}
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">

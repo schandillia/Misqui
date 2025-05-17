@@ -1,10 +1,11 @@
-// @/app/exercise/quiz-wrapper.tsx
+// @/app/lesson/components/quiz-wrapper.tsx
 "use client"
 
-import { Quiz } from "@/app/exercise/quiz"
+import { Quiz } from "@/app/lesson/components/quiz"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 
 type Props = {
+  initialLessonId: number
   initialExerciseId: number
   initialGems: number
   initialPercentage: number
@@ -12,8 +13,8 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
-  initialExerciseTitle: string // Add title
-  initialExerciseNumber: number // Add exercise_number
+  initialExerciseTitle: string
+  initialExerciseNumber: number
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean

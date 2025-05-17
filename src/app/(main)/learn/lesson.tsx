@@ -71,7 +71,9 @@ export const Lesson = ({
                     percentage={percentage}
                     gems={gems}
                     hasActiveSubscription={hasActiveSubscription}
-                    isTimed={exercise.isTimed} // Pass isTimed
+                    isTimed={exercise.isTimed}
+                    lessonId={id} // Add this line to pass the lesson ID
+                    exerciseNumber={exercise.exercise_number} // Add this line to pass the exercise number
                   />
                 </div>
               )
