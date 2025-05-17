@@ -2,13 +2,7 @@ import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, and, inArray } from "drizzle-orm"
-import {
-  exercises,
-  challenges,
-  challengeProgress,
-  userExerciseChallengeSubset,
-} from "@/db/schema"
-import app from "@/lib/data/app.json"
+import { exercises, challenges, challengeProgress } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { getOrCreateUserExerciseChallengeSubset } from "./exercises"
 
