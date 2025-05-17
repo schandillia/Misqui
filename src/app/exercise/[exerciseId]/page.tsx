@@ -1,9 +1,9 @@
+// @/app/[exerciseId]/page.tsx
 import { QuizWrapper } from "@/app/exercise/quiz-wrapper"
 import { getExercise, getUserProgress, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
 
-// Accept searchParams in props
 const Page = async ({
   params,
   searchParams,
@@ -39,9 +39,12 @@ const Page = async ({
       initialExerciseChallenges={exercise.challenges}
       initialGems={userProgress.gems}
       initialPercentage={initialPercentage}
+      initialExerciseTitle={exercise.title} // Pass title
+      initialExerciseNumber={exercise.exercise_number} // Pass exercise_number
       userSubscription={userSubscription}
       isPractice={exerciseIsPractice}
     />
   )
 }
+
 export default Page

@@ -1,3 +1,4 @@
+// @/app/exercise/quiz.tsx
 "use client"
 
 import { useRef } from "react"
@@ -28,6 +29,8 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
+  initialExerciseTitle: string // Add title
+  initialExerciseNumber: number // Add exercise_number
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
@@ -41,6 +44,8 @@ export const Quiz = ({
   initialGems,
   initialPercentage,
   initialExerciseChallenges,
+  initialExerciseTitle, // New prop
+  initialExerciseNumber, // New prop
   userSubscription,
   isPractice = false,
 }: Props) => {
@@ -249,6 +254,8 @@ export const Quiz = ({
         gems={gems}
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
+        exerciseTitle={initialExerciseTitle} // Pass title to header
+        exerciseNumber={initialExerciseNumber} // Pass exercise_number to header
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">

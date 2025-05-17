@@ -1,3 +1,4 @@
+// @/app/exercise/quiz-wrapper.tsx
 "use client"
 
 import { Quiz } from "@/app/exercise/quiz"
@@ -11,6 +12,8 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
+  initialExerciseTitle: string // Add title
+  initialExerciseNumber: number // Add exercise_number
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
