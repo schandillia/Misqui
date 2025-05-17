@@ -8,6 +8,7 @@ import {
   serial,
   index,
   boolean,
+  unique,
 } from "drizzle-orm/pg-core"
 import { userProgress } from "@/db/schema/progress"
 import { challenges } from "@/db/schema/challenges"
@@ -38,17 +39,27 @@ export const lessons = pgTable("lessons", {
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
 
-export const exercises = pgTable("exercises", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  lessonId: integer("lesson_id")
-    .references(() => lessons.id, { onDelete: "cascade" })
-    .notNull(),
-  order: integer("order").notNull(),
-  isTimed: boolean("is_timed").notNull().default(false),
-  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-})
+export const exercises = pgTable(
+  "exercises",
+  {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    lessonId: integer("lesson_id")
+      .references(() => lessons.id, { onDelete: "cascade" })
+      .notNull(),
+    order: integer("order").notNull(),
+    exercise_number: integer("exercise_number").notNull(),
+    isTimed: boolean("is_timed").notNull().default(false),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  },
+  (table) => [
+    unique("lesson_exercise_number_unique").on(
+      table.lessonId,
+      table.exercise_number
+    ),
+  ]
+)
 
 // Relations
 export const coursesRelations = relations(courses, ({ many }) => ({

@@ -6,7 +6,7 @@ import {
   text,
   timestamp,
   boolean,
-  uniqueIndex,
+  unique,
 } from "drizzle-orm/pg-core"
 
 export const userExerciseChallengeSubset = pgTable(
@@ -19,11 +19,11 @@ export const userExerciseChallengeSubset = pgTable(
     isPractice: boolean("is_practice").notNull().default(false),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   },
-  (table) => ({
-    userExerciseIsPracticeIdx: uniqueIndex("user_exercise_is_practice_idx").on(
+  (table) => [
+    unique("user_exercise_is_practice_idx").on(
       table.userId,
       table.exerciseId,
       table.isPractice
     ),
-  })
+  ]
 )
