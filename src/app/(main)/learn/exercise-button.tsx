@@ -37,7 +37,6 @@ export const ExerciseButton = ({
   lessonId,
   exerciseNumber,
 }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLast = index === totalCount
   const isCompleted = !current && !locked
   const buttonNumber = index + 1
@@ -53,19 +52,39 @@ export const ExerciseButton = ({
       return
     }
 
-    // Use the new URL format if lessonId and exerciseNumber are available
     if (lessonId && exerciseNumber) {
-      const href = isCompleted
-        ? `/lesson/${lessonId}/${exerciseNumber}?isPractice=true`
-        : `/lesson/${lessonId}/${exerciseNumber}`
+      const href =
+        isCompleted && !isTimed
+          ? `/lesson/${lessonId}/${exerciseNumber}?isPractice=true`
+          : `/lesson/${lessonId}/${exerciseNumber}`
       router.push(href)
     } else {
       console.warn(`Missing lessonId or exerciseNumber for exercise: ${id}`)
     }
   }
 
-  // Show crown only if isTimed is true
   const showCrown = isTimed
+
+  // Common button content (Crown or Number)
+  const buttonContent = showCrown ? (
+    <Crown
+      className={cn(
+        "size-10",
+        locked
+          ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
+          : "fill-primary-foreground text-primary-foreground"
+      )}
+    />
+  ) : (
+    <span
+      className={cn(
+        "text-2xl font-bold",
+        locked ? "text-neutral-400" : "text-primary-foreground"
+      )}
+    >
+      {buttonNumber}
+    </span>
+  )
 
   return (
     <div
@@ -80,84 +99,41 @@ export const ExerciseButton = ({
         isCompleted={isCompleted}
         current={current}
       >
-        {current ? (
-          <div className="relative h-[102px] w-[102px]">
+        {/* Always render a 102px × 102px container for layout consistency */}
+        <div className="relative flex h-[102px] w-[102px] items-center justify-center">
+          {current && !isTimed ? (
+            // Non-timed current button with CircularProgressbar
             <div className="text-neutral-300 dark:text-neutral-700">
               <CircularProgressbarWithChildren
                 value={Number.isNaN(percentage) ? 0 : percentage}
                 styles={{
-                  path: {
-                    stroke: "var(--color-brand-500)",
-                  },
-                  trail: {
-                    stroke: "currentColor",
-                  },
+                  path: { stroke: "var(--color-brand-500)" },
+                  trail: { stroke: "currentColor" },
                 }}
               >
                 <Button
-                  size={locked ? "default" : "rounded"}
                   variant={locked ? "locked" : "secondary"}
                   className={cn(
-                    "relative size-[70px] border-4 dark:border-emerald-600",
-                    locked ? "rounded-3xl" : ""
+                    "relative size-[70px] rounded-full border-4 dark:border-emerald-600"
                   )}
                 >
-                  {showCrown ? (
-                    <Crown
-                      className={cn(
-                        "size-10",
-                        locked
-                          ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
-                          : "fill-primary-foreground text-primary-foreground"
-                        // Removed isCompleted conditional styling
-                      )}
-                    />
-                  ) : (
-                    <span
-                      className={cn(
-                        "text-2xl font-bold",
-                        locked ? "text-neutral-400" : "text-primary-foreground",
-                        isCompleted && "text-emerald-500" // Optional: Add a different style for completed numbers
-                      )}
-                    >
-                      {buttonNumber}
-                    </span>
-                  )}
+                  {buttonContent}
                 </Button>
               </CircularProgressbarWithChildren>
             </div>
-          </div>
-        ) : (
-          <Button
-            variant={locked ? "locked" : "secondary"}
-            className={cn(
-              "relative size-[70px] rounded-3xl border-4",
-              !locked && "dark:border-emerald-600"
-            )}
-          >
-            {showCrown ? (
-              <Crown
-                className={cn(
-                  "size-10",
-                  locked
-                    ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
-                    : "fill-primary-foreground text-primary-foreground"
-                  // Removed isCompleted conditional styling
-                )}
-              />
-            ) : (
-              <span
-                className={cn(
-                  "text-2xl font-bold",
-                  locked ? "text-neutral-400" : "text-primary-foreground",
-                  isCompleted && "text-emerald-500"
-                )}
-              >
-                {buttonNumber}
-              </span>
-            )}
-          </Button>
-        )}
+          ) : (
+            // Timed exercises (current or not) or non-current buttons
+            <Button
+              variant={locked ? "locked" : "secondary"}
+              className={cn(
+                "relative size-[70px] rounded-full border-4",
+                !locked && "dark:border-emerald-600"
+              )}
+            >
+              {buttonContent}
+            </Button>
+          )}
+        </div>
       </ExerciseButtonWrapper>
     </div>
   )

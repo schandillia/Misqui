@@ -32,7 +32,7 @@ type Props = {
   })[]
   initialExerciseTitle: string
   initialExerciseNumber: number
-  initialIsTimed: boolean // Add isTimed
+  initialIsTimed: boolean
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
         isActive: boolean
@@ -60,6 +60,8 @@ export const Quiz = ({
   const hasPlayedFinishAudio = useRef(false)
 
   useMount(() => {
+    if (initialIsTimed) return // Skip modal logic entirely for timed lessons
+
     if (isPractice) {
       const SIX_HOURS = 6 * 60 * 60 * 1000
       const key = "practiceModalLastShown"

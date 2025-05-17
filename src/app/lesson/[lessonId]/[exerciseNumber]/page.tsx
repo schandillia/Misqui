@@ -12,7 +12,7 @@ import {
   challenges,
   challengeOptions,
   challengeProgress,
-} from "@/db/schema" // Add challengeProgress import
+} from "@/db/schema"
 
 const Page = async ({
   params,
