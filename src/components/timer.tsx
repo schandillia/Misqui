@@ -23,11 +23,6 @@ export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
     const timer = setInterval(() => {
       setSecondsLeft((prev) => {
         const newSeconds = prev - 1
-        console.log("Countdown Timer:", {
-          secondsLeft: newSeconds,
-          isTimerPaused,
-          timestamp: new Date().toISOString(),
-        })
         if (newSeconds <= 0) {
           clearInterval(timer)
           return 0

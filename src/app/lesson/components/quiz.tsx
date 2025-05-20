@@ -65,16 +65,17 @@ export const Quiz = ({
   const { playFinish, playCorrect, playIncorrect } = useQuizAudio()
 
   const hasPlayedFinishAudio = useRef(false)
-  const actionCounter = useRef(0) // Minimal action tracking for logging
 
   useMount(() => {
     if (initialIsTimed) return
     if (isPractice) {
-      const SIX_HOURS = 6 * 60 * 60 * 1000
       const key = "practiceModalLastShown"
       const lastShown = Number(localStorage.getItem(key) || 0)
       const now = Date.now()
-      if (now - lastShown > SIX_HOURS) {
+      if (
+        now - lastShown >
+        app.HOURS_BETWEEN_PRACTICE_MODALS * 60 * 60 * 1000
+      ) {
         openPracticeModal()
         localStorage.setItem(key, now.toString())
       }
@@ -91,6 +92,7 @@ export const Quiz = ({
   const [exerciseId] = useState(initialExerciseId)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [points, setPoints] = useState(initialPoints)
   const [pointsEarned, setPointsEarned] = useState(0)
   const [percentage, setPercentage] = useState(() =>
@@ -116,7 +118,9 @@ export const Quiz = ({
 
   const totalAttempts = correctAttempts + incorrectAttempts
   const scorePercentage =
-    totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0
+    totalAttempts > 0
+      ? parseFloat(((correctAttempts / totalAttempts) * 100).toFixed(1))
+      : 0
 
   // Expected time for the quiz
   const expectedTime = app.CHALLENGES_PER_EXERCISE * app.SECONDS_PER_CHALLENGE
@@ -147,14 +151,6 @@ export const Quiz = ({
     const timer = setInterval(() => {
       setTimeTaken((prev) => {
         const newTime = prev + 1
-        const minutes = Math.floor(newTime / 60)
-        const seconds = newTime % 60
-        const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
-        console.log("Timer:", {
-          timeTaken: newTime,
-          formattedTime: formatted,
-          timestamp: new Date().toISOString(),
-        })
         return newTime
       })
     }, 1000)
@@ -173,17 +169,6 @@ export const Quiz = ({
 
   const onContinue = () => {
     if (!selectedOption && status !== "wrong") return
-
-    const actionId = ++actionCounter.current
-    console.log(`onContinue [Action ${actionId}]:`, {
-      selectedOption,
-      status,
-      correctAttempts,
-      incorrectAttempts,
-      totalAttempts,
-      serverPending,
-      timestamp: new Date().toISOString(),
-    })
 
     if (status === "wrong") {
       setStatus("none")
@@ -206,12 +191,6 @@ export const Quiz = ({
       setStatus("correct")
       setCorrectAttempts((prev) => {
         const newCorrect = prev + 1
-        console.log(`Correct attempt [Action ${actionId}]:`, {
-          correctAttempts: newCorrect,
-          incorrectAttempts,
-          totalAttempts: newCorrect + incorrectAttempts,
-          timestamp: new Date().toISOString(),
-        })
         return newCorrect
       })
       setPercentage((prev) => prev + 100 / challenges.length)
@@ -223,10 +202,6 @@ export const Quiz = ({
       }
 
       setServerPending(true)
-      console.log(
-        `Server pending start [Action ${actionId}]: upsertChallengeProgress`,
-        { timestamp: new Date().toISOString() }
-      )
       upsertChallengeProgress(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
@@ -239,8 +214,8 @@ export const Quiz = ({
             openGemsModal()
           }
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .catch((error) => {
-          console.error("Error in upsertChallengeProgress:", error)
           setStatus("none")
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
@@ -251,22 +226,12 @@ export const Quiz = ({
         })
         .finally(() => {
           setServerPending(false)
-          console.log(
-            `Server pending end [Action ${actionId}]: upsertChallengeProgress`,
-            { timestamp: new Date().toISOString() }
-          )
         })
     } else {
       playIncorrect()
       setStatus("wrong")
       setIncorrectAttempts((prev) => {
         const newIncorrect = prev + 1
-        console.log(`Wrong attempt [Action ${actionId}]:`, {
-          correctAttempts,
-          incorrectAttempts: newIncorrect,
-          totalAttempts: correctAttempts + newIncorrect,
-          timestamp: new Date().toISOString(),
-        })
         return newIncorrect
       })
 
@@ -275,9 +240,6 @@ export const Quiz = ({
       }
 
       setServerPending(true)
-      console.log(`Server pending start [Action ${actionId}]: reduceGems`, {
-        timestamp: new Date().toISOString(),
-      })
       reduceGems(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
@@ -289,8 +251,8 @@ export const Quiz = ({
             openGemsModal()
           }
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .catch((error) => {
-          console.error("Error in reduceGems:", error)
           setStatus("none")
           setSelectedOption(undefined)
           if (!isPractice && !userSubscription?.isActive) {
@@ -300,9 +262,6 @@ export const Quiz = ({
         })
         .finally(() => {
           setServerPending(false)
-          console.log(`Server pending end [Action ${actionId}]: reduceGems`, {
-            timestamp: new Date().toISOString(),
-          })
         })
     }
   }
@@ -313,21 +272,6 @@ export const Quiz = ({
       playFinish()
     }
   }, [challenge, playFinish])
-
-  // Log final score
-  console.log("Final score:", {
-    correctAttempts,
-    incorrectAttempts,
-    totalAttempts,
-    scorePercentage,
-    timeTaken,
-    timeCaption,
-    timeStatus,
-    isTimed: initialIsTimed,
-    expectedTime,
-    actions: actionCounter.current,
-    timestamp: new Date().toISOString(),
-  })
 
   if (isExerciseCompleted) {
     // Dynamic result message using utility
@@ -379,9 +323,10 @@ export const Quiz = ({
               />
               <ResultCard
                 variant="score"
-                value={scorePercentage}
+                value={`${scorePercentage}%`}
                 caption="Score"
               />
+
               <ResultCard
                 variant="time"
                 value={formattedTime}
@@ -447,16 +392,6 @@ export const Quiz = ({
         isTimed={initialIsTimed}
         status={status}
         onCheck={() => {
-          const actionId = actionCounter.current + 1
-          console.log(`Footer onCheck [Action ${actionId}]:`, {
-            status,
-            selectedOption,
-            serverPending,
-            disabled:
-              status === "none" &&
-              (pending || !selectedOption || serverPending),
-            timestamp: new Date().toISOString(),
-          })
           onContinue()
         }}
       />
