@@ -7,30 +7,37 @@ import app from "@/lib/data/app.json"
 
 type Props = {
   isExerciseCompleted: boolean
+  isTimerPaused: boolean // Add isTimerPaused to Props
 }
 
-export const Timer = ({ isExerciseCompleted }: Props) => {
+export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
   const totalSeconds = app.CHALLENGES_PER_EXERCISE * app.SECONDS_PER_CHALLENGE
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds)
 
   // Countdown logic
   useEffect(() => {
-    if (isExerciseCompleted || secondsLeft <= 0) {
-      return // Stop the timer if exercise is completed or time is up
+    if (isExerciseCompleted || secondsLeft <= 0 || isTimerPaused) {
+      return // Stop the timer if exercise is completed, time is up, or paused
     }
 
     const timer = setInterval(() => {
       setSecondsLeft((prev) => {
-        if (prev <= 1) {
+        const newSeconds = prev - 1
+        console.log("Countdown Timer:", {
+          secondsLeft: newSeconds,
+          isTimerPaused,
+          timestamp: new Date().toISOString(),
+        })
+        if (newSeconds <= 0) {
           clearInterval(timer)
           return 0
         }
-        return prev - 1
+        return newSeconds
       })
     }, 1000)
 
     return () => clearInterval(timer) // Cleanup on unmount or when stopping
-  }, [isExerciseCompleted, secondsLeft])
+  }, [isExerciseCompleted, secondsLeft, isTimerPaused])
 
   // Format time as MM:SS
   const minutes = Math.floor(secondsLeft / 60)
@@ -39,7 +46,7 @@ export const Timer = ({ isExerciseCompleted }: Props) => {
     seconds
   ).padStart(2, "0")}`
 
-  // Granular color transition: amber at 20%, red at 10%
+  // Granular color transition: amber at 30%, red at 20%
   const amberThreshold = totalSeconds * 0.3 // 30% of total time
   const redThreshold = totalSeconds * 0.2 // 20% of total time
   const isAmberTime =

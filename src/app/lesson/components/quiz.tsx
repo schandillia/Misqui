@@ -20,6 +20,11 @@ import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { ExerciseHeader } from "@/app/lesson/components/exercise-header"
+import {
+  getTimeCaption,
+  getTimeStatus,
+  getResultMessage,
+} from "@/app/lesson/utils/quiz-utils"
 
 type Props = {
   initialLessonId: number
@@ -60,16 +65,15 @@ export const Quiz = ({
   const { playFinish, playCorrect, playIncorrect } = useQuizAudio()
 
   const hasPlayedFinishAudio = useRef(false)
+  const actionCounter = useRef(0) // Minimal action tracking for logging
 
   useMount(() => {
-    if (initialIsTimed) return // Skip modal logic entirely for timed lessons
-
+    if (initialIsTimed) return
     if (isPractice) {
       const SIX_HOURS = 6 * 60 * 60 * 1000
       const key = "practiceModalLastShown"
       const lastShown = Number(localStorage.getItem(key) || 0)
       const now = Date.now()
-
       if (now - lastShown > SIX_HOURS) {
         openPracticeModal()
         localStorage.setItem(key, now.toString())
@@ -88,6 +92,7 @@ export const Quiz = ({
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
   const [points, setPoints] = useState(initialPoints)
+  const [pointsEarned, setPointsEarned] = useState(0)
   const [percentage, setPercentage] = useState(() =>
     initialPercentage === 100 ? 0 : initialPercentage
   )
@@ -98,12 +103,64 @@ export const Quiz = ({
     )
     return incompleteIndex === -1 ? 0 : incompleteIndex
   })
-
   const [selectedOption, setSelectedOption] = useState<number>()
   const [status, setStatus] = useState<"correct" | "wrong" | "none">("none")
+  const [correctAttempts, setCorrectAttempts] = useState(0)
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0)
+  const [timeTaken, setTimeTaken] = useState(0)
 
   const challenge = challenges[activeIndex]
+  const isExerciseCompleted = !challenge
   const options = useMemo(() => challenge?.challengeOptions ?? [], [challenge])
+  const isTimerPaused = status === "none" && (pending || serverPending)
+
+  const totalAttempts = correctAttempts + incorrectAttempts
+  const scorePercentage =
+    totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0
+
+  // Expected time for the quiz
+  const expectedTime = app.CHALLENGES_PER_EXERCISE * app.SECONDS_PER_CHALLENGE
+
+  // Time caption for ResultCard using utility
+  const timeCaption = useMemo(
+    () => getTimeCaption(timeTaken, expectedTime),
+    [timeTaken, expectedTime]
+  )
+
+  // Time status message using utility
+  const timeStatus = useMemo(
+    () => getTimeStatus(timeTaken, expectedTime, scorePercentage),
+    [timeTaken, expectedTime, scorePercentage]
+  )
+
+  // Format time as mm:ss
+  const formattedTime = useMemo(() => {
+    const minutes = Math.floor(timeTaken / 60)
+    const seconds = timeTaken % 60
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+  }, [timeTaken])
+
+  // Timer for tracking time
+  useEffect(() => {
+    if (isExerciseCompleted || isTimerPaused) return
+
+    const timer = setInterval(() => {
+      setTimeTaken((prev) => {
+        const newTime = prev + 1
+        const minutes = Math.floor(newTime / 60)
+        const seconds = newTime % 60
+        const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+        console.log("Timer:", {
+          timeTaken: newTime,
+          formattedTime: formatted,
+          timestamp: new Date().toISOString(),
+        })
+        return newTime
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [isExerciseCompleted, isTimerPaused])
 
   const onNext = () => {
     setActiveIndex((current) => current + 1)
@@ -115,7 +172,18 @@ export const Quiz = ({
   }
 
   const onContinue = () => {
-    if (!selectedOption) return
+    if (!selectedOption && status !== "wrong") return
+
+    const actionId = ++actionCounter.current
+    console.log(`onContinue [Action ${actionId}]:`, {
+      selectedOption,
+      status,
+      correctAttempts,
+      incorrectAttempts,
+      totalAttempts,
+      serverPending,
+      timestamp: new Date().toISOString(),
+    })
 
     if (status === "wrong") {
       setStatus("none")
@@ -136,14 +204,29 @@ export const Quiz = ({
     if (correctOption.id === selectedOption) {
       playCorrect()
       setStatus("correct")
+      setCorrectAttempts((prev) => {
+        const newCorrect = prev + 1
+        console.log(`Correct attempt [Action ${actionId}]:`, {
+          correctAttempts: newCorrect,
+          incorrectAttempts,
+          totalAttempts: newCorrect + incorrectAttempts,
+          timestamp: new Date().toISOString(),
+        })
+        return newCorrect
+      })
       setPercentage((prev) => prev + 100 / challenges.length)
       setPoints((prev) => prev + app.POINTS_PER_CHALLENGE)
+      setPointsEarned((prev) => prev + app.POINTS_PER_CHALLENGE)
 
       if (isPractice || initialPercentage === 100) {
         setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
       }
 
       setServerPending(true)
+      console.log(
+        `Server pending start [Action ${actionId}]: upsertChallengeProgress`,
+        { timestamp: new Date().toISOString() }
+      )
       upsertChallengeProgress(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
@@ -151,9 +234,8 @@ export const Quiz = ({
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
             setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
-            if (isPractice || initialPercentage === 100) {
-              setGems((prev) => Math.max(prev - 1, 0))
-            }
+            setPointsEarned((prev) => prev - app.POINTS_PER_CHALLENGE)
+            setCorrectAttempts((prev) => prev - 1)
             openGemsModal()
           }
         })
@@ -163,23 +245,39 @@ export const Quiz = ({
           setSelectedOption(undefined)
           setPercentage((prev) => prev - 100 / challenges.length)
           setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
-          if (isPractice || initialPercentage === 100) {
-            setGems((prev) => Math.max(prev - 1, 0))
-          }
+          setPointsEarned((prev) => prev - app.POINTS_PER_CHALLENGE)
+          setCorrectAttempts((prev) => prev - 1)
           toast.error("Something went wrong. Please try again.")
         })
         .finally(() => {
           setServerPending(false)
+          console.log(
+            `Server pending end [Action ${actionId}]: upsertChallengeProgress`,
+            { timestamp: new Date().toISOString() }
+          )
         })
     } else {
       playIncorrect()
       setStatus("wrong")
+      setIncorrectAttempts((prev) => {
+        const newIncorrect = prev + 1
+        console.log(`Wrong attempt [Action ${actionId}]:`, {
+          correctAttempts,
+          incorrectAttempts: newIncorrect,
+          totalAttempts: correctAttempts + newIncorrect,
+          timestamp: new Date().toISOString(),
+        })
+        return newIncorrect
+      })
 
       if (!isPractice && !userSubscription?.isActive) {
         setGems((prev) => Math.max(prev - 1, 0))
       }
 
       setServerPending(true)
+      console.log(`Server pending start [Action ${actionId}]: reduceGems`, {
+        timestamp: new Date().toISOString(),
+      })
       reduceGems(challenge.id)
         .then((response) => {
           if (response?.error === "gems") {
@@ -202,6 +300,9 @@ export const Quiz = ({
         })
         .finally(() => {
           setServerPending(false)
+          console.log(`Server pending end [Action ${actionId}]: reduceGems`, {
+            timestamp: new Date().toISOString(),
+          })
         })
     }
   }
@@ -213,9 +314,30 @@ export const Quiz = ({
     }
   }, [challenge, playFinish])
 
-  const isExerciseCompleted = !challenge
+  // Log final score
+  console.log("Final score:", {
+    correctAttempts,
+    incorrectAttempts,
+    totalAttempts,
+    scorePercentage,
+    timeTaken,
+    timeCaption,
+    timeStatus,
+    isTimed: initialIsTimed,
+    expectedTime,
+    actions: actionCounter.current,
+    timestamp: new Date().toISOString(),
+  })
 
-  if (!challenge) {
+  if (isExerciseCompleted) {
+    // Dynamic result message using utility
+    const { resultMessage, showGreatJob } = getResultMessage(
+      initialIsTimed,
+      scorePercentage,
+      timeTaken,
+      expectedTime
+    )
+
     return (
       <>
         <ReactConfetti
@@ -242,14 +364,29 @@ export const Quiz = ({
               className="block lg:hidden"
             />
             <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-              Great job!
-              <br />
-              You’ve completed the exercise.
+              {showGreatJob && "Great job!"}
+              {showGreatJob && <br />}
+              {resultMessage}
             </h1>
-            <div className="flex w-full items-center gap-x-4">
-              <ResultCard variant="points" value={points} />{" "}
-              {/* Use total points */}
-              <ResultCard variant="gems" value={gems} />
+            <p className="text-lg font-semibold text-neutral-600 lg:text-xl dark:text-neutral-400">
+              {timeStatus}
+            </p>
+            <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
+              <ResultCard
+                variant="points"
+                value={pointsEarned}
+                caption="Points Earned"
+              />
+              <ResultCard
+                variant="score"
+                value={scorePercentage}
+                caption="Score"
+              />
+              <ResultCard
+                variant="time"
+                value={formattedTime}
+                caption={timeCaption}
+              />
             </div>
           </div>
           <Footer
@@ -279,6 +416,7 @@ export const Quiz = ({
         exerciseNumber={initialExerciseNumber}
         isTimed={initialIsTimed}
         isExerciseCompleted={isExerciseCompleted}
+        isTimerPaused={isTimerPaused}
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">
@@ -303,10 +441,24 @@ export const Quiz = ({
         </div>
       </div>
       <Footer
-        disabled={status === "none" && (pending || !selectedOption)}
+        disabled={
+          status === "none" && (pending || !selectedOption || serverPending)
+        }
         isTimed={initialIsTimed}
         status={status}
-        onCheck={onContinue}
+        onCheck={() => {
+          const actionId = actionCounter.current + 1
+          console.log(`Footer onCheck [Action ${actionId}]:`, {
+            status,
+            selectedOption,
+            serverPending,
+            disabled:
+              status === "none" &&
+              (pending || !selectedOption || serverPending),
+            timestamp: new Date().toISOString(),
+          })
+          onContinue()
+        }}
       />
     </>
   )

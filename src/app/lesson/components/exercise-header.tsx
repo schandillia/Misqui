@@ -13,6 +13,7 @@ type Props = {
   exerciseNumber?: number
   isTimed: boolean
   isExerciseCompleted: boolean
+  isTimerPaused: boolean // Add isTimerPaused to Props
 }
 
 export const ExerciseHeader = ({
@@ -23,6 +24,7 @@ export const ExerciseHeader = ({
   exerciseNumber,
   isTimed,
   isExerciseCompleted,
+  isTimerPaused,
 }: Props) => {
   const { open } = useExitModal()
 
@@ -31,7 +33,10 @@ export const ExerciseHeader = ({
       {/* Conditionally render Timer or Exercise Title */}
       {isTimed ? (
         <div className="flex w-full justify-center">
-          <Timer isExerciseCompleted={isExerciseCompleted} />
+          <Timer
+            isExerciseCompleted={isExerciseCompleted}
+            isTimerPaused={isTimerPaused} // Pass isTimerPaused to Timer
+          />
         </div>
       ) : (
         exerciseTitle && (
