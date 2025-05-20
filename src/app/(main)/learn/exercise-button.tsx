@@ -127,7 +127,8 @@ export const ExerciseButton = ({
             <Button
               variant={locked ? "locked" : "secondary"}
               className={cn(
-                "relative size-[70px] rounded-full border-4",
+                "relative size-[70px] border-4",
+                current ? "rounded-full" : "rounded-3xl",
                 !locked && "dark:border-emerald-600"
               )}
             >
