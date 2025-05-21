@@ -7,7 +7,12 @@ import {
   getUserSubscription,
   markExerciseCompleteAndUpdateStreak,
 } from "@/db/queries"
-import { challengeProgress, challenges, userProgress } from "@/db/schema"
+import {
+  challengeProgress,
+  challenges,
+  userProgress,
+  exercises, // Added import
+} from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
@@ -49,6 +54,16 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
   const exerciseId = challenge.exerciseId
 
+  // Fetch the exercise to check if it's timed
+  const exercise = await db.query.exercises.findFirst({
+    where: eq(exercises.id, exerciseId),
+  })
+
+  if (!exercise) {
+    logger.error("Exercise not found during progress upsert", { exerciseId })
+    throw new Error("Exercise not found")
+  }
+
   const existingChallengeProgress = await db.query.challengeProgress.findFirst({
     where: and(
       eq(challengeProgress.userId, session.user.id),
@@ -85,10 +100,14 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
     await db
       .update(userProgress)
-      .set({
-        gems: Math.min(currentUserProgress.gems + 1, app.GEMS_LIMIT),
-        points: currentUserProgress.points + 10,
-      })
+      .set(
+        !exercise.isTimed
+          ? {
+              gems: Math.min(currentUserProgress.gems + 1, app.GEMS_LIMIT),
+              points: currentUserProgress.points + 10,
+            }
+          : {} // Empty object if timed, so no update to points/gems
+      )
       .where(eq(userProgress.userId, session.user.id))
 
     // Check if exercise is complete and update streak after updating progress
@@ -115,12 +134,15 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     completed: true,
   })
 
-  await db
-    .update(userProgress)
-    .set({
-      points: currentUserProgress.points + 10,
-    })
-    .where(eq(userProgress.userId, session.user.id))
+  // Only update points if the exercise is not timed
+  if (!exercise.isTimed) {
+    await db
+      .update(userProgress)
+      .set({
+        points: currentUserProgress.points + 10,
+      })
+      .where(eq(userProgress.userId, session.user.id))
+  }
 
   // Check if exercise is complete and update streak after inserting progress
   await markExerciseCompleteAndUpdateStreak(session.user.id, exerciseId)

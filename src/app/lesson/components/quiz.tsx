@@ -18,6 +18,7 @@ import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
+import { awardTimedExerciseReward } from "@/app/actions/timed-exercise" // Added import
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { ExerciseHeader } from "@/app/lesson/components/exercise-header"
 import {
@@ -65,6 +66,7 @@ export const Quiz = ({
   const { playFinish, playCorrect, playIncorrect } = useQuizAudio()
 
   const hasPlayedFinishAudio = useRef(false)
+  const [isRewardPending, startRewardTransition] = useTransition() // New transition for reward action
 
   useMount(() => {
     if (initialIsTimed) return
@@ -170,6 +172,41 @@ export const Quiz = ({
   const onContinue = () => {
     if (!selectedOption && status !== "wrong") return
 
+    if (initialIsTimed) {
+      const correctOption = options.find((option) => option.correct)
+      if (!correctOption) return // Should not happen
+
+      if (status === "correct" || status === "wrong") {
+        // User clicked "Next"
+        onNext()
+        setStatus("none")
+        setSelectedOption(undefined)
+        // Percentage is updated regardless of correctness for timed exercises
+        // but only when moving to the next question.
+        // It's handled below to avoid double counting when "Check" is clicked.
+        return
+      }
+
+      // User clicked "Check"
+      setPercentage((prev) => prev + 100 / challenges.length) // Update progress bar
+
+      if (correctOption.id === selectedOption) {
+        playCorrect()
+        setStatus("correct") // Button becomes "Next" (green)
+        setCorrectAttempts((prev) => prev + 1)
+        // No points/gems changes for timed exercises
+      } else {
+        playIncorrect()
+        setStatus("wrong") // Button becomes "Next" (red)
+        setIncorrectAttempts((prev) => prev + 1)
+        // No points/gems changes for timed exercises
+        // No "Retry" for timed exercises, directly to "Next"
+      }
+      // No server calls for upsertChallengeProgress or reduceGems in timed mode locally
+      return // Wait for "Next" click
+    }
+
+    // Existing logic for non-timed exercises
     if (status === "wrong") {
       setStatus("none")
       setSelectedOption(undefined)
@@ -194,39 +231,42 @@ export const Quiz = ({
         return newCorrect
       })
       setPercentage((prev) => prev + 100 / challenges.length)
-      setPoints((prev) => prev + app.POINTS_PER_CHALLENGE)
-      setPointsEarned((prev) => prev + app.POINTS_PER_CHALLENGE)
-
-      if (isPractice || initialPercentage === 100) {
-        setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+      if (!initialIsTimed) {
+        setPoints((prev) => prev + app.POINTS_PER_CHALLENGE)
+        setPointsEarned((prev) => prev + app.POINTS_PER_CHALLENGE)
+        if (isPractice || initialPercentage === 100) {
+          setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+        }
       }
 
-      setServerPending(true)
-      upsertChallengeProgress(challenge.id)
-        .then((response) => {
-          if (response?.error === "gems") {
+      if (!initialIsTimed) {
+        setServerPending(true)
+        upsertChallengeProgress(challenge.id)
+          .then((response) => {
+            if (response?.error === "gems") {
+              setStatus("none")
+              setSelectedOption(undefined)
+              setPercentage((prev) => prev - 100 / challenges.length)
+              setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
+              setPointsEarned((prev) => prev - app.POINTS_PER_CHALLENGE)
+              setCorrectAttempts((prev) => prev - 1)
+              openGemsModal()
+            }
+          })
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .catch((error) => {
             setStatus("none")
             setSelectedOption(undefined)
             setPercentage((prev) => prev - 100 / challenges.length)
             setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
             setPointsEarned((prev) => prev - app.POINTS_PER_CHALLENGE)
             setCorrectAttempts((prev) => prev - 1)
-            openGemsModal()
-          }
-        })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .catch((error) => {
-          setStatus("none")
-          setSelectedOption(undefined)
-          setPercentage((prev) => prev - 100 / challenges.length)
-          setPoints((prev) => prev - app.POINTS_PER_CHALLENGE)
-          setPointsEarned((prev) => prev - app.POINTS_PER_CHALLENGE)
-          setCorrectAttempts((prev) => prev - 1)
-          toast.error("Something went wrong. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
+            toast.error("Something went wrong. Please try again.")
+          })
+          .finally(() => {
+            setServerPending(false)
+          })
+      }
     } else {
       playIncorrect()
       setStatus("wrong")
@@ -235,43 +275,70 @@ export const Quiz = ({
         return newIncorrect
       })
 
-      if (!isPractice && !userSubscription?.isActive) {
-        setGems((prev) => Math.max(prev - 1, 0))
-      }
+      if (!initialIsTimed) {
+        if (!isPractice && !userSubscription?.isActive) {
+          setGems((prev) => Math.max(prev - 1, 0))
+        }
 
-      setServerPending(true)
-      reduceGems(challenge.id)
-        .then((response) => {
-          if (response?.error === "gems") {
+        setServerPending(true)
+        reduceGems(challenge.id)
+          .then((response) => {
+            if (response?.error === "gems") {
+              setStatus("none")
+              setSelectedOption(undefined)
+              if (!isPractice && !userSubscription?.isActive) {
+                setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+              }
+              openGemsModal()
+            }
+          })
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .catch((error) => {
             setStatus("none")
             setSelectedOption(undefined)
             if (!isPractice && !userSubscription?.isActive) {
               setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
             }
-            openGemsModal()
-          }
-        })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .catch((error) => {
-          setStatus("none")
-          setSelectedOption(undefined)
-          if (!isPractice && !userSubscription?.isActive) {
-            setGems((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-          }
-          toast.error("Something went wrong. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
+            toast.error("Something went wrong. Please try again.")
+          })
+          .finally(() => {
+            setServerPending(false)
+          })
+      }
     }
   }
 
   useEffect(() => {
-    if (!challenge && !hasPlayedFinishAudio.current) {
-      hasPlayedFinishAudio.current = true
+    if (isExerciseCompleted && !hasPlayedFinishAudio.current) {
+      hasPlayedFinishAudio.current = true // Prevent playing multiple times
       playFinish()
+
+      if (initialIsTimed) {
+        startRewardTransition(() => {
+          awardTimedExerciseReward(initialExerciseId, scorePercentage)
+            .then((response) => {
+              if (response?.error === "not_timed_exercise") {
+                toast.error("This exercise is not timed.") // Should not happen based on initialIsTimed
+              } else if (response?.success && scorePercentage === 100) {
+                toast.success("Points awarded for perfect score!")
+              } else if (response?.success && scorePercentage < 100) {
+                // No toast needed, as no points are awarded.
+              }
+            })
+            .catch(() => {
+              toast.error("Failed to process timed exercise reward.")
+            })
+        })
+      }
     }
-  }, [challenge, playFinish])
+  }, [
+    isExerciseCompleted,
+    playFinish,
+    initialIsTimed,
+    initialExerciseId,
+    scorePercentage,
+    startRewardTransition,
+  ])
 
   if (isExerciseCompleted) {
     // Dynamic result message using utility
@@ -387,7 +454,9 @@ export const Quiz = ({
       </div>
       <Footer
         disabled={
-          status === "none" && (pending || !selectedOption || serverPending)
+          (status === "none" &&
+            (pending || !selectedOption || serverPending)) ||
+          isRewardPending
         }
         isTimed={initialIsTimed}
         status={status}

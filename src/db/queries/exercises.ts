@@ -224,3 +224,38 @@ export async function getOrCreateUserExerciseChallengeSubset(
   })
   return subset
 }
+
+export const getExerciseMetaByLessonAndNumber = cache(
+  async (lessonId: number, exerciseNumber: number) => {
+    logger.info("Fetching exercise meta by lesson and number", {
+      lessonId,
+      exerciseNumber,
+    })
+    const data = await db.query.exercises.findFirst({
+      columns: {
+        id: true,
+        isTimed: true,
+      },
+      where: and(
+        eq(exercises.lessonId, lessonId),
+        eq(exercises.order, exerciseNumber) // Assuming 'exerciseNumber' corresponds to 'order'
+      ),
+    })
+
+    if (!data) {
+      logger.warn("Exercise meta not found for lesson and number", {
+        lessonId,
+        exerciseNumber,
+      })
+      return null
+    }
+
+    logger.info("Exercise meta fetched successfully", {
+      lessonId,
+      exerciseNumber,
+      exerciseId: data.id,
+      isTimed: data.isTimed,
+    })
+    return data
+  }
+)

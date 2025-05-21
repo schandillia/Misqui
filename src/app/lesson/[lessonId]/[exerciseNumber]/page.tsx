@@ -4,9 +4,13 @@ import {
   getExerciseByLessonAndNumber,
   getUserProgress,
   getUserSubscription,
+  getExerciseMetaByLessonAndNumber, // Added import
 } from "@/db/queries"
+import { resetUserExerciseChallengeSubset } from "@/db/queries/user-progress" // Added import
+import { auth } from "@/auth" // Added import
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
+import { logger } from "@/lib/logger" // Added import
 import {
   exercises,
   challenges,
@@ -28,7 +32,30 @@ const Page = async ({
   const exerciseNumberInt = Number(exerciseNumber)
   const exerciseIsPractice = isPractice === "true"
 
-  const exerciseData = getExerciseByLessonAndNumber(
+  const session = await auth()
+  const userId = session?.user?.id
+
+  const exerciseMeta = await getExerciseMetaByLessonAndNumber(
+    lessonIdNumber,
+    exerciseNumberInt
+  )
+
+  if (!exerciseMeta) {
+    logger.error(
+      `Exercise meta not found for lesson ${lessonIdNumber}, exercise ${exerciseNumberInt}. Redirecting to /learn.`
+    )
+    redirect("/learn")
+  }
+
+  if (userId && !exerciseIsPractice && exerciseMeta.isTimed) {
+    logger.info(
+      `Resetting challenge subset for user ${userId}, timed exercise ${exerciseMeta.id}.`
+    )
+    await resetUserExerciseChallengeSubset(userId, exerciseMeta.id)
+  }
+
+  // Fetch full exercise data *after* potential reset
+  const exerciseDataPromise = getExerciseByLessonAndNumber(
     lessonIdNumber,
     exerciseNumberInt,
     exerciseIsPractice
@@ -43,16 +70,21 @@ const Page = async ({
       })
     | null
   >
-  const userProgressData = getUserProgress()
-  const userSubscriptionData = getUserSubscription()
+  const userProgressDataPromise = getUserProgress()
+  const userSubscriptionDataPromise = getUserSubscription()
 
   const [exercise, userProgress, userSubscription] = await Promise.all([
-    exerciseData,
-    userProgressData,
-    userSubscriptionData,
+    exerciseDataPromise,
+    userProgressDataPromise,
+    userSubscriptionDataPromise,
   ])
 
-  if (!exercise || !userProgress) redirect("/learn")
+  if (!exercise || !userProgress) {
+    logger.error(
+      `Exercise or user progress not found after full fetch for lesson ${lessonIdNumber}, exercise ${exerciseNumberInt}. Redirecting to /learn.`
+    )
+    redirect("/learn")
+  }
 
   const initialPercentage = exerciseIsPractice
     ? 0
