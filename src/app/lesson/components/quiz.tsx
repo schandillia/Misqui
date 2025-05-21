@@ -317,13 +317,19 @@ export const Quiz = ({
         startRewardTransition(() => {
           awardTimedExerciseReward(initialExerciseId, scorePercentage)
             .then((response) => {
+              if (response && typeof response.pointsAwarded === "number") {
+                setPointsEarned(response.pointsAwarded)
+                if (response.pointsAwarded > 0) {
+                  // Only show success toast if points were actually awarded
+                  toast.success("Points awarded for perfect score!")
+                }
+              }
+
+              // Handle specific errors that might come with a success=false or error field
               if (response?.error === "not_timed_exercise") {
                 toast.error("This exercise is not timed.") // Should not happen based on initialIsTimed
-              } else if (response?.success && scorePercentage === 100) {
-                toast.success("Points awarded for perfect score!")
-              } else if (response?.success && scorePercentage < 100) {
-                // No toast needed, as no points are awarded.
               }
+              // Other general success cases with 0 points (e.g. <100% score) don't need a toast.
             })
             .catch(() => {
               toast.error("Failed to process timed exercise reward.")

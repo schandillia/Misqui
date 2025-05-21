@@ -74,21 +74,26 @@ export const awardTimedExerciseReward = async (
         userId: session.user.id,
         exerciseId,
       })
+      return { success: true, pointsAwarded: app.REWARD_POINTS_FOR_TIMED }
     } else {
       logger.info(
         "No reward for timed exercise, score not 100%",
         { userId: session.user.id, exerciseId, scorePercentage }
       )
       // No points or gems are modified if score is less than 100%
+      return { success: true, pointsAwarded: 0 }
     }
   } else {
     logger.warn("Attempted to award reward for non-timed exercise", {
       userId: session.user.id,
       exerciseId,
     })
-    // Optionally, throw an error or return a specific status
-    return { error: "not_timed_exercise" }
+    return { error: "not_timed_exercise", pointsAwarded: 0 }
   }
 
-  return { success: true }
+  // This part should ideally not be reached if the logic above covers all cases.
+  // However, to satisfy the structure, if it's a non-timed exercise and no error was thrown before,
+  // it implies success but no points specific to "timed reward".
+  // Given the 'else' block for non-timed exercise returns, this is more of a fallback.
+  return { success: true, pointsAwarded: 0 }
 }

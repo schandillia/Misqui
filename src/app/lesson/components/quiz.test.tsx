@@ -9,6 +9,7 @@ import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { toast } from "sonner"
+import appConfig from "@/lib/data/app.json" // Import app config
 
 // --- Mocks ---
 jest.mock("@/app/actions/challenge-progress")
@@ -66,8 +67,11 @@ jest.mock("@/app/lesson/components/footer", () => ({
     </button>
   )),
 }))
+
+// Updated ResultCard mock to capture props
+const mockResultCard = jest.fn(() => <div data-testid="result-card-mock" />)
 jest.mock("@/app/lesson/components/result-card", () => ({
-  ResultCard: jest.fn(() => <div data-testid="result-card" />),
+  ResultCard: mockResultCard,
 }))
 jest.mock("react-confetti", () => jest.fn(() => null)) // Mock confetti
 
@@ -109,10 +113,14 @@ describe("Quiz Component - Timed Exercises", () => {
       playIncorrect: jest.fn(),
       playFinish: jest.fn(),
     })
-    ;(awardTimedExerciseReward as jest.Mock).mockResolvedValue({ success: true });
-    ;(upsertChallengeProgress as jest.Mock).mockResolvedValue({});
-    ;(reduceGems as jest.Mock).mockResolvedValue({});
-
+    // Default mock for awardTimedExerciseReward
+    ;(awardTimedExerciseReward as jest.Mock).mockResolvedValue({
+      success: true,
+      pointsAwarded: 0, // Default to 0 points awarded
+    })
+    ;(upsertChallengeProgress as jest.Mock).mockResolvedValue({})
+    ;(reduceGems as jest.Mock).mockResolvedValue({})
+    mockResultCard.mockClear() // Clear mock calls before each test
   })
 
   test("Timed Mode: Clicking 'Check' on wrong answer changes button to 'Next'", () => {
@@ -186,11 +194,17 @@ describe("Quiz Component - Timed Exercises", () => {
 
     // Quiz should be completed now
     expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
-    // initialExerciseId, scorePercentage (100 / 1 challenge = 100%)
     expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 100)
+
+    // Verify ResultCard for points displays the awarded points
+    const pointsCardCall = mockResultCard.mock.calls.find(
+      (call) => call[0].variant === "points"
+    )
+    expect(pointsCardCall).toBeDefined()
+    expect(pointsCardCall?.[0].value).toBe(appConfig.REWARD_POINTS_FOR_TIMED)
   })
 
-   test("Timed Mode: awardTimedExerciseReward action called on completion with <100% score", async () => {
+  test("Timed Mode: awardTimedExerciseReward action called on completion with <100% score, ResultCard shows 0 points", async () => {
     const challenges = [
       { ...defaultChallenge, id: 1, order: 1 },
       { ...defaultChallenge, id: 2, question:"Q2", order: 2, challengeOptions: [
@@ -222,8 +236,14 @@ describe("Quiz Component - Timed Exercises", () => {
     
     // Quiz should be completed now
     expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
-    // initialExerciseId, scorePercentage (1 correct / 2 total = 50%)
     expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 50)
+
+    // Verify ResultCard for points displays 0
+    const pointsCardCall = mockResultCard.mock.calls.find(
+      (call) => call[0].variant === "points"
+    )
+    expect(pointsCardCall).toBeDefined()
+    expect(pointsCardCall?.[0].value).toBe(0)
   })
 })
 

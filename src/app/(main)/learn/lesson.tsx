@@ -50,7 +50,23 @@ export const Lesson = ({
           {exercises.length > 0 ? (
             exercises.map((exercise, index) => {
               const isCurrent = exercise.id === activeExercise?.id
-              const isLocked = !exercise.completed && !isCurrent
+              // Determine if the previous exercise was completed.
+              // For the first exercise in the lesson (index === 0), there's no "previous" exercise to check,
+              // so we consider it as if the "previous" was completed to allow it to be unlocked
+              // if it's not current and not completed itself (though typically the first exercise of the first lesson is current).
+              // The actual lock status for the first exercise often depends on whether it's the activeExercise.
+              const previousExerciseCompleted =
+                index === 0 ? true : exercises[index - 1]?.completed || false
+
+              // An exercise is locked if:
+              // 1. It's not the current active exercise (it's not being actively worked on).
+              // 2. It's not yet completed itself.
+              // 3. The previous exercise in this lesson is NOT completed (this primarily locks later exercises).
+              //    If it's the first exercise (index === 0), previousExerciseCompleted is true, so this part of condition is !true = false,
+              //    meaning the lock status for the first exercise depends only on !isCurrent && !exercise.completed.
+              const isLocked =
+                !isCurrent && !exercise.completed && !previousExerciseCompleted
+
               const percentage = isCurrent
                 ? activeExercisePercentage
                 : exercise.completed
