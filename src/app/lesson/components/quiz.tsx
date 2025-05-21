@@ -89,6 +89,12 @@ export const Quiz = ({
   const { width, height } = useWindowSize()
   const router = useRouter()
 
+  // Handler for navigating to /learn after quiz completion
+  const handleQuizCompleteContinue = () => {
+    router.refresh() // Refresh data for /learn page (and current page server components)
+    router.push("/learn")
+  }
+
   const [pending] = useTransition()
   const [serverPending, setServerPending] = useState(false)
   const [exerciseId] = useState(initialExerciseId)
@@ -314,15 +320,20 @@ export const Quiz = ({
       playFinish()
 
       if (initialIsTimed) {
+        // Optimistic UI update for points earned in timed exercises
+        if (scorePercentage === 100) {
+          setPointsEarned(app.REWARD_POINTS_FOR_TIMED)
+        } else {
+          setPointsEarned(0) // Optimistically set to 0 if not 100%
+        }
+
         startRewardTransition(() => {
           awardTimedExerciseReward(initialExerciseId, scorePercentage)
             .then((response) => {
+              // Ensure consistency with server response, though UI was updated optimistically
               if (response && typeof response.pointsAwarded === "number") {
                 setPointsEarned(response.pointsAwarded)
-                if (response.pointsAwarded > 0) {
-                  // Only show success toast if points were actually awarded
-                  toast.success("Points awarded for perfect score!")
-                }
+                // Success toast removed as per requirement
               }
 
               // Handle specific errors that might come with a success=false or error field
@@ -412,7 +423,7 @@ export const Quiz = ({
             exerciseId={exerciseId}
             isTimed={initialIsTimed}
             status="completed"
-            onCheck={() => router.push("/learn")}
+            onCheck={handleQuizCompleteContinue} // Updated handler
           />
         </div>
       </>

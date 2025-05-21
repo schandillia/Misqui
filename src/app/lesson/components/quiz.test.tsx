@@ -18,8 +18,15 @@ jest.mock("@/app/actions/timed-exercise")
 jest.mock("@/store/use-gems-modal")
 jest.mock("@/store/use-practice-modal")
 jest.mock("@/store/use-quiz-audio")
+
+// Updated useRouter mock
+const mockRouterPush = jest.fn()
+const mockRouterRefresh = jest.fn()
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({
+    push: mockRouterPush,
+    refresh: mockRouterRefresh,
+  }),
 }))
 jest.mock("react-use", () => ({
   useWindowSize: () => ({ width: 1024, height: 768 }),
@@ -121,6 +128,10 @@ describe("Quiz Component - Timed Exercises", () => {
     ;(upsertChallengeProgress as jest.Mock).mockResolvedValue({})
     ;(reduceGems as jest.Mock).mockResolvedValue({})
     mockResultCard.mockClear() // Clear mock calls before each test
+    mockRouterPush.mockClear()
+    mockRouterRefresh.mockClear()
+    ;(toast.success as jest.Mock).mockClear()
+    ;(toast.error as jest.Mock).mockClear()
   })
 
   test("Timed Mode: Clicking 'Check' on wrong answer changes button to 'Next'", () => {
@@ -164,11 +175,17 @@ describe("Quiz Component - Timed Exercises", () => {
 
     // Gems should remain the same
     expect(header).toHaveTextContent("Gems: 3")
-    expect(upsertChallengeProgress).not.toHaveBeenCalled() // Should not be called in timed mode from Quiz
+    expect(upsertChallengeProgress).not.toHaveBeenCalled()
     expect(reduceGems).not.toHaveBeenCalled()
   })
 
-  test("Timed Mode: awardTimedExerciseReward action called on completion with 100% score", async () => {
+  test("Timed Mode: Optimistically sets points, calls reward action (100% score, no success toast, router refresh)", async () => {
+    // Mock awardTimedExerciseReward to return specific points for this test
+    ;(awardTimedExerciseReward as jest.Mock).mockResolvedValue({
+      success: true,
+      pointsAwarded: appConfig.REWARD_POINTS_FOR_TIMED,
+    })
+
     render(
       <Quiz
         {...defaultProps}
@@ -196,18 +213,47 @@ describe("Quiz Component - Timed Exercises", () => {
     expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
     expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 100)
 
-    // Verify ResultCard for points displays the awarded points
-    const pointsCardCall = mockResultCard.mock.calls.find(
+    // Quiz should be completed now
+    // Check for optimistic update BEFORE action resolves (though act makes it tricky)
+    // The key is that setPointsEarned is called outside the async .then()
+    const pointsCardCallOptimistic = mockResultCard.mock.calls.find(
       (call) => call[0].variant === "points"
     )
-    expect(pointsCardCall).toBeDefined()
-    expect(pointsCardCall?.[0].value).toBe(appConfig.REWARD_POINTS_FOR_TIMED)
+    expect(pointsCardCallOptimistic).toBeDefined()
+    expect(pointsCardCallOptimistic?.[0].value).toBe(appConfig.REWARD_POINTS_FOR_TIMED)
+    
+    // Wait for the action to resolve
+    await act(async () => {
+      // This is just to ensure all promises resolve if any were pending from the last fireEvent
+      // awardTimedExerciseReward was already called by the last fireEvent.
+    });
+
+    expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
+    expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 100)
+    expect(toast.success).not.toHaveBeenCalledWith("Points awarded for perfect score!")
+
+    // Verify ResultCard for points still shows the (now confirmed) awarded points
+    const pointsCardCallConfirmed = mockResultCard.mock.calls.find(
+      (call) => call[0].variant === "points"
+    )
+    expect(pointsCardCallConfirmed).toBeDefined()
+    expect(pointsCardCallConfirmed?.[0].value).toBe(appConfig.REWARD_POINTS_FOR_TIMED)
+
+    // Simulate clicking the "Continue" button on the results screen
+    // The footer in completed state should be present.
+    // Its onCheck prop is now `handleQuizCompleteContinue`
+    const continueButton = screen.getByTestId("footer-check-button")
+    expect(continueButton).toHaveAttribute("data-status", "completed") // Assuming Footer gets 'completed' status
+    fireEvent.click(continueButton)
+    expect(mockRouterRefresh).toHaveBeenCalledTimes(1)
+    expect(mockRouterPush).toHaveBeenCalledWith("/learn")
   })
 
-  test("Timed Mode: awardTimedExerciseReward action called on completion with <100% score, ResultCard shows 0 points", async () => {
+  test("Timed Mode: Optimistically sets 0 points, calls reward action (<100% score, no success toast, router refresh)", async () => {
+    // awardTimedExerciseReward mock already defaults to pointsAwarded: 0
     const challenges = [
       { ...defaultChallenge, id: 1, order: 1 },
-      { ...defaultChallenge, id: 2, question:"Q2", order: 2, challengeOptions: [
+      { ...defaultChallenge, id: 2, question: "Q2", order: 2, challengeOptions: [
         { id: 20, challengeId: 2, text: "Q2 Opt A", correct: true, audioSrc: "" },
         { id: 21, challengeId: 2, text: "Q2 Opt B", correct: false, audioSrc: "" },
       ]},
@@ -238,12 +284,34 @@ describe("Quiz Component - Timed Exercises", () => {
     expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
     expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 50)
 
-    // Verify ResultCard for points displays 0
-    const pointsCardCall = mockResultCard.mock.calls.find(
+    // Quiz should be completed now
+    // Check for optimistic update (0 points)
+    const pointsCardCallOptimistic = mockResultCard.mock.calls.find(
       (call) => call[0].variant === "points"
     )
-    expect(pointsCardCall).toBeDefined()
-    expect(pointsCardCall?.[0].value).toBe(0)
+    expect(pointsCardCallOptimistic).toBeDefined()
+    expect(pointsCardCallOptimistic?.[0].value).toBe(0)
+
+    await act(async () => { /* allow promises to settle */ });
+
+    expect(awardTimedExerciseReward).toHaveBeenCalledTimes(1)
+    expect(awardTimedExerciseReward).toHaveBeenCalledWith(defaultProps.initialExerciseId, 50)
+    expect(toast.success).not.toHaveBeenCalled()
+
+
+    // Verify ResultCard for points still shows 0
+    const pointsCardCallConfirmed = mockResultCard.mock.calls.find(
+      (call) => call[0].variant === "points"
+    )
+    expect(pointsCardCallConfirmed).toBeDefined()
+    expect(pointsCardCallConfirmed?.[0].value).toBe(0)
+
+    // Simulate clicking the "Continue" button on the results screen
+    const continueButton = screen.getByTestId("footer-check-button")
+    expect(continueButton).toHaveAttribute("data-status", "completed")
+    fireEvent.click(continueButton)
+    expect(mockRouterRefresh).toHaveBeenCalledTimes(1)
+    expect(mockRouterPush).toHaveBeenCalledWith("/learn")
   })
 })
 
@@ -257,9 +325,11 @@ describe("Quiz Component - Non-Timed Exercises (Existing Functionality)", () => 
             playIncorrect: jest.fn(),
             playFinish: jest.fn(),
         });
-        (awardTimedExerciseReward as jest.Mock).mockResolvedValue({ success: true });
-        (upsertChallengeProgress as jest.Mock).mockResolvedValue({}); // Default success
-        (reduceGems as jest.Mock).mockResolvedValue({}); // Default success
+        (awardTimedExerciseReward as jest.Mock).mockResolvedValue({ success: true, pointsAwarded: 0 });
+        (upsertChallengeProgress as jest.Mock).mockResolvedValue({}); 
+        (reduceGems as jest.Mock).mockResolvedValue({});
+        mockRouterPush.mockClear();
+        mockRouterRefresh.mockClear();
     });
 
     test("Non-Timed Mode: Correct answer calls upsertChallengeProgress and updates UI", async () => {
@@ -305,7 +375,7 @@ describe("Quiz Component - Non-Timed Exercises (Existing Functionality)", () => 
         expect(header).toHaveTextContent("Gems: 4"); 
     });
 
-    test("Non-Timed Mode: awardTimedExerciseReward NOT called on completion", async () => {
+    test("Non-Timed Mode: awardTimedExerciseReward NOT called, router.refresh called on completion", async () => {
         render(<Quiz {...defaultProps} initialIsTimed={false} />);
         
         const correctOptionButton = screen.getByTestId("option-10");
@@ -313,8 +383,17 @@ describe("Quiz Component - Non-Timed Exercises (Existing Functionality)", () => 
         const checkButton = screen.getByTestId("footer-check-button");
         
         await act(async () => { fireEvent.click(checkButton) }); // Status "correct"
-        await act(async () => { fireEvent.click(checkButton) }); // Click "Next"
+        await act(async () => { fireEvent.click(checkButton) }); // Click "Next" to complete
 
         expect(awardTimedExerciseReward).not.toHaveBeenCalled();
+
+        // Simulate clicking the "Continue" button on the results screen
+        const continueButtonOnResult = screen.getByTestId("footer-check-button")
+        // Footer status should be "completed" when exercise is done
+        expect(continueButtonOnResult).toHaveAttribute("data-status", "completed"); 
+        fireEvent.click(continueButtonOnResult);
+        
+        expect(mockRouterRefresh).toHaveBeenCalledTimes(1);
+        expect(mockRouterPush).toHaveBeenCalledWith("/learn");
     });
 });
