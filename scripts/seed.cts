@@ -108,6 +108,7 @@ Lorem ipsum **dolor sit amet**, *consectetur adipiscing elit*. Sed do eiusmod te
         order: 1,
         exercise_number: 1,
         title: "Grid",
+        isTimed: true,
       },
       {
         id: 2,
