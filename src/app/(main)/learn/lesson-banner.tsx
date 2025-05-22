@@ -69,7 +69,7 @@ export const LessonBanner = ({
   }
 
   return (
-    <div className="from-brand-500 via-brand-500/90 to-brand-400 dark:from-brand-800 dark:via-brand-800/90 dark:to-brand-700 flex w-full items-center justify-between rounded-3xl bg-gradient-to-br p-5 dark:bg-gradient-to-br">
+    <div className="from-brand-500 via-brand-500/90 to-brand-400 dark:from-brand-800 dark:via-brand-800/90 dark:to-brand-700 flex w-full items-center justify-between rounded-3xl bg-gradient-to-br p-5 shadow-md shadow-neutral-500 dark:bg-gradient-to-br dark:shadow-neutral-800">
       <div className="space-y-2.5 text-white dark:text-neutral-300">
         <h3 className="text-2xl font-bold">{title}</h3>
         <p className="text-lg">{description}</p>
