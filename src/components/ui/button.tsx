@@ -4,47 +4,45 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  // REMOVED 'group' from here, it's only needed if shine is intrinsic.
-  // 'custom-ease' was also removed as it's not standard and the shine has its own transition.
-  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal relative overflow-hidden",
+  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-200 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-500 aria-invalid:ring-red-300/30 dark:aria-invalid:ring-red-400/50 aria-invalid:border-red-300 dark:aria-invalid:border-red-400/50 uppercase tracking-normal relative overflow-hidden transform-gpu",
   {
     variants: {
       variant: {
         locked:
-          "bg-neutral-200 text-primary-foreground hover:bg-neutral-200/90 border-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700/90 dark:border-neutral-600",
+          "bg-neutral-200 text-primary-foreground border-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:border-neutral-600 shadow-md shadow-neutral-300/30 dark:shadow-neutral-800/50",
         default:
-          "rounded-3xl bg-white text-accent-foreground border border-input hover:bg-accent hover:scale-105 active:scale-95 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700",
+          "rounded-3xl bg-gradient-to-b from-white to-gray-50 text-accent-foreground border-2 border-gray-200 hover:from-gray-50 hover:to-gray-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-neutral-800 dark:to-neutral-900 dark:text-neutral-100 dark:border-neutral-600 dark:hover:from-neutral-700 dark:hover:to-neutral-800 shadow-md shadow-gray-300/40 hover:shadow-sm hover:shadow-gray-400/50 dark:shadow-neutral-900/60 dark:hover:shadow-neutral-900/80",
         primary:
-          "bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-3xl hover:scale-105 hover:from-brand-500 hover:to-indigo-500 active:scale-95 dark:hover:from-brand-700 dark:hover:to-indigo-700",
+          "bg-gradient-to-b from-brand-500 to-brand-700 text-white rounded-3xl hover:scale-102 hover:-translate-y-0.5 hover:from-brand-400 hover:to-brand-600 active:scale-98 active:translate-y-0 dark:from-brand-600 dark:to-brand-800 dark:hover:from-brand-500 dark:hover:to-brand-700 shadow-md shadow-brand-500/40 hover:shadow-sm hover:shadow-brand-500/60 border-2 border-brand-400",
         primaryOutline:
-          "bg-white text-brand-600 border-2 border-brand-300 rounded-3xl hover:bg-brand-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-brand-400 dark:border-brand-500 dark:hover:bg-brand-900/50",
+          "bg-gradient-to-b from-white to-brand-50 text-brand-600 border-2 border-brand-400 rounded-3xl hover:from-brand-50 hover:to-brand-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-transparent dark:to-brand-900/30 dark:text-brand-400 dark:border-brand-500 dark:hover:from-brand-900/30 dark:hover:to-brand-900/50 shadow-md shadow-brand-300/40 hover:shadow-sm hover:shadow-brand-400/50",
         secondary:
-          "bg-gradient-to-r from-teal-500 to-emerald-400 text-white rounded-3xl hover:scale-105 hover:from-teal-400 hover:to-emerald-300 active:scale-95 dark:from-teal-700 dark:to-emerald-600 dark:hover:from-teal-600 dark:hover:to-emerald-500",
+          "bg-gradient-to-b from-teal-400 to-teal-600 text-white rounded-3xl hover:scale-102 hover:-translate-y-0.5 hover:from-teal-300 hover:to-teal-500 active:scale-98 active:translate-y-0 dark:from-teal-600 dark:to-teal-800 dark:hover:from-teal-500 dark:hover:to-teal-700 shadow-md shadow-teal-400/40 hover:shadow-sm hover:shadow-teal-500/60 border-2 border-teal-300",
         secondaryOutline:
-          "bg-white text-teal-600 border-2 border-emerald-300 rounded-3xl hover:bg-emerald-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-teal-400 dark:border-emerald-500 dark:hover:bg-emerald-900/50",
+          "bg-gradient-to-b from-white to-teal-50 text-teal-600 border-2 border-teal-400 rounded-3xl hover:from-teal-50 hover:to-teal-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-transparent dark:to-teal-900/30 dark:text-teal-400 dark:border-teal-500 dark:hover:from-teal-900/30 dark:hover:to-teal-900/50 shadow-md shadow-teal-300/40 hover:shadow-sm hover:shadow-teal-400/50",
         danger:
-          "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-3xl hover:scale-105 hover:from-red-400 hover:to-red-500 active:scale-95 dark:hover:from-red-600 dark:hover:to-red-700",
+          "bg-gradient-to-b from-red-400 to-red-600 text-white rounded-3xl hover:scale-102 hover:-translate-y-0.5 hover:from-red-300 hover:to-red-500 active:scale-98 active:translate-y-0 dark:from-red-500 dark:to-red-700 dark:hover:from-red-400 dark:hover:to-red-600 shadow-md shadow-red-400/40 hover:shadow-sm hover:shadow-red-500/60 border-2 border-red-300",
         dangerOutline:
-          "bg-white text-red-600 border-2 border-red-300 rounded-3xl hover:bg-red-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-red-400 dark:border-red-500 dark:hover:bg-red-900/50",
+          "bg-gradient-to-b from-white to-red-50 text-red-600 border-2 border-red-400 rounded-3xl hover:from-red-50 hover:to-red-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-transparent dark:to-red-900/30 dark:text-red-400 dark:border-red-500 dark:hover:from-red-900/30 dark:hover:to-red-900/50 shadow-md shadow-red-300/40 hover:shadow-sm hover:shadow-red-400/50",
         super:
-          "bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-3xl hover:scale-105 hover:from-yellow-300 hover:to-orange-300 active:scale-95 dark:hover:from-yellow-500 dark:hover:to-orange-500",
+          "bg-gradient-to-b from-yellow-300 to-orange-500 text-white rounded-3xl hover:scale-102 hover:-translate-y-0.5 hover:from-yellow-200 hover:to-orange-400 active:scale-98 active:translate-y-0 dark:from-yellow-400 dark:to-orange-600 dark:hover:from-yellow-300 dark:hover:to-orange-500 shadow-md shadow-orange-400/50 hover:shadow-sm hover:shadow-orange-500/70 border-2 border-yellow-200",
         superOutline:
-          "bg-white text-yellow-600 border-2 border-yellow-300 rounded-3xl hover:bg-yellow-50 hover:scale-105 active:scale-95 dark:bg-transparent dark:text-yellow-400 dark:border-yellow-500 dark:hover:bg-yellow-900/50",
+          "bg-gradient-to-b from-white to-orange-50 text-orange-600 border-2 border-orange-400 rounded-3xl hover:from-orange-50 hover:to-orange-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-transparent dark:to-orange-900/30 dark:text-orange-400 dark:border-orange-500 dark:hover:from-orange-900/30 dark:hover:to-orange-900/50 shadow-md shadow-orange-300/40 hover:shadow-sm hover:shadow-orange-400/50",
         defaultOutline:
-          "bg-transparent text-gray-600 border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:scale-105 active:scale-95 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-800",
+          "bg-gradient-to-b from-white to-gray-50 text-gray-600 border-2 border-gray-400 rounded-3xl hover:from-gray-50 hover:to-gray-100 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-transparent dark:to-gray-800/30 dark:text-gray-100 dark:border-gray-600 dark:hover:from-gray-800/30 dark:hover:to-gray-800/50 shadow-md shadow-gray-300/40 hover:shadow-sm hover:shadow-gray-400/50",
         ghost:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40",
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40 hover:scale-102 active:scale-98 transition-all duration-200",
         sidebar:
-          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40",
+          "bg-transparent text-gray-600 border-transparent rounded-3xl hover:bg-brand-100/50 dark:text-gray-300 dark:hover:bg-brand-900/40 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 shadow-sm shadow-transparent hover:shadow-md hover:shadow-brand-200/30",
         sidebarOutline:
-          "bg-brand-100 text-brand-600 border-2 border-brand-200 rounded-3xl hover:bg-brand-200 hover:scale-105 active:scale-95 dark:bg-brand-900/50 dark:text-brand-300 dark:border-brand-800 dark:hover:bg-brand-900/70",
+          "bg-gradient-to-b from-brand-100 to-brand-200 text-brand-600 border-2 border-brand-300 rounded-3xl hover:from-brand-200 hover:to-brand-300 hover:scale-102 hover:-translate-y-0.5 active:scale-98 active:translate-y-0 dark:from-brand-900/50 dark:to-brand-900/70 dark:text-brand-300 dark:border-brand-700 dark:hover:from-brand-900/70 dark:hover:to-brand-900/90 shadow-md shadow-brand-200/40 hover:shadow-sm hover:shadow-brand-300/50",
       },
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5 text-xs",
         lg: "h-12 px-6 has-[>svg]:px-4 text-base",
-        icon: "size-10 rounded-full",
-        rounded: "rounded-full",
+        icon: "size-10 rounded-full shadow-md hover:shadow-sm",
+        rounded: "rounded-full shadow-md hover:shadow-sm",
       },
     },
     defaultVariants: {
@@ -64,11 +62,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    // REMOVED the content wrapper and the shine div.
-    // The span wrapper is now conditionally applied if not asChild,
-    // to ensure content is above the ::after pseudo-element (shine)
-    // and to maintain the `gap-2` for icons.
-
     return (
       <Comp
         data-slot="button"
@@ -79,9 +72,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {asChild ? (
           children
         ) : (
-          <span className="relative z-[1] flex items-center gap-2">
-            {" "}
-            {/* z-index ensures content is above pseudo-element */}
+          <span className="relative z-10 flex items-center gap-2 drop-shadow-xs">
             {children}
           </span>
         )}
