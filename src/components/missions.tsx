@@ -14,7 +14,7 @@ type Props = {
 
 export const Missions = ({ points }: Props) => {
   return (
-    <div className="space-y-4 rounded-3xl border-1 p-4 shadow-md shadow-neutral-500 dark:border-2 dark:shadow-neutral-800">
+    <div className="space-y-4 rounded-3xl border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800">
       <div className="flex w-full items-center justify-between space-y-2">
         <h3 className="text-lg font-bold dark:text-neutral-300">Missions</h3>
         <Link href="/missions">
