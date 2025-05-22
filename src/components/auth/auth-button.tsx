@@ -7,10 +7,12 @@ import { FcGoogle } from "react-icons/fc"
 import { FaApple } from "react-icons/fa"
 import Link from "next/link"
 import brand from "@/lib/data/brand.json"
+import { HiOutlineRocketLaunch } from "react-icons/hi2"
 
 import { signInWithGoogle } from "@/app/actions/auth"
 import { usePathname, useSearchParams } from "next/navigation"
 import type { VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
 
 type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
 type ButtonSize = VariantProps<typeof buttonVariants>["size"]
@@ -20,13 +22,15 @@ interface AuthButtonProps {
   size?: ButtonSize
   className?: string
   label?: string
+  hasIcon?: boolean
 }
 
 export const AuthButton = ({
   variant = "ghost",
   size = "lg",
   className,
-  label = "Start",
+  label = "Login",
+  hasIcon = false,
 }: AuthButtonProps) => {
   const [showModal, setShowModal] = useState(false)
 
@@ -46,10 +50,11 @@ export const AuthButton = ({
       <Button
         variant={variant}
         size={size}
-        className={className}
+        className={cn(className, hasIcon && "mx-4")}
         onClick={onClick}
       >
         {label}
+        {hasIcon && <HiOutlineRocketLaunch className="ml-2 size-6" />}
       </Button>
 
       {showModal && (

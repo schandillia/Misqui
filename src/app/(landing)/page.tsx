@@ -4,6 +4,7 @@ import brand from "@/lib/data/brand.json"
 import { auth } from "@/auth"
 import Link from "next/link"
 import { AuthButton } from "@/components/auth/auth-button"
+import { HiOutlineRocketLaunch } from "react-icons/hi2"
 
 export default async function Home() {
   const session = await auth()
@@ -24,16 +25,20 @@ export default async function Home() {
             <Button
               size="lg"
               variant="primary"
-              className="button-shine-effect w-full"
+              className="button-shine-effect mx-4 w-full"
               asChild
             >
-              <Link href="/learn">Continue learning</Link>
+              <Link href="/learn">
+                Continue your adventure!
+                <HiOutlineRocketLaunch className="ml-2 size-6" />
+              </Link>
             </Button>
           ) : (
             <AuthButton
               variant="primary"
               className="button-shine-effect w-full"
-              label="Get Started"
+              label="Start your adventure!"
+              hasIcon
             />
           )}
         </div>
