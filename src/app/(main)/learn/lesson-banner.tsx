@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { NotebookText } from "lucide-react"
 import { NotesModal } from "@/app/(main)/learn/notes-modal"
+import { BookOpenText } from "lucide-react"
 
 type Props = {
   title: string
@@ -64,7 +64,7 @@ export const LessonBanner = ({
         </p>
       </div>
       <Button size="lg" variant="secondary" onClick={handleOpen}>
-        <NotebookText className="lg:mr-2" />
+        <BookOpenText className="size-6 lg:mr-2" />
         <span className="hidden lg:inline">Study</span>
       </Button>
       <NotesModal
