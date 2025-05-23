@@ -48,10 +48,10 @@ export function LessonNotesScroller({ html }: { html: string }) {
           <button
             type="button"
             onClick={handleScrollDown}
-            className="absolute bottom-2 left-1/2 z-10 -translate-x-1/2 animate-bounce cursor-pointer rounded-full bg-neutral-500/80 p-2 shadow dark:bg-neutral-300/80"
+            className="bg-brand-500/70 dark:bg-brand-300/70 absolute bottom-2 left-1/2 z-10 -translate-x-1/2 animate-bounce cursor-pointer rounded-full p-2 shadow"
             aria-label="Scroll down"
           >
-            <ChevronDown className="size-6 text-neutral-50 dark:text-neutral-700" />
+            <ChevronDown className="dark:text-brand-700 text-brand-100 size-6" />
           </button>
         )}
       </div>
