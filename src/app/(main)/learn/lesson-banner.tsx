@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { NotebookText, Loader } from "lucide-react"
@@ -69,10 +71,14 @@ export const LessonBanner = ({
   }
 
   return (
-    <div className="from-brand-500 via-brand-500/90 to-brand-400 dark:from-brand-800 dark:via-brand-800/90 dark:to-brand-700 flex w-full items-center justify-between rounded-3xl bg-gradient-to-br p-5 shadow-lg shadow-neutral-400 dark:bg-gradient-to-br dark:shadow-neutral-800">
+    <div className="bg-brand-500 dark:bg-brand-800 flex w-full items-center justify-between rounded-3xl p-5 shadow-[inset_8px_8px_12px_rgba(0,0,0,0.15),inset_-8px_-8px_12px_rgba(255,255,255,0.3)] dark:shadow-[inset_8px_8px_12px_rgba(0,0,0,0.35),inset_-8px_-8px_12px_rgba(255,255,255,0.15)]">
       <div className="space-y-2.5 text-white dark:text-neutral-300">
-        <h3 className="text-2xl font-bold">{title}</h3>
-        <p className="text-lg">{description}</p>
+        <h3 className="text-2xl font-bold text-shadow-[1px_1px_2px_rgba(255,255,255,0.5),-1px_-1px_2px_rgba(0,0,0,0.3)] dark:text-shadow-[1px_1px_2px_rgba(255,255,255,0.3),-1px_-1px_2px_rgba(0,0,0,0.5)]">
+          {title}
+        </h3>
+        <p className="text-lg text-shadow-[1px_1px_2px_rgba(255,255,255,0.5),-1px_-1px_2px_rgba(0,0,0,0.3)] dark:text-shadow-[1px_1px_2px_rgba(255,255,255,0.3),-1px_-1px_2px_rgba(0,0,0,0.5)]">
+          {description}
+        </p>
       </div>
       <Button size="lg" variant="secondary" onClick={handleOpen}>
         <NotebookText className="lg:mr-2" />
