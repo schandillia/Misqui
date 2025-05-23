@@ -57,7 +57,7 @@ const Page = () => {
         </Button>
       </div>
 
-      <div className="text-brand-600 dark:text-brand-300 max-w-xs pt-6 text-center text-xs">
+      <div className="text-muted-foreground max-w-xs pt-6 text-center text-xs">
         <p>
           By continuing, you agree to {brand.BRAND}{" "}
           <Link
