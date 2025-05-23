@@ -7,7 +7,7 @@ import { CardTitle } from "@/components/ui/card"
 import { SidebarCard } from "@/components/sidebar-card"
 
 const missions = app.MISSIONS
-const missionsToDisplay = 3
+const missionsToDisplay = app.MISSIONS_IN_CARD
 
 type Props = {
   points: number
