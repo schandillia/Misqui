@@ -35,7 +35,7 @@ const Page = () => {
         Welcome Back!
       </h1>
       <p className="text-brand-600 dark:text-brand-200 mb-6 text-lg">
-        Choose a method to sign in and continue to your destination.
+        Pick one and continue with your adventure!
       </p>
 
       <div className="w-full max-w-sm space-y-4">
