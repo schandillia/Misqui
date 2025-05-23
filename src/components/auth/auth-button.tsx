@@ -62,7 +62,7 @@ export const AuthButton = ({
           showModal={showModal}
           setShowModal={setShowModal}
           title="Sign In"
-          description="Tap a button to get started"
+          description="Pick one to get started"
         >
           <div className="w-full space-y-6 p-6">
             <div className="grid gap-4">
