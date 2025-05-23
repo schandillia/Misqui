@@ -1,6 +1,6 @@
 "use client"
 
-import { Card } from "@/app/(main)/courses/card"
+import { CourseCard } from "@/app/(main)/courses/course-card"
 import { upsertUserProgress } from "@/app/actions/user-progress"
 import { courses, userProgress } from "@/db/schema"
 import { useRouter } from "next/navigation"
@@ -40,7 +40,7 @@ export const List = ({ courses, activeCourseId }: Props) => {
   return (
     <div className="grid grid-cols-2 gap-4 pt-6 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
       {courses.map((course) => (
-        <Card
+        <CourseCard
           key={course.id}
           id={course.id}
           title={course.title}

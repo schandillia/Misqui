@@ -3,9 +3,10 @@ import Image from "next/image"
 import Link from "next/link"
 import app from "@/lib/data/app.json"
 import { Progress } from "@/components/ui/progress"
+import { CardTitle } from "@/components/ui/card"
+import { SidebarCard } from "@/components/sidebar-card"
 
 const missions = app.MISSIONS
-
 const missionsToDisplay = 3
 
 type Props = {
@@ -14,9 +15,20 @@ type Props = {
 
 export const Missions = ({ points }: Props) => {
   return (
-    <div className="space-y-4 rounded-3xl border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800">
-      <div className="flex w-full items-center justify-between space-y-2">
-        <h3 className="text-lg font-bold dark:text-neutral-300">Missions</h3>
+    <SidebarCard>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-x-2">
+          <Image
+            src="/images/icons/missions.svg"
+            alt="Missions"
+            height={26}
+            width={26}
+            className="self-center"
+          />
+          <CardTitle className="text-lg font-bold dark:text-neutral-300">
+            Missions
+          </CardTitle>
+        </div>
         <Link href="/missions">
           <Button size="sm" variant="primaryOutline">
             View all
@@ -50,6 +62,6 @@ export const Missions = ({ points }: Props) => {
             )
           })}
       </ul>
-    </div>
+    </SidebarCard>
   )
 }
