@@ -1,0 +1,32 @@
+/* Theme switcher classes with comprehensive named colors mapped to oklch */
+.brand-black {
+  --brand-base: oklch(0.21 0.006 285.885); /* Black */
+}
+
+.brand-red {
+  --brand-base: oklch(0.637 0.237 25.331); /* Red */
+}
+
+.brand-pink {
+  --brand-base: oklch(0.645 0.246 16.439); /* Pink */
+}
+
+.brand-purple {
+  --brand-base: oklch(0.606 0.25 292.717); /* Purple */
+}
+
+.brand-blue {
+  --brand-base: oklch(0.623 0.214 259.815); /* Blue */
+}
+
+.brand-green {
+  --brand-base: oklch(0.723 0.219 149.579); /* Green */
+}
+
+.brand-yellow {
+  --brand-base: oklch(0.795 0.184 86.047); /* Yellow */
+}
+
+.brand-orange {
+  --brand-base: oklch(0.705 0.213 47.604); /* Orange */
+}

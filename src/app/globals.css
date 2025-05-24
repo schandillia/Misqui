@@ -1,6 +1,6 @@
-/* globals.css */
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./colors.css";
 
 html,
 body,
@@ -11,21 +11,46 @@ body,
 /* Define dark variant to work with next-themes */
 @custom-variant dark (&:is(.dark *), &.dark);
 
-/* Custom theme color definitions */
+/* Define a base brand color (default: zinc) */
+:root {
+  --brand-base: oklch(0.606 0.25 292.717); /* Default to purple */
+}
+
+/* Dynamic brand color palette derived from --brand-base */
 @theme {
-  --color-brand: oklch(62.7% 0.265 303.9);
-  --color-brand-25: oklch(99.1% 0.007 309.1);
-  --color-brand-50: oklch(97.7% 0.014 308.299);
-  --color-brand-100: oklch(94.6% 0.033 307.174);
-  --color-brand-200: oklch(90.2% 0.063 306.703);
-  --color-brand-300: oklch(82.7% 0.119 306.383);
-  --color-brand-400: oklch(71.4% 0.203 305.504);
-  --color-brand-500: oklch(62.7% 0.265 303.9);
-  --color-brand-600: oklch(55.8% 0.288 302.321);
-  --color-brand-700: oklch(49.6% 0.265 301.924);
-  --color-brand-800: oklch(43.8% 0.218 303.724);
-  --color-brand-900: oklch(38.1% 0.176 304.987);
-  --color-brand-950: oklch(29.1% 0.149 302.717);
+  --color-brand: var(--brand-base);
+  --color-brand-25: oklch(
+    from var(--brand-base) calc(l + 0.35) calc(c * 0.1) h
+  );
+  --color-brand-50: oklch(
+    from var(--brand-base) calc(l + 0.33) calc(c * 0.2) h
+  );
+  --color-brand-100: oklch(
+    from var(--brand-base) calc(l + 0.3) calc(c * 0.4) h
+  );
+  --color-brand-200: oklch(
+    from var(--brand-base) calc(l + 0.25) calc(c * 0.6) h
+  );
+  --color-brand-300: oklch(
+    from var(--brand-base) calc(l + 0.18) calc(c * 0.8) h
+  );
+  --color-brand-400: oklch(from var(--brand-base) calc(l + 0.08) c h);
+  --color-brand-500: var(--brand-base);
+  --color-brand-600: oklch(
+    from var(--brand-base) calc(l - 0.08) calc(c * 1.1) h
+  );
+  --color-brand-700: oklch(
+    from var(--brand-base) calc(l - 0.15) calc(c * 1.2) h
+  );
+  --color-brand-800: oklch(
+    from var(--brand-base) calc(l - 0.22) calc(c * 1.3) h
+  );
+  --color-brand-900: oklch(
+    from var(--brand-base) calc(l - 0.28) calc(c * 1.4) h
+  );
+  --color-brand-950: oklch(
+    from var(--brand-base) calc(l - 0.35) calc(c * 1.5) h
+  );
 }
 
 @theme inline {
@@ -54,7 +79,7 @@ body,
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
+  --colormuted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
@@ -77,7 +102,7 @@ body,
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.606 0.25 292.717);
+  --primary: var(--color-brand-500); /* Use brand color as primary */
   --primary-foreground: oklch(0.969 0.016 293.756);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
@@ -88,7 +113,7 @@ body,
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.606 0.25 292.717);
+  --ring: var(--color-brand-500); /* Use brand color for ring */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -96,12 +121,12 @@ body,
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.606 0.25 292.717);
+  --sidebar-primary: var(--color-brand-500); /* Use brand color for sidebar */
   --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
   --sidebar-accent: oklch(0.967 0.001 286.375);
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.606 0.25 292.717);
+  --sidebar-ring: var(--color-brand-500); /* Use brand color for sidebar ring */
 }
 
 .dark {
@@ -111,7 +136,7 @@ body,
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.541 0.281 293.009);
+  --primary: var(--color-brand-500); /* Use brand color as primary */
   --primary-foreground: oklch(0.969 0.016 293.756);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
@@ -122,20 +147,20 @@ body,
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.541 0.281 293.009);
+  --ring: var(--color-brand-500); /* Use brand color for ring */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-4: var(--color-brand-500); /* Use brand color for chart */
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.541 0.281 293.009);
+  --sidebar-primary: var(--color-brand-500); /* Use brand color for sidebar */
   --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
   --sidebar-accent: oklch(0.274 0.006 286.033);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.541 0.281 293.009);
+  --sidebar-ring: var(--color-brand-500); /* Use brand color for sidebar ring */
 }
 
 @layer base {
@@ -161,38 +186,34 @@ body,
   }
 }
 
-/* Your existing animate-shine, if you still want it for other elements */
 .animate-shine {
   animation: shine 3s infinite;
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
 }
 
-/* NEW: Button Shine Effect Class */
 @layer utilities {
   .button-shine-effect::after {
     content: "";
     @apply absolute block h-[200%] w-12 rotate-[135deg] transform bg-white transition-all ease-out;
-    /* Much more subtle opacity and longer, smoother transition */
     opacity: 0.08;
     transition-duration: 800ms;
     top: -50%;
     left: -150%;
     z-index: 1;
-    /* Add a subtle blur for softer edges */
     filter: blur(1px);
   }
 
   .button-shine-effect:hover::after {
     left: 150%;
-    opacity: 0.15; /* Much more subtle peak opacity */
+    opacity: 0.15;
   }
 
   .dark .button-shine-effect::after {
     @apply bg-white;
-    opacity: 0.04; /* Even more subtle in dark mode */
+    opacity: 0.04;
   }
 
   .dark .button-shine-effect:hover::after {
-    opacity: 0.08; /* Gentle peak for dark mode */
+    opacity: 0.08;
   }
 }
