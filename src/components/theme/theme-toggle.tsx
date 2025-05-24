@@ -53,7 +53,10 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
       )
     }
     return (
-      <div className="border-brand-200 dark:border-brand-700 inline-flex items-center gap-x-1.5 rounded-full border p-1.5">
+      <div
+        className="border-brand-200 dark:border-brand-700 inline-flex items-center gap-x-1.5
+          rounded-full border p-1.5"
+      >
         {THEMES.map(({ icon: Icon }) => (
           <Button
             key={Icon.name}
@@ -75,7 +78,8 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
       <Button
         variant="default"
         size="icon"
-        className="dark:bg-brand-200/10 hover:bg-brand-200 dark:hover:bg-brand-950/90 cursor-pointer rounded-full"
+        className="dark:bg-brand-200/10 hover:bg-brand-200 dark:hover:bg-brand-950/90
+          cursor-pointer rounded-full"
         onClick={cycleTheme}
         aria-label="Toggle theme"
       >
@@ -90,12 +94,14 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
 
   return (
     <div
-      className="border-brand-200 bg-brand-50 relative inline-flex w-max shrink-0 items-center gap-x-1.5 rounded-full border p-1.5 dark:border-neutral-700 dark:bg-neutral-800"
+      className="border-brand-200 bg-brand-50 relative inline-flex w-max shrink-0 items-center
+        gap-x-1.5 rounded-full border p-1.5 dark:border-neutral-700 dark:bg-neutral-800"
       role="group"
       aria-label="Theme toggle"
     >
       <div
-        className="bg-brand-200 dark:bg-brand-900/80 absolute top-1.5 left-1.5 h-8 w-8 rounded-full transition-transform duration-300 ease-in-out"
+        className="bg-brand-200 dark:bg-brand-900/80 absolute top-1.5 left-1.5 h-8 w-8 rounded-full
+          transition-transform duration-300 ease-in-out"
         style={{ transform: `translateX(${activeIndex * 38}px)` }}
       />
       {THEMES.map(({ name, icon: Icon, label }, index) => (
@@ -104,8 +110,9 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
           variant="ghost"
           size="icon"
           onClick={() => handleThemeChange(name, index)}
-          className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full p-1.5 transition-colors ${
-            currentTheme === name
+          className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full p-1.5
+          transition-colors ${
+          currentTheme === name
               ? "text-brand-800 dark:text-brand-200"
               : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-950/60"
           }`}

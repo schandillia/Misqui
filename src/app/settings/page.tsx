@@ -7,7 +7,7 @@ import { redirect } from "next/navigation"
 import { UserAvatar } from "@/components/user-avatar"
 import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
-import ThemeToggle from "@/components/theme-toggle"
+import ThemeToggle from "@/components/theme/theme-toggle"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -61,7 +61,11 @@ const Page = async () => {
                   image={session?.user?.image}
                   className="size-16"
                 />
-                <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
+                <button
+                  className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
+                    transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700
+                    dark:text-neutral-300 dark:hover:bg-neutral-600"
+                >
                   Change Avatar
                 </button>
               </div>
@@ -134,8 +138,9 @@ const Page = async () => {
                   className={`w-full rounded-lg px-4 py-2 font-medium transition-colors sm:w-auto ${
                     isPro
                       ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600"
-                  }`}
+                      : `bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-700
+                        dark:text-neutral-100 dark:hover:bg-neutral-600`
+                    }`}
                 >
                   {isPro ? "Manage Subscription" : "Upgrade to Pro"}
                 </button>
@@ -183,7 +188,11 @@ const Page = async () => {
                     Google Account
                   </p>
                 </div>
-                <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
+                <button
+                  className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
+                    transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700
+                    dark:text-neutral-300 dark:hover:bg-neutral-600"
+                >
                   Manage
                 </button>
               </div>
@@ -196,10 +205,17 @@ const Page = async () => {
               <CardTitle>Data & Privacy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <button className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
+              <button
+                className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
+                  transition-colors hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300
+                  dark:hover:bg-neutral-600"
+              >
                 Export Data
               </button>
-              <button className="w-full rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600">
+              <button
+                className="w-full rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white
+                  transition-colors hover:bg-red-600"
+              >
                 Delete Account
               </button>
             </CardContent>

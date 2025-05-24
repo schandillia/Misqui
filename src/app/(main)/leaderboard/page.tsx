@@ -53,24 +53,28 @@ const Page = async () => {
           {leaderboard.map((userProgress, index) => (
             <div
               key={userProgress.userId}
-              className="hover:bg-brand-200/50 dark:hover:bg-brand-500/10 flex w-full items-center rounded-3xl p-2 px-4"
+              className="hover:bg-brand-200/50 dark:hover:bg-brand-500/10 flex w-full items-center
+                rounded-3xl p-2 px-4"
             >
               {index < 3 ? (
                 <span
-                  className={`relative flex size-8 items-center justify-center overflow-hidden rounded-full border-2 ${
+                  className={`relative flex size-8 items-center justify-center overflow-hidden rounded-full
+                    border-2 ${
                     index === 0
-                      ? "border-yellow-200 bg-yellow-500"
-                      : index === 1
-                        ? "border-gray-100 bg-gray-300"
-                        : "border-orange-300 bg-orange-500"
-                  }`}
+                        ? "border-yellow-200 bg-yellow-500"
+                        : index === 1
+                          ? "border-gray-100 bg-gray-300"
+                          : "border-orange-300 bg-orange-500"
+                    }`}
                 >
-                  <div className="animate-shine absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                  <div
+                    className="animate-shine absolute inset-0 bg-gradient-to-r from-transparent via-white/50
+                      to-transparent"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent" />
                   <p
                     className={`relative z-10 text-sm font-bold ${
-                      index === 2 ? "text-neutral-300" : "text-neutral-700"
-                    }`}
+                      index === 2 ? "text-neutral-300" : "text-neutral-700" }`}
                   >
                     {index + 1}
                   </p>

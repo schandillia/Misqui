@@ -8,13 +8,8 @@ body,
   @apply h-full;
 }
 
-/* Define dark variant for compatibility with next-themes, enabling seamless theme switching between light and dark modes. Additional brand colors are defined in colors.css for dynamic theme customization. */
+/* Define dark variant for compatibility with next-themes */
 @custom-variant dark (&:is(.dark *), &.dark);
-
-/* Define a base brand color (default: purple) */
-:root {
-  --brand-base: oklch(0.606 0.25 292.717); /* Default to purple */
-}
 
 /* Dynamic brand color palette derived from --brand-base */
 @theme {
