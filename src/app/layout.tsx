@@ -14,6 +14,7 @@ import { ExitModal } from "@/components/exit-modal"
 import { GemsModal } from "@/components/gems-modal"
 import { PracticeModal } from "@/components/practice-modal"
 import { ThemeProvider } from "next-themes"
+import { ColorThemeProvider } from "@/components/ColorThemeProvider";
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
