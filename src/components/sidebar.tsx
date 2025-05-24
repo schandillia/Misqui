@@ -1,9 +1,11 @@
+"use client"; // Added
+
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import brand from "@/lib/data/brand.json"
 import Link from "next/link"
 import { SidebarItem } from "@/components/sidebar-item"
-import { auth } from "@/auth"
+// import { auth } from "@/auth"; // Commented out for client component
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import { AuthButton } from "@/components/auth/auth-button"
 import ThemeToggle from "@/components/theme-toggle"
@@ -27,8 +29,10 @@ const sidebarItems = [
   { label: "Store", iconSrc: "/images/icons/store.svg", href: "/store" },
 ]
 
-export const Sidebar = async ({ className }: Props) => {
-  const session = await auth()
+// Changed to a synchronous component
+export const Sidebar = ({ className }: Props) => {
+  // const session = await auth(); // Original line
+  const session = null; // TEMPORARY: Replace with client-side session fetching
 
   return (
     <div
