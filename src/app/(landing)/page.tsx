@@ -10,7 +10,10 @@ export default async function Home() {
   const session = await auth()
 
   return (
-    <div className="mx-auto flex w-full max-w-[988px] flex-1 flex-col items-center justify-center gap-8 p-4 lg:flex-row">
+    <div
+      className="mx-auto flex w-full max-w-[988px] flex-1 flex-col items-center justify-center
+        gap-8 p-4 lg:flex-row"
+    >
       <div className="relative h-[240px] w-[240px] shrink-0 lg:h-[424px] lg:w-[424px]">
         <Image src="images/backgrounds/hero.svg" alt="Mascot" fill priority />
       </div>
