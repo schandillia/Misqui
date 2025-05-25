@@ -51,6 +51,7 @@ export default async function RootLayout({
 
   const userSubscription = await getUserSubscription()
   const isPro = !!userSubscription?.isActive
+  const initialBrandColor = isPro ? "brand-violet" : "brand-violet"
 
   return (
     <html
@@ -60,7 +61,7 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         <AuthProvider>
-          <ThemeProvider isPro={isPro}>
+          <ThemeProvider isPro={isPro} initialBrandColor={initialBrandColor}>
             {children}
             <Toaster />
             <ExitModal />

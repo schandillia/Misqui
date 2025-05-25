@@ -49,7 +49,7 @@ export default function ColorSwitcher({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className={`w-48 sm:w-fit rounded-3xl border border-border bg-neutral-100/70
+        className={`w-48 sm:w-fit rounded-3xl border border-border bg-neutral-100/80
           backdrop-blur-xs dark:bg-neutral-800/90 p-3 sm:p-4 shadow-sm
           ${inSidebar ? "ml-6" : ""}`}
       >

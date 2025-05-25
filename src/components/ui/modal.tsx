@@ -101,11 +101,15 @@ export const Modal = ({
           <Drawer.Portal>
             <Drawer.Content
               className={cn(
-                "dark:border-brand-800 dark:bg-brand-950 fixed right-0 bottom-0 left-0 z-60 rounded-t-[20px] border-t border-gray-200 bg-white",
+                `dark:border-brand-800 dark:bg-brand-950 fixed right-0 bottom-0 left-0 z-60
+                rounded-t-[20px] border-t border-gray-200 bg-white`,
                 className
               )}
             >
-              <div className="sticky top-0 z-20 flex w-full items-center justify-center rounded-t-[20px] bg-inherit">
+              <div
+                className="sticky top-0 z-20 flex w-full items-center justify-center rounded-t-[20px]
+                  bg-inherit"
+              >
                 <div className="my-3 h-1 w-12 rounded-full bg-gray-300" />
               </div>
 

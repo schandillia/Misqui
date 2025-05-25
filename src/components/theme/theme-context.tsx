@@ -62,11 +62,13 @@ export const useTheme = () => {
 export function ThemeProvider({
   children,
   isPro,
+  initialBrandColor,
 }: {
   children: ReactNode
   isPro: boolean
+  initialBrandColor: string
 }) {
-  const [brandColor, setBrandColor] = useState("brand-violet") // Default brand color
+  const [brandColor, setBrandColor] = useState(initialBrandColor)
 
   useEffect(() => {
     // Apply the default or stored brand color class to <html> on the client
@@ -80,15 +82,15 @@ export function ThemeProvider({
 
     if (isPro) {
       const storedBrandColor =
-        localStorage.getItem("brandColor") || "brand-violet"
+        localStorage.getItem("brandColor") || initialBrandColor
       const validColor = brandColors.find(
         (color) => color.className === storedBrandColor
       )
       if (validColor) {
         applyBrandColor(storedBrandColor)
       } else {
-        applyBrandColor("brand-violet")
-        localStorage.setItem("brandColor", "brand-violet")
+        applyBrandColor(initialBrandColor)
+        localStorage.setItem("brandColor", initialBrandColor)
       }
     } else {
       // For non-pro users, force brand-violet and clear localStorage
@@ -115,7 +117,7 @@ export function ThemeProvider({
       })
       window.removeEventListener("storage", handleStorageChange)
     }
-  }, [isPro]) // Re-run if isPro changes
+  }, [isPro, initialBrandColor])
 
   // Function to change brand color
   const changeBrandColor = (color: string) => {
