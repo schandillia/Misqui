@@ -75,8 +75,14 @@ export function ThemeProvider({
       brandColors.forEach((c) =>
         document.documentElement.classList.remove(c.className)
       )
+      document.documentElement.classList.add("theme-switching")
       document.documentElement.classList.add(color)
       setBrandColor(color)
+      // Remove theme-switching class after transition duration
+      const timeout = setTimeout(() => {
+        document.documentElement.classList.remove("theme-switching")
+      }, 300) // Match the transition duration in globals.css
+      return timeout
     }
 
     if (isPro) {
@@ -109,11 +115,12 @@ export function ThemeProvider({
 
     window.addEventListener("storage", handleStorageChange)
 
-    // Cleanup: Remove all brand color classes and listener on unmount
+    // Cleanup: Remove all brand color classes, theme-switching, and listener on unmount
     return () => {
       brandColors.forEach((color) => {
         document.documentElement.classList.remove(color.className)
       })
+      document.documentElement.classList.remove("theme-switching")
       window.removeEventListener("storage", handleStorageChange)
     }
   }, [isPro]) // Re-run if isPro changes
@@ -127,10 +134,16 @@ export function ThemeProvider({
       brandColors.forEach((c) =>
         document.documentElement.classList.remove(c.className)
       )
+      // Add theme-switching class for smooth transition
+      document.documentElement.classList.add("theme-switching")
       // Add the new brand color class
       document.documentElement.classList.add(color)
       setBrandColor(color)
       localStorage.setItem("brandColor", color) // Persist the choice
+      // Remove theme-switching class after transition duration
+      setTimeout(() => {
+        document.documentElement.classList.remove("theme-switching")
+      }, 300) // Match the transition duration in globals.css
     }
   }
 

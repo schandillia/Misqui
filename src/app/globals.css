@@ -277,32 +277,88 @@ body,
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      fill 0.3s ease,
+      stroke 0.3s ease,
+      --background 0.3s ease,
+      --foreground 0.3s ease,
+      --primary 0.3s ease,
+      --secondary 0.3s ease,
+      --accent 0.3s ease,
+      --destructive 0.3s ease,
+      --border 0.3s ease,
+      --input 0.3s ease,
+      --ring 0.3s ease,
+      --card 0.3s ease,
+      --card-foreground 0.3s ease,
+      --popover 0.3s ease,
+      --popover-foreground 0.3s ease,
+      --muted 0.3s ease,
+      --muted-foreground 0.3s ease,
+      --sidebar 0.3s ease,
+      --sidebar-foreground 0.3s ease,
+      --sidebar-primary 0.3s ease,
+      --sidebar-accent 0.3s ease,
+      --sidebar-border 0.3s ease,
+      --sidebar-ring 0.3s ease;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) skewX(-15deg);
+  html {
+    transition:
+      opacity 0.3s ease,
+      --brand-base 0.3s ease,
+      --brand-secondary 0.3s ease,
+      --brand-danger 0.3s ease,
+      --brand-super 0.3s ease;
+  }
+  html.theme-switching {
     opacity: 0.7;
   }
-  50% {
-    opacity: 1;
+  [data-slot="button"] {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      transform 0.2s ease-out,
+      --primary 0.3s ease,
+      --primary-foreground 0.3s ease,
+      --ring 0.3s ease;
   }
-  100% {
-    transform: translateX(100%) skewX(-15deg);
-    opacity: 0.7;
+  [data-slot="button"][class*="animate-"] {
+    transition: transform 0.2s ease-out;
   }
-}
-
-.animate-shine {
-  animation: shine 3s infinite;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
 }
 
 @layer utilities {
+  .bg-brand-base {
+    background-color: oklch(from var(--brand-base) l c h);
+    transition: background-color 0.3s ease;
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%) skewX(-15deg);
+      opacity: 0.7;
+    }
+  }
+
+  .animate-shine {
+    animation: shine 3s infinite;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+  }
+
   .button-shine-effect::after {
     content: "";
     @apply absolute block h-[200%] w-12 rotate-[135deg] transform bg-white transition-all ease-out;
