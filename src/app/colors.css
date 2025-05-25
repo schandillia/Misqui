@@ -9,14 +9,14 @@
 .brand-red {
   --brand-base: oklch(0.637 0.237 25.331); /* Red */
   --brand-secondary: oklch(0.723 0.219 149.579); /* Green (complementary) */
-  --brand-danger: oklch(0.645 0.246 16.439); /* Pink (analogous) */
+  --brand-danger: oklch(0.43 0.18 27); /* Maroon (analogous) */
   --brand-super: oklch(0.795 0.184 86.047); /* Yellow (triadic) */
 }
 
 .brand-pink {
   --brand-base: oklch(0.645 0.246 16.439); /* Pink */
   --brand-secondary: oklch(0.606 0.25 292.717); /* Purple (analogous) */
-  --brand-danger: oklch(0.637 0.237 25.331); /* Red (analogous) */
+  --brand-danger: oklch(0.42 0.19 15); /* Maroon (analogous) */
   --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
 }
 
