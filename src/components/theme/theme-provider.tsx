@@ -4,7 +4,13 @@ import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { ThemeProvider as CustomThemeProvider } from "@/components/theme/theme-context"
 import { ReactNode } from "react"
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({
+  children,
+  isPro,
+}: {
+  children: ReactNode
+  isPro: boolean
+}) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -12,7 +18,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <CustomThemeProvider isPro={isPro}>{children}</CustomThemeProvider>
     </NextThemesProvider>
   )
 }

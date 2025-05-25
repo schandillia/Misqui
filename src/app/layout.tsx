@@ -14,6 +14,7 @@ import { ExitModal } from "@/components/exit-modal"
 import { GemsModal } from "@/components/gems-modal"
 import { PracticeModal } from "@/components/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
+import { getUserSubscription } from "@/db/queries"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -48,6 +49,9 @@ export default async function RootLayout({
     logger.warn("No user session or ID found.")
   }
 
+  const userSubscription = await getUserSubscription()
+  const isPro = !!userSubscription?.isActive
+
   return (
     <html
       lang="en"
@@ -56,7 +60,7 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         <AuthProvider>
-          <ThemeProvider>
+          <ThemeProvider isPro={isPro}>
             {children}
             <Toaster />
             <ExitModal />

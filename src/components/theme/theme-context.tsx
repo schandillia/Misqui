@@ -59,33 +59,67 @@ export const useTheme = () => {
 }
 
 // ThemeProvider component to provide the context
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({
+  children,
+  isPro,
+}: {
+  children: ReactNode
+  isPro: boolean
+}) {
   const [brandColor, setBrandColor] = useState("brand-violet") // Default brand color
 
   useEffect(() => {
     // Apply the default or stored brand color class to <html> on the client
-    const storedBrandColor =
-      localStorage.getItem("brandColor") || "brand-purple"
-    const validColor = brandColors.find(
-      (color) => color.className === storedBrandColor
-    )
-    if (validColor) {
-      document.documentElement.classList.add(storedBrandColor)
-      setBrandColor(storedBrandColor)
-    } else {
-      document.documentElement.classList.add("brand-purple")
+    const applyBrandColor = (color: string) => {
+      brandColors.forEach((c) =>
+        document.documentElement.classList.remove(c.className)
+      )
+      document.documentElement.classList.add(color)
+      setBrandColor(color)
     }
 
-    // Cleanup: Remove all brand color classes on unmount
+    if (isPro) {
+      const storedBrandColor =
+        localStorage.getItem("brandColor") || "brand-violet"
+      const validColor = brandColors.find(
+        (color) => color.className === storedBrandColor
+      )
+      if (validColor) {
+        applyBrandColor(storedBrandColor)
+      } else {
+        applyBrandColor("brand-violet")
+        localStorage.setItem("brandColor", "brand-violet")
+      }
+    } else {
+      // For non-pro users, force brand-violet and clear localStorage
+      applyBrandColor("brand-violet")
+      localStorage.removeItem("brandColor")
+    }
+
+    // Listen for localStorage changes in other windows/tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "brandColor" && isPro) {
+        const newColor = event.newValue
+        if (newColor && brandColors.find((c) => c.className === newColor)) {
+          applyBrandColor(newColor)
+        }
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange)
+
+    // Cleanup: Remove all brand color classes and listener on unmount
     return () => {
       brandColors.forEach((color) => {
         document.documentElement.classList.remove(color.className)
       })
+      window.removeEventListener("storage", handleStorageChange)
     }
-  }, []) // Empty dependency array ensures this runs once on mount
+  }, [isPro]) // Re-run if isPro changes
 
   // Function to change brand color
   const changeBrandColor = (color: string) => {
+    if (!isPro) return // Prevent color changes for non-pro users
     const validColor = brandColors.find((c) => c.className === color)
     if (validColor) {
       // Remove all existing brand color classes
