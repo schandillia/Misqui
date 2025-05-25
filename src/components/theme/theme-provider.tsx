@@ -7,11 +7,9 @@ import { ReactNode } from "react"
 export function ThemeProvider({
   children,
   isPro,
-  initialBrandColor,
 }: {
   children: ReactNode
   isPro: boolean
-  initialBrandColor: string
 }) {
   return (
     <NextThemesProvider
@@ -20,9 +18,7 @@ export function ThemeProvider({
       enableSystem
       disableTransitionOnChange
     >
-      <CustomThemeProvider isPro={isPro} initialBrandColor={initialBrandColor}>
-        {children}
-      </CustomThemeProvider>
+      <CustomThemeProvider isPro={isPro}>{children}</CustomThemeProvider>
     </NextThemesProvider>
   )
 }
