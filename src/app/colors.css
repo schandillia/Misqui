@@ -1,35 +1,21 @@
 /* Theme switcher classes with comprehensive named colors mapped to oklch */
-.brand-black {
-  --brand-base: oklch(0.21 0.006 285.885); /* Black */
-  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue for contrast */
-  --brand-danger: oklch(0.637 0.237 25.331); /* Red for urgency */
-  --brand-super: oklch(0.705 0.213 47.604); /* Orange for vibrancy */
-}
-
 .brand-red {
   --brand-base: oklch(0.637 0.237 25.331); /* Red */
   --brand-secondary: oklch(0.723 0.219 149.579); /* Green (complementary) */
-  --brand-danger: oklch(0.43 0.18 27); /* Maroon (analogous) */
+  --brand-danger: oklch(0.645 0.246 16.439); /* Rose (analogous) */
   --brand-super: oklch(0.795 0.184 86.047); /* Yellow (triadic) */
 }
 
 .brand-pink {
-  --brand-base: oklch(0.645 0.246 16.439); /* Pink */
-  --brand-secondary: oklch(0.606 0.25 292.717); /* Purple (analogous) */
-  --brand-danger: oklch(0.42 0.19 15); /* Maroon (analogous) */
+  --brand-base: oklch(0.656 0.241 354.308); /* Pink */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Violet (analogous) */
+  --brand-danger: oklch(0.645 0.246 16.439); /* Rose (analogous) */
   --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
-}
-
-.brand-purple {
-  --brand-base: oklch(0.606 0.25 292.717); /* Purple */
-  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue (analogous) */
-  --brand-danger: oklch(0.637 0.237 25.331); /* Red (triadic) */
-  --brand-super: oklch(0.723 0.219 149.579); /* Green (triadic) */
 }
 
 .brand-blue {
   --brand-base: oklch(0.623 0.214 259.815); /* Blue */
-  --brand-secondary: oklch(0.606 0.25 292.717); /* Purple (analogous) */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Violet (analogous) */
   --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
   --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
 }
@@ -38,7 +24,7 @@
   --brand-base: oklch(0.723 0.219 149.579); /* Green */
   --brand-secondary: oklch(0.795 0.184 86.047); /* Yellow (analogous) */
   --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
-  --brand-super: oklch(0.606 0.25 292.717); /* Purple (triadic) */
+  --brand-super: oklch(0.667 0.295 322.15); /* Purple (triadic) */
 }
 
 .brand-yellow {
@@ -52,5 +38,96 @@
   --brand-base: oklch(0.705 0.213 47.604); /* Orange */
   --brand-secondary: oklch(0.795 0.184 86.047); /* Yellow (analogous) */
   --brand-danger: oklch(0.637 0.237 25.331); /* Red (analogous) */
-  --brand-super: oklch(0.606 0.25 292.717); /* Purple (triadic) */
+  --brand-super: oklch(0.667 0.295 322.15); /* Purple (triadic) */
+}
+
+.brand-teal {
+  --brand-base: oklch(0.704 0.14 182.503); /* Teal */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Violet (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
+}
+
+.brand-violet {
+  --brand-base: oklch(0.606 0.25 292.717); /* Violet */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (triadic) */
+  --brand-super: oklch(0.723 0.219 149.579); /* Green (triadic) */
+}
+
+.brand-indigo {
+  --brand-base: oklch(0.585 0.233 277.117); /* Indigo */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Violet (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
+}
+
+.brand-slate {
+  --brand-base: oklch(0.554 0.046 257.417); /* Slate */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue for contrast */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red for urgency */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange for vibrancy */
+}
+
+.brand-fuchsia {
+  --brand-base: oklch(0.667 0.295 322.15); /* Fuchsia */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Violet (analogous) */
+  --brand-danger: oklch(0.645 0.246 16.439); /* Rose (analogous) */
+  --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
+}
+
+.brand-stone {
+  --brand-base: oklch(0.553 0.013 58.071); /* Stone */
+  --brand-secondary: oklch(0.705 0.213 47.604); /* Orange for contrast */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red for urgency */
+  --brand-super: oklch(0.623 0.214 259.815); /* Blue for vibrancy */
+}
+
+.brand-cyan {
+  --brand-base: oklch(0.715 0.143 215.221); /* Cyan */
+  --brand-secondary: oklch(0.704 0.14 182.503); /* Teal (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
+}
+
+.brand-lime {
+  --brand-base: oklch(0.768 0.233 130.85); /* Lime */
+  --brand-secondary: oklch(0.795 0.184 86.047); /* Yellow (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.667 0.295 322.15); /* Purple (triadic) */
+}
+
+.brand-emerald {
+  --brand-base: oklch(0.696 0.17 162.48); /* Emerald */
+  --brand-secondary: oklch(0.704 0.14 182.503); /* Teal (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
+}
+
+.brand-sky {
+  --brand-base: oklch(0.685 0.169 237.323); /* Sky */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
+}
+
+.brand-amber {
+  --brand-base: oklch(0.769 0.188 70.08); /* Amber */
+  --brand-secondary: oklch(0.705 0.213 47.604); /* Orange (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (triadic) */
+  --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
+}
+
+.brand-rose {
+  --brand-base: oklch(0.645 0.246 16.439); /* Rose */
+  --brand-secondary: oklch(0.656 0.241 354.308); /* Pink (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (analogous) */
+  --brand-super: oklch(0.723 0.219 149.579); /* Green (triadic) */
+}
+
+.brand-gray {
+  --brand-base: oklch(0.551 0.027 264.364); /* Gray */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue for contrast */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red for urgency */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange for vibrancy */
 }

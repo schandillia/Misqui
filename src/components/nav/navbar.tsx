@@ -4,7 +4,7 @@ import brand from "@/lib/data/brand.json"
 import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import ThemeToggle from "@/components/theme/theme-toggle"
-import { ColorSwitcher } from "@/components/theme/color-switcher"
+import ColorSwitcher from "@/components/theme/color-switcher"
 import { getUserSubscription } from "@/db/queries"
 
 export const Navbar = async () => {
