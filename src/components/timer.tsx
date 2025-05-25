@@ -48,7 +48,7 @@ export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
     secondsLeft <= amberThreshold && secondsLeft > redThreshold
   const isRedTime = secondsLeft <= redThreshold
   const textColor = isRedTime
-    ? "text-red-500"
+    ? "text-danger-500"
     : isAmberTime
       ? "text-amber-500"
       : "text-neutral-700 dark:text-neutral-300"
@@ -60,7 +60,8 @@ export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
   return (
     <div className="mt-4 flex justify-center">
       <div
-        className="flex items-center gap-x-2 rounded-full bg-neutral-100 px-4 py-2 shadow-sm dark:bg-neutral-800"
+        className="flex items-center gap-x-2 rounded-full bg-neutral-100 px-4 py-2 shadow-sm
+          dark:bg-neutral-800"
         role="timer"
         aria-live="polite"
         aria-label={`Time remaining: ${formattedTime}`}

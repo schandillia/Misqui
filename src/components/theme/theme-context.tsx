@@ -20,7 +20,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 // Define the brand colors
 const brandColors = [
   { className: "brand-black", label: "Black" },
-  { className: "brand-red", label: "Red" },
+  { className: "brand-danger", label: "Red" },
   { className: "brand-pink", label: "Pink" },
   { className: "brand-purple", label: "Purple" },
   { className: "brand-blue", label: "Blue" },

@@ -11,8 +11,9 @@ body,
 /* Define dark variant for compatibility with next-themes */
 @custom-variant dark (&:is(.dark *), &.dark);
 
-/* Dynamic brand color palette derived from --brand-base */
+/* Dynamic color palettes derived from --brand-base and other brand colors */
 @theme {
+  /* Primary brand palette */
   --color-brand: var(--brand-base);
   --color-brand-25: oklch(
     from var(--brand-base) calc(l + 0.35) calc(c * 0.1) h
@@ -45,6 +46,113 @@ body,
   );
   --color-brand-950: oklch(
     from var(--brand-base) calc(l - 0.35) calc(c * 1.5) h
+  );
+
+  /* Secondary palette */
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-secondary-25: oklch(
+    from var(--brand-secondary) calc(l + 0.35) calc(c * 0.1) h
+  );
+  --color-brand-secondary-50: oklch(
+    from var(--brand-secondary) calc(l + 0.33) calc(c * 0.2) h
+  );
+  --color-brand-secondary-100: oklch(
+    from var(--brand-secondary) calc(l + 0.3) calc(c * 0.4) h
+  );
+  --color-brand-secondary-200: oklch(
+    from var(--brand-secondary) calc(l + 0.25) calc(c * 0.6) h
+  );
+  --color-brand-secondary-300: oklch(
+    from var(--brand-secondary) calc(l + 0.18) calc(c * 0.8) h
+  );
+  --color-brand-secondary-400: oklch(
+    from var(--brand-secondary) calc(l + 0.08) c h
+  );
+  --color-brand-secondary-500: var(--brand-secondary);
+  --color-brand-secondary-600: oklch(
+    from var(--brand-secondary) calc(l - 0.08) calc(c * 1.1) h
+  );
+  --color-brand-secondary-700: oklch(
+    from var(--brand-secondary) calc(l - 0.15) calc(c * 1.2) h
+  );
+  --color-brand-secondary-800: oklch(
+    from var(--brand-secondary) calc(l - 0.22) calc(c * 1.3) h
+  );
+  --color-brand-secondary-900: oklch(
+    from var(--brand-secondary) calc(l - 0.28) calc(c * 1.4) h
+  );
+  --color-brand-secondary-950: oklch(
+    from var(--brand-secondary) calc(l - 0.35) calc(c * 1.5) h
+  );
+
+  /* Danger palette */
+  --color-brand-danger: var(--brand-danger);
+  --color-brand-danger-25: oklch(
+    from var(--brand-danger) calc(l + 0.35) calc(c * 0.1) h
+  );
+  --color-brand-danger-50: oklch(
+    from var(--brand-danger) calc(l + 0.33) calc(c * 0.2) h
+  );
+  --color-brand-danger-100: oklch(
+    from var(--brand-danger) calc(l + 0.3) calc(c * 0.4) h
+  );
+  --color-brand-danger-200: oklch(
+    from var(--brand-danger) calc(l + 0.25) calc(c * 0.6) h
+  );
+  --color-brand-danger-300: oklch(
+    from var(--brand-danger) calc(l + 0.18) calc(c * 0.8) h
+  );
+  --color-brand-danger-400: oklch(from var(--brand-danger) calc(l + 0.08) c h);
+  --color-brand-danger-500: var(--brand-danger);
+  --color-brand-danger-600: oklch(
+    from var(--brand-danger) calc(l - 0.08) calc(c * 1.1) h
+  );
+  --color-brand-danger-700: oklch(
+    from var(--brand-danger) calc(l - 0.15) calc(c * 1.2) h
+  );
+  --color-brand-danger-800: oklch(
+    from var(--brand-danger) calc(l - 0.22) calc(c * 1.3) h
+  );
+  --color-brand-danger-900: oklch(
+    from var(--brand-danger) calc(l - 0.28) calc(c * 1.4) h
+  );
+  --color-brand-danger-950: oklch(
+    from var(--brand-danger) calc(l - 0.35) calc(c * 1.5) h
+  );
+
+  /* Super palette */
+  --color-brand-super: var(--brand-super);
+  --color-brand-super-25: oklch(
+    from var(--brand-super) calc(l + 0.35) calc(c * 0.1) h
+  );
+  --color-brand-super-50: oklch(
+    from var(--brand-super) calc(l + 0.33) calc(c * 0.2) h
+  );
+  --color-brand-super-100: oklch(
+    from var(--brand-super) calc(l + 0.3) calc(c * 0.4) h
+  );
+  --color-brand-super-200: oklch(
+    from var(--brand-super) calc(l + 0.25) calc(c * 0.6) h
+  );
+  --color-brand-super-300: oklch(
+    from var(--brand-super) calc(l + 0.18) calc(c * 0.8) h
+  );
+  --color-brand-super-400: oklch(from var(--brand-super) calc(l + 0.08) c h);
+  --color-brand-super-500: var(--brand-super);
+  --color-brand-super-600: oklch(
+    from var(--brand-super) calc(l - 0.08) calc(c * 1.1) h
+  );
+  --color-brand-super-700: oklch(
+    from var(--brand-super) calc(l - 0.15) calc(c * 1.2) h
+  );
+  --color-brand-super-800: oklch(
+    from var(--brand-super) calc(l - 0.22) calc(c * 1.3) h
+  );
+  --color-brand-super-900: oklch(
+    from var(--brand-super) calc(l - 0.28) calc(c * 1.4) h
+  );
+  --color-brand-super-950: oklch(
+    from var(--brand-super) calc(l - 0.35) calc(c * 1.5) h
   );
 }
 
@@ -99,13 +207,17 @@ body,
   --popover-foreground: oklch(0.141 0.005 285.823);
   --primary: var(--color-brand-500); /* Use brand color as primary */
   --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: oklch(0.967 0.001 286.375);
+  --secondary: var(
+    --color-brand-secondary-500
+  ); /* Use brand-secondary as secondary */
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(
+    --color-brand-danger-500
+  ); /* Use brand-danger as destructive */
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
   --ring: var(--color-brand-500); /* Use brand color for ring */
@@ -133,13 +245,17 @@ body,
   --popover-foreground: oklch(0.985 0 0);
   --primary: var(--color-brand-500); /* Use brand color as primary */
   --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: oklch(0.274 0.006 286.033);
+  --secondary: var(
+    --color-brand-secondary-500
+  ); /* Use brand-secondary as secondary */
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
   --muted-foreground: oklch(0.705 0.015 286.067);
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: var(
+    --color-brand-danger-500
+  ); /* Use brand-danger as destructive */
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: var(--color-brand-500); /* Use brand color for ring */

@@ -1,32 +1,56 @@
 /* Theme switcher classes with comprehensive named colors mapped to oklch */
 .brand-black {
   --brand-base: oklch(0.21 0.006 285.885); /* Black */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue for contrast */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red for urgency */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange for vibrancy */
 }
 
 .brand-red {
   --brand-base: oklch(0.637 0.237 25.331); /* Red */
+  --brand-secondary: oklch(0.723 0.219 149.579); /* Green (complementary) */
+  --brand-danger: oklch(0.645 0.246 16.439); /* Pink (analogous) */
+  --brand-super: oklch(0.795 0.184 86.047); /* Yellow (triadic) */
 }
 
 .brand-pink {
   --brand-base: oklch(0.645 0.246 16.439); /* Pink */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Purple (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (analogous) */
+  --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
 }
 
 .brand-purple {
   --brand-base: oklch(0.606 0.25 292.717); /* Purple */
+  --brand-secondary: oklch(0.623 0.214 259.815); /* Blue (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (triadic) */
+  --brand-super: oklch(0.723 0.219 149.579); /* Green (triadic) */
 }
 
 .brand-blue {
   --brand-base: oklch(0.623 0.214 259.815); /* Blue */
+  --brand-secondary: oklch(0.606 0.25 292.717); /* Purple (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.705 0.213 47.604); /* Orange (triadic) */
 }
 
 .brand-green {
   --brand-base: oklch(0.723 0.219 149.579); /* Green */
+  --brand-secondary: oklch(0.795 0.184 86.047); /* Yellow (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (complementary) */
+  --brand-super: oklch(0.606 0.25 292.717); /* Purple (triadic) */
 }
 
 .brand-yellow {
   --brand-base: oklch(0.795 0.184 86.047); /* Yellow */
+  --brand-secondary: oklch(0.705 0.213 47.604); /* Orange (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (triadic) */
+  --brand-super: oklch(0.623 0.214 259.815); /* Blue (triadic) */
 }
 
 .brand-orange {
   --brand-base: oklch(0.705 0.213 47.604); /* Orange */
+  --brand-secondary: oklch(0.795 0.184 86.047); /* Yellow (analogous) */
+  --brand-danger: oklch(0.637 0.237 25.331); /* Red (analogous) */
+  --brand-super: oklch(0.606 0.25 292.717); /* Purple (triadic) */
 }

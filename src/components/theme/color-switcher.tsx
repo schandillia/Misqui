@@ -1,6 +1,7 @@
 "use client"
 
 import { useTheme, brandColors } from "@/components/theme/theme-context"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,9 +26,15 @@ export function ColorSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           className={`size-8 rounded-full border border-border transition-all hover:scale-110
-            cursor-pointer hover:shadow-sm ${brandColor}`}
+            cursor-pointer ${brandColor} relative overflow-hidden shadow-md hover:shadow-lg
+            hover:-translate-y-0.5 active:scale-95 active:shadow-sm before:content-['']
+            before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20
+            before:to-transparent before:rounded-full ring-2 ring-brand-300/50 hover:ring-3
+            hover:ring-brand-400/70 dark:ring-brand-500/50 dark:hover:ring-brand-600/70`}
           style={{ backgroundColor: `oklch(from var(--brand-base) l c h)` }}
         />
       </DropdownMenuTrigger>
