@@ -35,15 +35,15 @@ export default function ColorSwitcher({
         <Button
           variant="ghost"
           size="icon"
-          className={`size-8 rounded-full border border-border transition-all hover:scale-110
-            cursor-pointer relative overflow-hidden shadow-lg hover:shadow-xl
-            hover:-translate-y-1 active:scale-95 active:shadow-md before:content-['']
-            before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/60
-            before:to-transparent before:rounded-full after:content-[''] after:absolute
-            after:inset-[2px] after:bg-gradient-radial after:from-white/40
-            after:to-transparent after:rounded-full ring-2 ring-brand-300/50 hover:ring-3
-            hover:ring-brand-400/70 dark:ring-brand-500/50 dark:hover:ring-brand-600/70
-            ${brandColor}`}
+          className={`${inSidebar ? "size-7" : "size-8"} rounded-full border border-border
+            transition-all hover:scale-110 cursor-pointer relative overflow-hidden shadow-lg
+            hover:shadow-xl hover:-translate-y-1 active:scale-95 active:shadow-md
+            before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-b
+            before:from-white/60 before:to-transparent before:rounded-full
+            after:content-[''] after:absolute after:inset-[2px] after:bg-gradient-radial
+            after:from-white/40 after:to-transparent after:rounded-full ring-2
+            ring-brand-300/50 hover:ring-3 hover:ring-brand-400/70 dark:ring-brand-500/50
+            dark:hover:ring-brand-600/70 ${brandColor}`}
           style={{ backgroundColor: "oklch(from var(--brand-base) l c h)" }}
         />
       </DropdownMenuTrigger>
