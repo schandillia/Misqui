@@ -7,6 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react"
+import app from "@/lib/data/app.json"
 
 // Define the shape of the context
 interface ThemeContextType {
@@ -66,7 +67,7 @@ export function ThemeProvider({
   children: ReactNode
   isPro: boolean
 }) {
-  const [brandColor, setBrandColor] = useState("brand-violet") // Default brand color
+  const [brandColor, setBrandColor] = useState(`brand-${app.BRAND_COLOR}`)
 
   useEffect(() => {
     // Apply the default or stored brand color class to <html> on the client
