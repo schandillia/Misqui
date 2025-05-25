@@ -58,7 +58,7 @@ export const NotesModal = ({
           <Loader className="text-muted-foreground size-8 animate-spin" />
         </div>
       )}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-danger-500">{error}</div>}
       {!loading && !error && notes && (
         <LessonNotesScroller html={marked(notes, { renderer }) as string} />
       )}
