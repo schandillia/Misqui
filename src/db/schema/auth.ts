@@ -12,6 +12,8 @@ import {
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 import { userProgress } from "@/db/schema/progress"
+import app from "@/lib/data/app.json"
+import { brandColorEnum, themeEnum } from "@/db/schema/types"
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -19,6 +21,10 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image").notNull().default("/images/mascots/mascot.svg"),
+  theme: themeEnum("theme").notNull().default("system"),
+  brandColor: brandColorEnum("brand_color")
+    .notNull()
+    .default(app.BRAND_COLOR as (typeof brandColorEnum.enumValues)[number]),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })

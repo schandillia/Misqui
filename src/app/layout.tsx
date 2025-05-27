@@ -4,7 +4,7 @@ import { bodyFont, headingFont } from "@/lib/fonts"
 import { Toaster } from "sonner"
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
-import { users } from "@/db/schema"
+import { brandColorEnum, themeEnum, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { logger } from "@/lib/logger"
@@ -31,15 +31,21 @@ export default async function RootLayout({
   // Logging the session data
   if (session) logger.info("SESSION: %O", session)
 
+  let theme: (typeof themeEnum.enumValues)[number] = "system"
+  let brandColor: (typeof brandColorEnum.enumValues)[number] = "violet"
+
   if (session?.user?.id) {
     logger.info("SESSION.USER.ID: %s", session.user.id)
     try {
-      await db
-        .select()
+      const [user] = await db
+        .select({ theme: users.theme, brandColor: users.brandColor })
         .from(users)
         .where(eq(users.id, session.user.id))
         .limit(1)
-      // Not storing the result since we're not using it
+      if (user) {
+        theme = user.theme
+        brandColor = user.brandColor
+      }
     } catch (error) {
       // Log errors using Winston
       logger.error("Error fetching user: %O", error)
@@ -51,7 +57,6 @@ export default async function RootLayout({
 
   const userSubscription = await getUserSubscription()
   const isPro = !!userSubscription?.isActive
-  const initialBrandColor = isPro ? "brand-violet" : "brand-violet"
 
   return (
     <html
