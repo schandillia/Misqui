@@ -44,7 +44,7 @@ export default async function RootLayout({
         .limit(1)
       if (user) {
         theme = user.theme
-        brandColor = user.brandColor
+        brandColor = user.brandColor // eslint-disable-line @typescript-eslint/no-unused-vars
       }
     } catch (error) {
       // Log errors using Winston

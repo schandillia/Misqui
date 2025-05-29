@@ -21,7 +21,7 @@ export async function updateThemeAction({ theme }: ThemeRequest) {
   try {
     await updateUserTheme(session.user.id, theme)
     return { success: true }
-  } catch (error) {
+  } catch (_error) {
     throw new Error("Failed to update theme")
   }
 }

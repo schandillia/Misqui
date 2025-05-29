@@ -24,7 +24,8 @@ export const CourseCard = ({
     <Card
       onClick={() => onClick(id)}
       className={cn(
-        "flex h-full min-h-[217px] min-w-[200px] cursor-pointer flex-col items-center justify-between rounded-3xl p-3 pb-6 hover:bg-black/5 dark:hover:bg-neutral-800",
+        `flex h-full min-h-[217px] min-w-[200px] cursor-pointer flex-col items-center
+        justify-between rounded-3xl p-3 pb-6 hover:bg-black/5 dark:hover:bg-neutral-800`,
         disabled && "pointer-events-none opacity-50"
       )}
     >
