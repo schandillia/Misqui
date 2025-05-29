@@ -2,9 +2,12 @@
 
 import * as React from "react"
 import { useTheme } from "next-themes"
+import { useOptimistic, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { PiMoonStars, PiSun } from "react-icons/pi"
 import { LuComputer } from "react-icons/lu"
+import { updateThemeAction } from "@/app/actions/update-theme"
+import { themeEnum } from "@/db/schema"
 
 interface ThemeToggleProps {
   type?: "compact" | "default"
@@ -19,19 +22,48 @@ const THEMES = [
 export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const [optimisticTheme, setOptimisticTheme] = useOptimistic(theme ?? "system")
+  const [isPending, startTransition] = useTransition()
 
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
-  const currentTheme = theme ?? "system"
+  const currentTheme = optimisticTheme
   const activeIndex = THEMES.findIndex((t) => t.name === currentTheme)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleThemeChange = (newTheme: string, index: number) => {
-    setTheme(newTheme)
-    // Note: localStorage may not be needed if next-themes handles persistence
-    localStorage.setItem("theme", newTheme)
+  const handleThemeChange = async (newTheme: string, index: number) => {
+    const isAuthenticated =
+      document.documentElement.dataset.authenticated === "true"
+
+    if (isAuthenticated) {
+      // Immediate UI updates (optimistic)
+      startTransition(() => {
+        setOptimisticTheme(newTheme)
+      })
+      setTheme(newTheme) // This should be immediate for UI responsiveness
+
+      // Background server update
+      try {
+        await updateThemeAction({
+          theme: newTheme as (typeof themeEnum.enumValues)[number],
+        })
+      } catch (error: any) {
+        console.error("Error updating theme:", error)
+        // Roll back only the optimistic state on failure
+        startTransition(() => {
+          setOptimisticTheme(theme ?? "system")
+        })
+        setTheme(theme ?? "system")
+      }
+    } else {
+      // For non-authenticated users, update immediately
+      setTheme(newTheme) // Immediate UI change
+      localStorage.setItem("theme", newTheme) // Persist to localStorage
+      startTransition(() => {
+        setOptimisticTheme(newTheme) // Update optimistic state
+      })
+    }
   }
 
   const cycleTheme = () => {
@@ -47,6 +79,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
           size="icon"
           className="rounded-full"
           aria-label="Toggle theme"
+          disabled={isPending}
         >
           <span className="sr-only">Toggle theme</span>
         </Button>
@@ -62,8 +95,9 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
             key={Icon.name}
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full p-1.5"
+            className="size-8 rounded-full p-1.5"
             aria-label="Toggle theme"
+            disabled={isPending}
           >
             <Icon className="text-brand-400 size-5" strokeWidth={1.5} />
           </Button>
@@ -82,6 +116,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
           cursor-pointer rounded-full"
         onClick={cycleTheme}
         aria-label="Toggle theme"
+        disabled={isPending}
       >
         <Icon
           className="text-brand-600 dark:text-brand-300 size-4"
@@ -100,7 +135,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
       aria-label="Theme toggle"
     >
       <div
-        className="bg-brand-200 dark:bg-brand-900/80 absolute top-1.5 left-1.5 h-8 w-8 rounded-full
+        className="bg-brand-200 dark:bg-brand-900/80 absolute top-1.5 left-1.5 size-8 rounded-full
           transition-transform duration-300 ease-in-out"
         style={{ transform: `translateX(${activeIndex * 38}px)` }}
       />
@@ -110,13 +145,14 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
           variant="ghost"
           size="icon"
           onClick={() => handleThemeChange(name, index)}
-          className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full p-1.5
+          className={`relative z-10 flex size-8 items-center justify-center rounded-full p-1.5
           transition-colors ${
           currentTheme === name
               ? "text-brand-800 dark:text-brand-200"
               : "text-brand-500 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-950/60"
           }`}
           aria-label={label}
+          disabled={isPending}
         >
           <Icon className="size-5" strokeWidth={1.5} />
         </Button>

@@ -63,10 +63,11 @@ export default async function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(bodyFont.variable, headingFont.variable)}
+      data-authenticated={session?.user?.id ? "true" : "false"}
     >
       <body className="antialiased">
         <AuthProvider>
-          <ThemeProvider isPro={isPro}>
+          <ThemeProvider isPro={isPro} defaultTheme={theme}>
             {children}
             <Toaster />
             <ExitModal />

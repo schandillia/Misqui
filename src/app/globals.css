@@ -221,6 +221,7 @@ body,
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
   --ring: var(--color-brand-500); /* Use brand color for ring */
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light mode shadow */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -259,6 +260,7 @@ body,
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: var(--color-brand-500); /* Use brand color for ring */
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -283,6 +285,8 @@ body,
       border-color 0.3s ease,
       fill 0.3s ease,
       stroke 0.3s ease,
+      box-shadow 0.3s ease,
+      filter 0.3s ease,
       --background 0.3s ease,
       --foreground 0.3s ease,
       --primary 0.3s ease,
@@ -292,6 +296,7 @@ body,
       --border 0.3s ease,
       --input 0.3s ease,
       --ring 0.3s ease,
+      --shadow 0.3s ease,
       --card 0.3s ease,
       --card-foreground 0.3s ease,
       --popover 0.3s ease,
@@ -318,19 +323,28 @@ body,
   }
   html.theme-switching {
     opacity: 0.7;
+    transition: opacity 0.3s ease;
   }
   [data-slot="button"] {
     transition:
       background-color 0.3s ease,
       color 0.3s ease,
       border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      filter 0.3s ease,
       transform 0.2s ease-out,
       --primary 0.3s ease,
       --primary-foreground 0.3s ease,
       --ring 0.3s ease;
   }
   [data-slot="button"][class*="animate-"] {
-    transition: transform 0.2s ease-out;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      filter 0.3s ease,
+      transform 0.2s ease;
   }
 }
 
@@ -355,32 +369,47 @@ body,
   }
 
   .animate-shine {
-    animation: shine 3s infinite;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+    animation: shine 3s ease infinite;
+    filter: var(--shadow-sm); /* Use custom shadow */
+    transition: filter 0.3s ease;
   }
 
-  .button-shine-effect::after {
+  .button-shadow-shine-effect::after {
     content: "";
     @apply absolute block h-[200%] w-12 rotate-[135deg] transform bg-white transition-all ease-out;
     opacity: 0.08;
-    transition-duration: 800ms;
+    transition-duration: 0.3s; /* Match theme transition */
     top: -50%;
     left: -150%;
     z-index: 1;
     filter: blur(1px);
   }
 
-  .button-shine-effect:hover::after {
+  .button-shadow-shine-effect:hover::after {
     left: 150%;
     opacity: 0.15;
   }
 
-  .dark .button-shine-effect::after {
+  .dark .button-shadow-shine-effect::after {
     @apply bg-white;
     opacity: 0.04;
   }
 
-  .dark .button-shine-effect:hover::after {
+  .dark .button-shadow-shine-effect:hover::after {
     opacity: 0.08;
+  }
+
+  /* Apply custom shadow to elements with shadows */
+  .shadow {
+    box-shadow: var(--shadow);
+  }
+  .shadow-sm {
+    box-shadow: var(--shadow);
+  }
+  .shadow-md {
+    box-shadow: var(--shadow);
+  }
+  .shadow-lg {
+    box-shadow: var(--shadow);
   }
 }
