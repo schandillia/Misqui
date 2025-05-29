@@ -5,7 +5,7 @@ import {
   useTheme as useNextTheme,
 } from "next-themes"
 import { ThemeProvider as CustomThemeProvider } from "@/components/theme/theme-context"
-import { ReactNode, useEffect, useRef } from "react"
+import { ReactNode, useEffect, useRef, useCallback } from "react"
 import { themeEnum } from "@/db/schema/types"
 
 export function ThemeProvider({
@@ -20,23 +20,30 @@ export function ThemeProvider({
   const { theme, setTheme } = useNextTheme()
   const isInitialRender = useRef(true)
 
-  console.log("ThemeProvider initialized with defaultTheme:", defaultTheme)
+  if (process.env.NODE_ENV === "development") {
+    console.info("ThemeProvider initialized with defaultTheme:", defaultTheme)
+  }
 
-  useEffect(() => {
-    console.log(
-      "useEffect: isInitialRender=",
-      isInitialRender.current,
-      "current theme=",
-      theme,
-      "isAuthenticated=",
-      document.documentElement.dataset.authenticated
-    )
+  const handleThemeInitialization = useCallback(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.info(
+        "useEffect: isInitialRender=",
+        isInitialRender.current,
+        "current theme=",
+        theme,
+        "isAuthenticated=",
+        document.documentElement.dataset.authenticated
+      )
+    }
+
     if (isInitialRender.current) {
       isInitialRender.current = false
       if (document.documentElement.dataset.authenticated === "true") {
         // For logged-in users, clear localStorage and use defaultTheme
         localStorage.removeItem("theme")
-        console.log("Setting theme to defaultTheme:", defaultTheme)
+        if (process.env.NODE_ENV === "development") {
+          console.info("Setting theme to defaultTheme:", defaultTheme)
+        }
         setTheme(defaultTheme)
         // Force apply theme class to <html>
         document.documentElement.classList.remove("light", "system")
@@ -44,11 +51,19 @@ export function ThemeProvider({
       } else {
         // For non-logged-in users, check localStorage for theme
         const storedTheme = localStorage.getItem("theme") || "system"
-        if (themeEnum.enumValues.includes(storedTheme as any)) {
-          console.log("Setting theme to storedTheme:", storedTheme)
+        const isValidTheme = themeEnum.enumValues.includes(
+          storedTheme as (typeof themeEnum.enumValues)[number]
+        )
+
+        if (isValidTheme) {
+          if (process.env.NODE_ENV === "development") {
+            console.info("Setting theme to storedTheme:", storedTheme)
+          }
           setTheme(storedTheme)
         } else {
-          console.log("Falling back to system theme")
+          if (process.env.NODE_ENV === "development") {
+            console.info("Falling back to system theme")
+          }
           setTheme("system")
         }
       }
@@ -62,7 +77,11 @@ export function ThemeProvider({
     }, 300) // Match the transition duration in globals.css
 
     return () => clearTimeout(timeout)
-  }, [theme, defaultTheme])
+  }, [theme, defaultTheme, setTheme])
+
+  useEffect(() => {
+    return handleThemeInitialization()
+  }, [handleThemeInitialization])
 
   return (
     <NextThemesProvider

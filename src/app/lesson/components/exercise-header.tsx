@@ -29,7 +29,10 @@ export const ExerciseHeader = ({
   const { open } = useExitModal()
 
   return (
-    <header className="mx-auto flex w-full max-w-[1140px] flex-col items-start gap-y-4 px-10 pt-[20px] lg:pt-[50px]">
+    <header
+      className="mx-auto flex w-full max-w-[1140px] flex-col items-start gap-y-4 px-10 pt-[20px]
+        lg:pt-[50px]"
+    >
       {/* Conditionally render Timer or Exercise Title */}
       {isTimed ? (
         <div className="flex w-full justify-center">
@@ -40,7 +43,10 @@ export const ExerciseHeader = ({
         </div>
       ) : (
         exerciseTitle && (
-          <h1 className="w-full text-center text-lg font-bold text-neutral-700 lg:text-xl dark:text-neutral-300">
+          <h1
+            className="w-full text-center text-lg font-bold text-neutral-700 lg:text-xl
+              dark:text-neutral-300"
+          >
             {exerciseNumber
               ? `${exerciseNumber}. ${exerciseTitle}`
               : exerciseTitle}

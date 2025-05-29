@@ -4,7 +4,10 @@ import { buttonVariants } from "@/components/ui/button"
 
 export default function NotFound() {
   return (
-    <div className="bg-brand-50 dark:bg-brand-950 flex min-h-screen flex-col items-center justify-center p-6 text-center">
+    <div
+      className="bg-brand-50 dark:bg-brand-950 flex min-h-screen flex-col items-center
+        justify-center p-6 text-center"
+    >
       <Image
         src="/images/mascots/mascot.svg"
         alt="Mascot"

@@ -3,7 +3,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 const ExerciseSkeleton = () => (
   <div className="flex min-h-screen flex-col">
     {/* Header skeleton */}
-    <div className="mx-auto mb-8 flex w-full max-w-[1140px] items-center justify-between gap-x-7 px-10 pt-[20px] lg:pt-[50px]">
+    <div
+      className="mx-auto mb-8 flex w-full max-w-[1140px] items-center justify-between gap-x-7
+        px-10 pt-[20px] lg:pt-[50px]"
+    >
       <Skeleton className="h-8 w-8 rounded-full" />
       <Skeleton className="h-4 w-1/2 rounded-full" /> {/* Progress bar */}
       <div className="flex items-center gap-2">

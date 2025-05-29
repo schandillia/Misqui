@@ -47,15 +47,19 @@ export const ChallengeCard = ({
     <div
       onClick={handleClick}
       className={cn(
-        "relative h-full min-h-[100px] cursor-pointer rounded-3xl border-2 p-4 hover:bg-black/5 lg:min-h-[120px] lg:p-6 dark:hover:bg-neutral-800",
+        `relative h-full min-h-[100px] cursor-pointer rounded-3xl border-2 p-4
+        hover:bg-black/5 lg:min-h-[120px] lg:p-6 dark:hover:bg-neutral-800`,
         selected &&
-          "border-sky-300 bg-sky-100 hover:bg-sky-100 dark:border-sky-900 dark:bg-sky-950/90",
+          `border-sky-300 bg-sky-100 hover:bg-sky-100 dark:border-sky-900
+          dark:bg-sky-950/90`,
         selected &&
           status === "correct" &&
-          "border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/90",
+          `border-emerald-300 bg-emerald-100 hover:bg-emerald-100 dark:border-emerald-900
+          dark:bg-emerald-950/90`,
         selected &&
           status === "wrong" &&
-          "border-rose-300 bg-rose-100 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/90",
+          `border-rose-300 bg-rose-100 hover:bg-rose-100 dark:border-rose-900
+          dark:bg-rose-950/90`,
         disabled && "pointer-events-none hover:bg-white"
       )}
     >
@@ -78,7 +82,8 @@ export const ChallengeCard = ({
       <div className="relative flex items-center">
         <p
           className={cn(
-            "flex-1 pr-10 text-left text-sm leading-relaxed font-semibold text-neutral-600 lg:pr-12 lg:text-base lg:leading-relaxed dark:text-neutral-400",
+            `flex-1 pr-10 text-left text-sm leading-relaxed font-semibold text-neutral-600
+            lg:pr-12 lg:text-base lg:leading-relaxed dark:text-neutral-400`,
             selected && "text-sky-500 dark:text-sky-500",
             selected &&
               status === "correct" &&
@@ -101,7 +106,9 @@ export const ChallengeCard = ({
       </div>
       <div
         className={cn(
-          "absolute right-4 bottom-4 box-border flex aspect-square h-[24px] w-[24px] items-center justify-center rounded-full border-2 text-sm font-semibold text-neutral-400 lg:h-[36px] lg:w-[36px] lg:text-base",
+          `absolute right-4 bottom-4 box-border flex aspect-square h-[24px] w-[24px]
+          items-center justify-center rounded-full border-2 text-sm font-semibold
+          text-neutral-400 lg:h-[36px] lg:w-[36px] lg:text-base`,
           selected && "border-sky-300 text-sky-500",
           selected &&
             status === "correct" &&

@@ -25,7 +25,10 @@ export const HeaderSection = ({
         width={80}
         className="mb-2"
       />
-      <h1 className="mt-2 mb-1 text-center text-2xl font-bold text-neutral-700 sm:text-3xl dark:text-neutral-400">
+      <h1
+        className="mt-2 mb-1 text-center text-2xl font-bold text-neutral-700 sm:text-3xl
+          dark:text-neutral-400"
+      >
         {title}
       </h1>
       <p className="text-muted-foreground mb-6 max-w-2xl text-center text-base sm:text-lg">

@@ -32,7 +32,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
   const currentTheme = optimisticTheme
   const activeIndex = THEMES.findIndex((t) => t.name === currentTheme)
 
-  const handleThemeChange = async (newTheme: string, index: number) => {
+  const handleThemeChange = async (newTheme: string, _index: number) => {
     const isAuthenticated =
       document.documentElement.dataset.authenticated === "true"
 
@@ -48,7 +48,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
         await updateThemeAction({
           theme: newTheme as (typeof themeEnum.enumValues)[number],
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error updating theme:", error)
         // Roll back only the optimistic state on failure
         startTransition(() => {

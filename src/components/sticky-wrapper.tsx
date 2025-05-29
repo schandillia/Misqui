@@ -9,7 +9,11 @@ export const StickyWrapper = ({ children }: Props) => {
     <div className="sticky bottom-6 hidden w-[368px] self-end lg:block">
       <div className="sticky top-6 flex min-h-[calc(100vh-48px)] flex-col justify-between">
         <div className="flex flex-col gap-y-4">{children}</div>
-        <div className="text-muted-foreground mt-6 flex flex-wrap justify-between gap-x-4 gap-y-2 border-t border-neutral-200 px-2 pt-6 text-xs font-bold uppercase dark:border-neutral-800">
+        <div
+          className="text-muted-foreground mt-6 flex flex-wrap justify-between gap-x-4 gap-y-2
+            border-t border-neutral-200 px-2 pt-6 text-xs font-bold uppercase
+            dark:border-neutral-800"
+        >
           <Link href="/about" className="whitespace-nowrap hover:underline">
             About
           </Link>
