@@ -7,8 +7,6 @@ import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import { AuthButton } from "@/components/auth/auth-button"
 import ThemeToggle from "@/components/theme/theme-toggle"
-import ColorSwitcher from "@/components/theme/color-switcher"
-import { getUserSubscription } from "@/db/queries"
 
 type Props = {
   className?: string
@@ -30,15 +28,7 @@ const sidebarItems = [
 ]
 
 export const Sidebar = async ({ className }: Props) => {
-  const sessionData = auth()
-  const userSubscriptionData = getUserSubscription()
-
-  const [session, userSubscription] = await Promise.all([
-    sessionData,
-    userSubscriptionData,
-  ])
-
-  const isPro = !!userSubscription?.isActive
+  const session = await auth()
 
   return (
     <div
@@ -74,7 +64,6 @@ export const Sidebar = async ({ className }: Props) => {
       </div>
       <div className="flex flex-row items-center justify-center gap-x-4 py-2">
         <ThemeToggle />
-        {isPro && <ColorSwitcher inSidebar />}
       </div>
       <div className="flex flex-col items-center gap-y-2 p-4">
         {session?.user ? (

@@ -8,17 +8,20 @@ import { UserAvatar } from "@/components/user-avatar"
 import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
+import ColorSwitcher from "@/components/theme/color-switcher"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 const Page = async () => {
-  const session = await auth()
+  const sessionData = auth()
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
 
-  const [userProgress, userSubscription] = await Promise.all([
+  const [session, userProgress, userSubscription] = await Promise.all([
+    sessionData,
     userProgressData,
     userSubscriptionData,
   ])
@@ -61,13 +64,9 @@ const Page = async () => {
                   image={session?.user?.image}
                   className="size-16"
                 />
-                <button
-                  className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
-                    transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700
-                    dark:text-neutral-300 dark:hover:bg-neutral-600"
-                >
+                <Button variant="ghost" className="w-full sm:w-auto">
                   Change Avatar
-                </button>
+                </Button>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -134,24 +133,20 @@ const Page = async () => {
                     {isPro ? "Pro Plan" : "Free Plan"}
                   </p>
                 </div>
-                <button
-                  className={`w-full rounded-lg px-4 py-2 font-medium transition-colors sm:w-auto ${
-                    isPro
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : `bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-700
-                        dark:text-neutral-100 dark:hover:bg-neutral-600`
-                    }`}
+                <Button
+                  variant={isPro ? "primary" : "ghost"}
+                  className="w-full sm:w-auto"
                 >
                   {isPro ? "Manage Subscription" : "Upgrade to Pro"}
-                </button>
+                </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Account Settings */}
+          {/* Display Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
+              <CardTitle>Display Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -162,6 +157,15 @@ const Page = async () => {
                   </p>
                 </div>
                 <ThemeToggle />
+              </div>
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                <div>
+                  <Label>Color Theme</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Choose your preferred color theme
+                  </p>
+                </div>
+                {isPro && <ColorSwitcher />}
               </div>
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
@@ -188,13 +192,9 @@ const Page = async () => {
                     Google Account
                   </p>
                 </div>
-                <button
-                  className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
-                    transition-colors hover:bg-neutral-200 sm:w-auto dark:bg-neutral-700
-                    dark:text-neutral-300 dark:hover:bg-neutral-600"
-                >
+                <Button variant="ghost" className="w-full sm:w-auto">
                   Manage
-                </button>
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -205,19 +205,12 @@ const Page = async () => {
               <CardTitle>Data & Privacy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <button
-                className="w-full rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700
-                  transition-colors hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-300
-                  dark:hover:bg-neutral-600"
-              >
+              <Button variant="ghost" className="w-full">
                 Export Data
-              </button>
-              <button
-                className="w-full rounded-lg bg-danger-500 px-4 py-2 text-sm font-medium text-white
-                  transition-colors hover:bg-danger-600"
-              >
+              </Button>
+              <Button variant="danger" className="w-full">
                 Delete Account
-              </button>
+              </Button>
             </CardContent>
           </Card>
         </div>

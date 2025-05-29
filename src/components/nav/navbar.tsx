@@ -4,19 +4,9 @@ import brand from "@/lib/data/brand.json"
 import { auth } from "@/auth"
 import UserNavMenu from "@/components/nav/user-nav-menu"
 import ThemeToggle from "@/components/theme/theme-toggle"
-import ColorSwitcher from "@/components/theme/color-switcher"
-import { getUserSubscription } from "@/db/queries"
 
 export const Navbar = async () => {
-  const sessionData = auth()
-  const userSubscriptionData = getUserSubscription()
-
-  const [session, userSubscription] = await Promise.all([
-    sessionData,
-    userSubscriptionData,
-  ])
-
-  const isPro = !!userSubscription?.isActive
+  const session = await auth()
 
   return (
     <nav className="h-20 w-full border-b-2 border-neutral-200 px-4 dark:border-neutral-800">
@@ -44,7 +34,6 @@ export const Navbar = async () => {
             </>
           )}
           <ThemeToggle type="compact" />
-          {isPro && <ColorSwitcher />}
         </div>
       </div>
     </nav>
