@@ -376,7 +376,10 @@ export const Quiz = ({
           tweenDuration={10000}
         />
         <div className="flex min-h-screen flex-col">
-          <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4 text-center lg:gap-y-8">
+          <div
+            className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4
+              text-center lg:gap-y-8"
+          >
             <Image
               src="/images/icons/finish.svg"
               height={100}
@@ -450,7 +453,10 @@ export const Quiz = ({
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">
           <div className="flex w-full flex-col gap-y-12 px-6 lg:min-h-[350px] lg:w-[600px] lg:px-0">
-            <h1 className="text-center text-lg font-bold text-neutral-700 lg:text-start lg:text-3xl dark:text-neutral-300">
+            <h1
+              className="text-center text-lg font-bold text-neutral-700 lg:text-start lg:text-3xl
+                dark:text-neutral-300"
+            >
               {title}
             </h1>
             <div>

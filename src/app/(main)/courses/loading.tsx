@@ -9,7 +9,8 @@ const Loading = () => {
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="flex h-full min-h-[217px] min-w-[200px] flex-col items-center justify-between rounded-3xl border-2 border-b-4 p-3 pb-6"
+            className="flex h-full min-h-[217px] min-w-[200px] flex-col items-center justify-between
+              rounded-3xl border-2 border-b-4 p-3 pb-6"
           >
             <div className="flex min-h-[24px] w-full items-center justify-end">
               <Skeleton className="h-6 w-6 rounded-full" />

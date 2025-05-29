@@ -36,7 +36,11 @@ const Loading = () => (
             ))}
           </div>
         </div>
-        <div className="text-muted-foreground mt-6 flex flex-wrap justify-between gap-x-4 gap-y-2 border-t border-neutral-200 px-2 pt-6 text-xs font-bold uppercase dark:border-neutral-800">
+        <div
+          className="text-muted-foreground mt-6 flex flex-wrap justify-between gap-x-4 gap-y-2
+            border-t border-neutral-200 px-2 pt-6 text-xs font-bold uppercase
+            dark:border-neutral-800"
+        >
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="mb-2 h-4 w-16" />
           ))}
@@ -46,7 +50,10 @@ const Loading = () => (
     {/* Main feed skeleton */}
     <div className="relative top-0 flex-1 pb-10">
       {/* Header skeleton */}
-      <div className="sticky top-0 mb-5 flex items-center justify-between border-b-2 bg-white pb-3 text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] dark:bg-black">
+      <div
+        className="sticky top-0 mb-5 flex items-center justify-between border-b-2 bg-white pb-3
+          text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] dark:bg-black"
+      >
         <Skeleton className="h-8 w-10" />
         <Skeleton className="h-8 w-40" />
         <Skeleton className="h-8 w-10" />
