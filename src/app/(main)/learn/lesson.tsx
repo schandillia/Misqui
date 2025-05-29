@@ -1,5 +1,3 @@
-"use client"
-
 import { ExerciseButton } from "@/app/(main)/learn/exercise-button"
 import { LessonBanner } from "@/app/(main)/learn/lesson-banner"
 import { exercises, lessons } from "@/db/schema"

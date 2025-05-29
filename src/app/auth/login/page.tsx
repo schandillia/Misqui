@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { signInWithGoogle } from "@/app/actions/auth"
 import { FcGoogle } from "react-icons/fc"
-import { FaApple } from "react-icons/fa"
+import { BsApple } from "react-icons/bs"
 import brand from "@/lib/data/brand.json"
 
 const Page = () => {
@@ -23,7 +23,10 @@ const Page = () => {
   }, [callbackUrl, intent])
 
   return (
-    <div className="bg-brand-50 dark:bg-brand-950 flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <div
+      className="bg-brand-50 dark:bg-brand-950 flex min-h-screen flex-col items-center
+        justify-center px-6 text-center"
+    >
       <Image
         src="/images/mascots/mascot.svg"
         alt="Mascot"
@@ -32,10 +35,10 @@ const Page = () => {
         className="mb-6 animate-bounce"
       />
       <h1 className="text-brand-700 dark:text-brand-100 mb-2 text-4xl font-bold">
-        Welcome Back!
+        Let’s Begin!
       </h1>
       <p className="text-brand-600 dark:text-brand-200 mb-6 text-lg">
-        Pick one and continue with your adventure!
+        Pick one to get started
       </p>
 
       <div className="w-full max-w-sm space-y-4">
@@ -52,7 +55,7 @@ const Page = () => {
           variant="primaryOutline"
           className="flex h-12 w-full items-center justify-center gap-2"
         >
-          <FaApple className="text-brand-950 dark:text-brand-100 size-5" />
+          <BsApple className="text-black dark:text-white size-5" />
           <span>Continue with Apple</span>
         </Button>
       </div>

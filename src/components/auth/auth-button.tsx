@@ -4,11 +4,10 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
-import { FaApple } from "react-icons/fa"
+import { BsApple } from "react-icons/bs"
 import Link from "next/link"
 import brand from "@/lib/data/brand.json"
 import { HiOutlineRocketLaunch } from "react-icons/hi2"
-
 import { signInWithGoogle } from "@/app/actions/auth"
 import { usePathname, useSearchParams } from "next/navigation"
 import type { VariantProps } from "class-variance-authority"
@@ -61,7 +60,7 @@ export const AuthButton = ({
         <Modal
           showModal={showModal}
           setShowModal={setShowModal}
-          title="Sign In"
+          title="Let’s Begin!"
           description="Pick one to get started"
         >
           <div className="w-full space-y-6 p-6">
@@ -79,7 +78,7 @@ export const AuthButton = ({
                 variant="primaryOutline"
                 className="flex h-12 items-center justify-center gap-2"
               >
-                <FaApple className="size-5 text-black dark:text-white" />
+                <BsApple className="size-5 text-black dark:text-white" />
                 <span>Continue with Apple</span>
               </Button>
             </div>
