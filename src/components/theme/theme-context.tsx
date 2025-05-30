@@ -7,6 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react"
+import { brandColorEnum } from "@/db/schema"
 import app from "@/lib/data/app.json"
 
 // Define the shape of the context
@@ -18,36 +19,36 @@ interface ThemeContextType {
 // Create the context with a default value
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-// Define the brand colors
-const brandColors = [
+// Define the brand colors with value field for brandColorEnum
+export const brandColors = [
   // Neutrals and Grays
-  { className: "brand-slate", label: "Dragon Smoke" },
-  { className: "brand-gray", label: "Cloudy Cat" },
-  { className: "brand-stone", label: "Pebble Pop" },
+  { className: "brand-slate", value: "slate", label: "Dragon Smoke" },
+  { className: "brand-gray", value: "gray", label: "Cloudy Cat" },
+  { className: "brand-stone", value: "stone", label: "Pebble Pop" },
 
   // Reds and Pinks
-  { className: "brand-red", label: "Lava Blast" },
-  { className: "brand-rose", label: "Bubblegum Burst" },
-  { className: "brand-pink", label: "Fairy Floss" },
-  { className: "brand-fuchsia", label: "Neon Giggle" },
+  { className: "brand-red", value: "red", label: "Lava Blast" },
+  { className: "brand-rose", value: "rose", label: "Bubblegum Burst" },
+  { className: "brand-pink", value: "pink", label: "Fairy Floss" },
+  { className: "brand-fuchsia", value: "fuchsia", label: "Neon Giggle" },
 
   // Oranges and Yellows
-  { className: "brand-orange", label: "Zesty Zoom" },
-  { className: "brand-amber", label: "Honey Roar" },
-  { className: "brand-yellow", label: "Banana Zoom" },
+  { className: "brand-orange", value: "orange", label: "Zesty Zoom" },
+  { className: "brand-amber", value: "amber", label: "Honey Roar" },
+  { className: "brand-yellow", value: "yellow", label: "Banana Zoom" },
 
   // Violets and Blues
-  { className: "brand-violet", label: "Unicorn Twilight" },
-  { className: "brand-indigo", label: "Starlight Shadow" },
-  { className: "brand-blue", label: "Shark Splash" },
-  { className: "brand-sky", label: "Sky Scooter" },
-  { className: "brand-cyan", label: "Ice Pop" },
+  { className: "brand-violet", value: "violet", label: "Unicorn Twilight" },
+  { className: "brand-indigo", value: "indigo", label: "Starlight Shadow" },
+  { className: "brand-blue", value: "blue", label: "Shark Splash" },
+  { className: "brand-sky", value: "sky", label: "Sky Scooter" },
+  { className: "brand-cyan", value: "cyan", label: "Ice Pop" },
 
   // Teals and Greens
-  { className: "brand-lime", label: "Lemon Rocket" },
-  { className: "brand-teal", label: "Mermaid Tail" },
-  { className: "brand-emerald", label: "Dino Leaf" },
-  { className: "brand-green", label: "Froggy Fresh" },
+  { className: "brand-lime", value: "lime", label: "Lemon Rocket" },
+  { className: "brand-teal", value: "teal", label: "Mermaid Tail" },
+  { className: "brand-emerald", value: "emerald", label: "Dino Leaf" },
+  { className: "brand-green", value: "green", label: "Froggy Fresh" },
 ]
 
 // Custom hook to use the ThemeContext
@@ -63,22 +64,32 @@ export const useTheme = () => {
 export function ThemeProvider({
   children,
   isPro,
+  defaultBrandColor,
 }: {
   children: ReactNode
   isPro: boolean
+  defaultBrandColor: (typeof brandColorEnum.enumValues)[number]
 }) {
-  const [brandColor, setBrandColor] = useState(`brand-${app.BRAND_COLOR}`)
+  const [brandColor, setBrandColor] = useState(
+    isPro ? defaultBrandColor : app.BRAND_COLOR
+  )
 
   useEffect(() => {
-    // Apply the default or stored brand color class to <html> on the client
-    const applyBrandColor = (color: string) => {
+    const applyBrandColor = (colorValue: string) => {
+      const color = brandColors.find((c) => c.value === colorValue)
+      if (!color) return
+
       brandColors.forEach((c) =>
         document.documentElement.classList.remove(c.className)
       )
       document.documentElement.classList.add("theme-switching")
-      document.documentElement.classList.add(color)
-      setBrandColor(color)
-      // Remove theme-switching class after transition duration
+      document.documentElement.classList.add(color.className)
+      setBrandColor(colorValue)
+      if (isPro) {
+        localStorage.setItem("brandColor", colorValue)
+      } else {
+        localStorage.removeItem("brandColor")
+      }
       const timeout = setTimeout(() => {
         document.documentElement.classList.remove("theme-switching")
       }, 300) // Match the transition duration in globals.css
@@ -86,28 +97,23 @@ export function ThemeProvider({
     }
 
     if (isPro) {
-      const storedBrandColor =
-        localStorage.getItem("brandColor") || "brand-violet"
       const validColor = brandColors.find(
-        (color) => color.className === storedBrandColor
+        (color) => color.value === defaultBrandColor
       )
       if (validColor) {
-        applyBrandColor(storedBrandColor)
+        applyBrandColor(defaultBrandColor)
       } else {
-        applyBrandColor("brand-violet")
-        localStorage.setItem("brandColor", "brand-violet")
+        applyBrandColor("violet")
+        localStorage.setItem("brandColor", "violet")
       }
     } else {
-      // For non-pro users, force brand-violet and clear localStorage
-      applyBrandColor("brand-violet")
-      localStorage.removeItem("brandColor")
+      applyBrandColor("violet")
     }
 
-    // Listen for localStorage changes in other windows/tabs
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === "brandColor" && isPro) {
         const newColor = event.newValue
-        if (newColor && brandColors.find((c) => c.className === newColor)) {
+        if (newColor && brandColors.find((c) => c.value === newColor)) {
           applyBrandColor(newColor)
         }
       }
@@ -115,7 +121,6 @@ export function ThemeProvider({
 
     window.addEventListener("storage", handleStorageChange)
 
-    // Cleanup: Remove all brand color classes, theme-switching, and listener on unmount
     return () => {
       brandColors.forEach((color) => {
         document.documentElement.classList.remove(color.className)
@@ -123,24 +128,19 @@ export function ThemeProvider({
       document.documentElement.classList.remove("theme-switching")
       window.removeEventListener("storage", handleStorageChange)
     }
-  }, [isPro]) // Re-run if isPro changes
+  }, [isPro, defaultBrandColor])
 
-  // Function to change brand color
-  const changeBrandColor = (color: string) => {
-    if (!isPro) return // Prevent color changes for non-pro users
-    const validColor = brandColors.find((c) => c.className === color)
+  const changeBrandColor = (colorValue: string) => {
+    if (!isPro) return
+    const validColor = brandColors.find((c) => c.value === colorValue)
     if (validColor) {
-      // Remove all existing brand color classes
       brandColors.forEach((c) =>
         document.documentElement.classList.remove(c.className)
       )
-      // Add theme-switching class for smooth transition
       document.documentElement.classList.add("theme-switching")
-      // Add the new brand color class
-      document.documentElement.classList.add(color)
-      setBrandColor(color)
-      localStorage.setItem("brandColor", color) // Persist the choice
-      // Remove theme-switching class after transition duration
+      document.documentElement.classList.add(validColor.className)
+      setBrandColor(colorValue)
+      localStorage.setItem("brandColor", colorValue)
       setTimeout(() => {
         document.documentElement.classList.remove("theme-switching")
       }, 300) // Match the transition duration in globals.css
@@ -153,6 +153,3 @@ export function ThemeProvider({
     </ThemeContext.Provider>
   )
 }
-
-// Export the brandColors array for use in the ThemeSwitcher
-export { brandColors }

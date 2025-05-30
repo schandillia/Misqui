@@ -67,7 +67,11 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         <AuthProvider>
-          <ThemeProvider isPro={isPro} defaultTheme={theme}>
+          <ThemeProvider
+            isPro={isPro}
+            defaultTheme={theme}
+            defaultBrandColor={brandColor}
+          >
             {children}
             <Toaster />
             <ExitModal />

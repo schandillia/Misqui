@@ -6,16 +6,18 @@ import {
 } from "next-themes"
 import { ThemeProvider as CustomThemeProvider } from "@/components/theme/theme-context"
 import { ReactNode, useEffect, useRef, useCallback } from "react"
-import { themeEnum } from "@/db/schema/types"
+import { brandColorEnum, themeEnum } from "@/db/schema/types"
 
 export function ThemeProvider({
   children,
   isPro,
   defaultTheme,
+  defaultBrandColor,
 }: {
   children: ReactNode
   isPro: boolean
   defaultTheme: (typeof themeEnum.enumValues)[number]
+  defaultBrandColor: (typeof brandColorEnum.enumValues)[number]
 }) {
   const { theme, setTheme } = useNextTheme()
   const isInitialRender = useRef(true)
@@ -89,7 +91,9 @@ export function ThemeProvider({
       defaultTheme={defaultTheme}
       enableSystem
     >
-      <CustomThemeProvider isPro={isPro}>{children}</CustomThemeProvider>
+      <CustomThemeProvider isPro={isPro} defaultBrandColor={defaultBrandColor}>
+        {children}
+      </CustomThemeProvider>
     </NextThemesProvider>
   )
 }

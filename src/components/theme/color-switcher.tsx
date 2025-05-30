@@ -8,20 +8,57 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useTransition } from "react"
+import { useOptimistic } from "react"
+import { updateColor } from "@/app/actions/update-color"
+import { brandColorEnum } from "@/db/schema"
+import app from "@/lib/data/app.json"
 
-export default function ColorSwitcher() {
+export default function ColorSwitcher({ isPro }: { isPro: boolean }) {
   const [mounted, setMounted] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { brandColor, changeBrandColor } = useTheme()
+  const [optimisticBrandColor, setOptimisticBrandColor] = useOptimistic(
+    brandColor ?? app.BRAND_COLOR
+  )
+  const [isPending, startTransition] = useTransition()
 
   // Find the current color's label
   const currentColorLabel =
-    brandColors.find((color) => color.className === brandColor)?.label ||
+    brandColors.find((color) => color.value === optimisticBrandColor)?.label ||
     "Unknown"
 
   useEffect(() => {
     setMounted(true)
+    // Set isAuthenticated after mounting to avoid accessing document during SSR
+    setIsAuthenticated(
+      document.documentElement.dataset.authenticated === "true"
+    )
   }, [])
+
+  const handleColorChange = async (newColor: string) => {
+    if (!isAuthenticated || !isPro) return
+
+    // Optimistic update
+    startTransition(() => {
+      setOptimisticBrandColor(newColor)
+    })
+    changeBrandColor(newColor) // Immediate UI update
+
+    // Server update
+    try {
+      await updateColor({
+        brandColor: newColor as (typeof brandColorEnum.enumValues)[number],
+      })
+    } catch (error: unknown) {
+      console.error("Error updating brand color:", error)
+      // Roll back optimistic state
+      startTransition(() => {
+        setOptimisticBrandColor(brandColor ?? app.BRAND_COLOR)
+      })
+      changeBrandColor(brandColor ?? app.BRAND_COLOR)
+    }
+  }
 
   // Placeholder during hydration to prevent layout shift
   if (!mounted) {
@@ -37,7 +74,7 @@ export default function ColorSwitcher() {
     <div className="flex items-center gap-4">
       <span className="text-foreground font-medium">{currentColorLabel}</span>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild disabled={!isPro || !isAuthenticated}>
           <Button
             variant="ghost"
             size="icon"
@@ -47,6 +84,7 @@ export default function ColorSwitcher() {
               ease-out cursor-pointer focus:ring-2 focus:ring-brand-400 focus:ring-offset-2"
             style={{ backgroundColor: "oklch(from var(--brand-base) l c h)" }}
             aria-label={`Change theme color, current color: ${currentColorLabel}`}
+            disabled={isPending || !isPro || !isAuthenticated}
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -57,14 +95,14 @@ export default function ColorSwitcher() {
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
             {brandColors.map((color) => (
               <DropdownMenuItem
-                key={color.className}
-                onClick={() => changeBrandColor(color.className)}
+                key={color.value}
+                onClick={() => handleColorChange(color.value)}
                 className={`group flex items-center justify-center sm:justify-start gap-2 p-1 sm:p-2
                 rounded-3xl hover:bg-brand-100/50 ${color.className}`}
               >
                 <div
-                  className={`size-6 rounded-full transition-all flex-shrink-0 ${ brandColor ===
-                  color.className && "ring-3 ring-border ring-offset-2" }`}
+                  className={`size-6 rounded-full transition-all flex-shrink-0 ${ optimisticBrandColor ===
+                  color.value && "ring-3 ring-border ring-offset-2" }`}
                   style={{
                     backgroundColor: "oklch(from var(--brand-base) l c h)",
                   }}

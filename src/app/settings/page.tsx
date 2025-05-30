@@ -165,7 +165,7 @@ const Page = async () => {
                     Choose your preferred color theme
                   </p>
                 </div>
-                {isPro && <ColorSwitcher />}
+                {isPro && <ColorSwitcher isPro />}
               </div>
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
