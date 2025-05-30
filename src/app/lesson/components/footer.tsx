@@ -73,7 +73,13 @@ export const Footer = ({
         {(status === "correct" || status === "wrong" || status === "none") && (
           <Button
             disabled={disabled}
-            className="ml-auto"
+            className={cn(
+              "ml-auto",
+              status === "correct" &&
+                `bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400
+                hover:to-emerald-600 dark:from-emerald-600 dark:to-emerald-800
+                dark:hover:from-emerald-500 dark:hover:to-emerald-700`
+            )}
             onClick={onCheck}
             size={isMobile ? "sm" : "lg"}
             variant={status === "wrong" ? "danger" : "secondary"}
