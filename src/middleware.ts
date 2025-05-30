@@ -1,3 +1,4 @@
+// middleware.ts
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import {
@@ -14,9 +15,32 @@ export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
+  // Initialize response
+  const response = NextResponse.next()
+
+  // Add security headers
+  response.headers.set("X-Content-Type-Options", "nosniff")
+  response.headers.set("X-Frame-Options", "DENY")
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+  // CSP Configuration
+  const csp = [
+    "default-src 'self'",
+    // Allow Stripe scripts and connections
+    "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self'",
+    "connect-src 'self' https://api.stripe.com",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ]
+  response.headers.set("Content-Security-Policy", csp.join("; "))
+
   // Early return for API routes
   if (nextUrl.pathname.startsWith(apiRoutes)) {
-    return NextResponse.next()
+    return response
   }
 
   // O(1) lookup for route checks
@@ -28,7 +52,7 @@ export default auth((req) => {
     if (isLoggedIn) {
       return NextResponse.redirect(createUrl(DEFAULT_LOGIN_REDIRECT, nextUrl))
     }
-    return NextResponse.next()
+    return response
   }
 
   // Redirect unauthenticated users to login for protected routes
@@ -42,20 +66,11 @@ export default auth((req) => {
     )
   }
 
-  return NextResponse.next()
+  return response
 })
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths except:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico
-     * - assets/ (local assets)
-     * - Image/SVG files
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|assets/|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)",
   ],
 }
