@@ -21,6 +21,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image").notNull().default("/images/mascots/mascot.svg"),
+  soundEnabled: boolean("sound_enabled").notNull().default(true),
   theme: themeEnum("theme").notNull().default("system"),
   brandColor: brandColorEnum("brand_color")
     .notNull()

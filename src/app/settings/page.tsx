@@ -9,11 +9,11 @@ import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
-import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { SoundToggle } from "@/components/sound-toggle"
 
 const Page = async () => {
   const sessionData = auth()
@@ -55,7 +55,7 @@ const Page = async () => {
           {/* Profile Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle>Profile</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -85,37 +85,40 @@ const Page = async () => {
             </CardContent>
           </Card>
 
-          {/* Learning Progress */}
+          {/* Preferences */}
           <Card>
             <CardHeader>
-              <CardTitle>Learning Progress</CardTitle>
+              <CardTitle>Preferences</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
+            <CardContent className="space-y-6">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                  <Label>Current Course</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {userProgress.activeCourse.title}
+                  <Label>Dark Mode</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Toggle dark mode appearance
                   </p>
                 </div>
+                <ThemeToggle />
+              </div>
+              {isPro && (
+                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                  <div>
+                    <Label>Color Theme</Label>
+                    <p className="text-muted-foreground text-sm">
+                      Choose your preferred color theme
+                    </p>
+                  </div>
+                  <ColorSwitcher isPro />
+                </div>
+              )}
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                  <Label>Total Points</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {userProgress.points}
+                  <Label>Sound Effects</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Enable sound effects during exercises
                   </p>
                 </div>
-                <div>
-                  <Label>Current Streak</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {userProgress.currentStreak} days
-                  </p>
-                </div>
-                <div>
-                  <Label>Longest Streak</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {userProgress.longestStreak} days
-                  </p>
-                </div>
+                <SoundToggle initialSoundEnabled />
               </div>
             </CardContent>
           </Card>
@@ -143,46 +146,10 @@ const Page = async () => {
             </CardContent>
           </Card>
 
-          {/* Display Settings */}
+          {/* Account Security */}
           <Card>
             <CardHeader>
-              <CardTitle>Display Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                  <Label>Dark Mode</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Toggle dark mode appearance
-                  </p>
-                </div>
-                <ThemeToggle />
-              </div>
-              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                  <Label>Color Theme</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Choose your preferred color theme
-                  </p>
-                </div>
-                {isPro && <ColorSwitcher isPro />}
-              </div>
-              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                  <Label>Sound Effects</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Enable sound effects during exercises
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Security */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Security</CardTitle>
+              <CardTitle>Account Security</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
