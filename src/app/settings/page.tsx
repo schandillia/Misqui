@@ -3,6 +3,7 @@ import { HeaderSection } from "@/components/header-section"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { UserProgress } from "@/components/user-progress"
 import { getUserProgress, getUserSubscription } from "@/db/queries"
+import { getUserSoundPreference } from "@/db/queries/sound-settings"
 import { redirect } from "next/navigation"
 import { UserAvatar } from "@/components/user-avatar"
 import { auth } from "@/auth"
@@ -19,14 +20,18 @@ const Page = async () => {
   const sessionData = auth()
   const userProgressData = getUserProgress()
   const userSubscriptionData = getUserSubscription()
+  const userSoundPreferenceData = getUserSoundPreference()
 
-  const [session, userProgress, userSubscription] = await Promise.all([
-    sessionData,
-    userProgressData,
-    userSubscriptionData,
-  ])
+  const [session, userProgress, userSubscription, userSoundPreference] =
+    await Promise.all([
+      sessionData,
+      userProgressData,
+      userSubscriptionData,
+      userSoundPreferenceData,
+    ])
 
   if (!userProgress || !userProgress.activeCourse) redirect("/courses")
+  if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
 
   const isPro = !!userSubscription?.isActive
 
@@ -118,7 +123,9 @@ const Page = async () => {
                     Enable sound effects during exercises
                   </p>
                 </div>
-                <SoundToggle initialSoundEnabled />
+                <SoundToggle
+                  initialSoundEnabled={userSoundPreference.soundEnabled}
+                />
               </div>
             </CardContent>
           </Card>

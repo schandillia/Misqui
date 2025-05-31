@@ -1,7 +1,8 @@
 "use server"
 
 import { auth } from "@/auth"
-import { updateUserSoundSetting } from "@/db/queries"
+import { updateUserSoundSetting } from "@/db/queries/sound-settings"
+import { logger } from "@/lib/logger"
 
 interface SoundRequest {
   soundEnabled: boolean
@@ -20,7 +21,11 @@ export async function updateSound({ soundEnabled }: SoundRequest) {
   try {
     await updateUserSoundSetting(session.user.id, soundEnabled)
     return { success: true }
-  } catch (_error) {
+  } catch (error) {
+    logger.error("Failed to update sound setting", {
+      error,
+      userId: session.user.id,
+    })
     throw new Error("Failed to update sound setting")
   }
 }

@@ -1,7 +1,21 @@
 import { db } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import { auth } from "@/auth"
 import { logger } from "@/lib/logger"
+
+export async function getUserSoundPreference() {
+  const session = await auth()
+  if (!session?.user?.id) return null
+
+  const result = await db
+    .select({ soundEnabled: users.soundEnabled })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1)
+
+  return result[0] || null
+}
 
 export async function updateUserSoundSetting(
   userId: string,
