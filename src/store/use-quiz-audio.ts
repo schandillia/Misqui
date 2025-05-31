@@ -1,7 +1,8 @@
 import { create } from "zustand"
-import { toast } from "sonner"
 
 type QuizAudioState = {
+  soundEnabled: boolean
+  setSoundEnabled: (enabled: boolean) => void
   playFinish: () => void
   playCorrect: () => void
   playIncorrect: () => void
@@ -36,23 +37,22 @@ const getAudio = (type: keyof typeof AUDIO_FILES): HTMLAudioElement => {
   }
 }
 
-export const useQuizAudio = create<QuizAudioState>(() => {
+export const useQuizAudio = create<QuizAudioState>((set, get) => {
   const playAudio = (type: keyof typeof AUDIO_FILES) => {
     try {
-      if (typeof window === "undefined") return
+      if (typeof window === "undefined" || !get().soundEnabled) return
 
       const audio = getAudio(type)
-      // Reset the audio to the beginning
       audio.currentTime = 0
-      // Play the audio
       audio.play()
     } catch (error) {
       console.error(`Error playing ${type} audio:`, error)
-      toast.error("Failed to play audio feedback")
     }
   }
 
   return {
+    soundEnabled: true, // Default until fetched
+    setSoundEnabled: (enabled: boolean) => set({ soundEnabled: enabled }),
     playFinish: () => playAudio("finish"),
     playCorrect: () => playAudio("correct"),
     playIncorrect: () => playAudio("incorrect"),

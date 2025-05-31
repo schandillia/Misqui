@@ -99,7 +99,7 @@ const Page = async () => {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Dark Mode</Label>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground">
                     Toggle dark mode appearance
                   </p>
                 </div>
@@ -109,7 +109,7 @@ const Page = async () => {
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                   <div>
                     <Label>Color Theme</Label>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground">
                       Choose your preferred color theme
                     </p>
                   </div>
@@ -119,7 +119,7 @@ const Page = async () => {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Sound Effects</Label>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground">
                     Enable sound effects during exercises
                   </p>
                 </div>
@@ -139,7 +139,7 @@ const Page = async () => {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <p className="font-medium">Current Plan</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground">
                     {isPro ? "Pro Plan" : "Free Plan"}
                   </p>
                 </div>
@@ -162,9 +162,7 @@ const Page = async () => {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Connected Account</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Google Account
-                  </p>
+                  <p className="text-muted-foreground">Google Account</p>
                 </div>
                 <Button variant="ghost" className="w-full sm:w-auto">
                   Manage

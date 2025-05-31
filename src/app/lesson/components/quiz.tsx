@@ -1,10 +1,9 @@
-// @/app/lesson/components/quiz.tsx
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { QuestionBubble } from "@/app/lesson/components/question-bubble"
 import { challengeOptions, challenges, userSubscription } from "@/db/schema"
-import { useState, useTransition, useEffect, useMemo } from "react"
+import { useState, useTransition, useMemo } from "react"
 import { Challenge } from "@/app/lesson/components/challenge"
 import { Footer } from "@/app/lesson/components/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
@@ -18,7 +17,7 @@ import ReactConfetti from "react-confetti"
 import { useGemsModal } from "@/store/use-gems-modal"
 import { usePracticeModal } from "@/store/use-practice-modal"
 import app from "@/lib/data/app.json"
-import { awardTimedExerciseReward } from "@/app/actions/timed-exercise" // Added import
+import { awardTimedExerciseReward } from "@/app/actions/timed-exercise"
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { ExerciseHeader } from "@/app/lesson/components/exercise-header"
 import {
@@ -26,6 +25,7 @@ import {
   getTimeStatus,
   getResultMessage,
 } from "@/app/lesson/utils/quiz-utils"
+import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
 
 type Props = {
   initialLessonId: number
@@ -63,10 +63,11 @@ export const Quiz = ({
 }: Props) => {
   const { open: openGemsModal } = useGemsModal()
   const { open: openPracticeModal } = usePracticeModal()
-  const { playFinish, playCorrect, playIncorrect } = useQuizAudio()
+  const { playFinish, playCorrect, playIncorrect, setSoundEnabled } =
+    useQuizAudio()
 
   const hasPlayedFinishAudio = useRef(false)
-  const [isRewardPending, startRewardTransition] = useTransition() // New transition for reward action
+  const [isRewardPending, startRewardTransition] = useTransition()
 
   useMount(() => {
     if (initialIsTimed) return
@@ -86,12 +87,18 @@ export const Quiz = ({
     }
   })
 
+  // Fetch sound preference on mount
+  useEffect(() => {
+    getSoundPreference().then(({ soundEnabled }) => {
+      setSoundEnabled(soundEnabled)
+    })
+  }, [setSoundEnabled])
+
   const { width, height } = useWindowSize()
   const router = useRouter()
 
-  // Handler for navigating to /learn after quiz completion
   const handleQuizCompleteContinue = () => {
-    router.refresh() // Refresh data for /learn page (and current page server components)
+    router.refresh()
     router.push("/learn")
   }
 
@@ -100,7 +107,6 @@ export const Quiz = ({
   const [exerciseId] = useState(initialExerciseId)
   const [lessonId] = useState(initialLessonId)
   const [gems, setGems] = useState(initialGems)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [points, setPoints] = useState(initialPoints)
   const [pointsEarned, setPointsEarned] = useState(0)
   const [percentage, setPercentage] = useState(() =>
@@ -130,37 +136,29 @@ export const Quiz = ({
       ? parseFloat(((correctAttempts / totalAttempts) * 100).toFixed(1))
       : 0
 
-  // Expected time for the quiz
   const expectedTime = app.CHALLENGES_PER_EXERCISE * app.SECONDS_PER_CHALLENGE
 
-  // Time caption for ResultCard using utility
   const timeCaption = useMemo(
     () => getTimeCaption(timeTaken, expectedTime),
     [timeTaken, expectedTime]
   )
 
-  // Time status message using utility
   const timeStatus = useMemo(
     () => getTimeStatus(timeTaken, expectedTime, scorePercentage),
     [timeTaken, expectedTime, scorePercentage]
   )
 
-  // Format time as mm:ss
   const formattedTime = useMemo(() => {
     const minutes = Math.floor(timeTaken / 60)
     const seconds = timeTaken % 60
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
   }, [timeTaken])
 
-  // Timer for tracking time
   useEffect(() => {
     if (isExerciseCompleted || isTimerPaused) return
 
     const timer = setInterval(() => {
-      setTimeTaken((prev) => {
-        const newTime = prev + 1
-        return newTime
-      })
+      setTimeTaken((prev) => prev + 1)
     }, 1000)
 
     return () => clearInterval(timer)
@@ -180,39 +178,29 @@ export const Quiz = ({
 
     if (initialIsTimed) {
       const correctOption = options.find((option) => option.correct)
-      if (!correctOption) return // Should not happen
+      if (!correctOption) return
 
       if (status === "correct" || status === "wrong") {
-        // User clicked "Next"
         onNext()
         setStatus("none")
         setSelectedOption(undefined)
-        // Percentage is updated regardless of correctness for timed exercises
-        // but only when moving to the next question.
-        // It's handled below to avoid double counting when "Check" is clicked.
         return
       }
 
-      // User clicked "Check"
-      setPercentage((prev) => prev + 100 / challenges.length) // Update progress bar
+      setPercentage((prev) => prev + 100 / challenges.length)
 
       if (correctOption.id === selectedOption) {
         playCorrect()
-        setStatus("correct") // Button becomes "Next" (green)
+        setStatus("correct")
         setCorrectAttempts((prev) => prev + 1)
-        // No points/gems changes for timed exercises
       } else {
         playIncorrect()
-        setStatus("wrong") // Button becomes "Next" (red)
+        setStatus("wrong")
         setIncorrectAttempts((prev) => prev + 1)
-        // No points/gems changes for timed exercises
-        // No "Retry" for timed exercises, directly to "Next"
       }
-      // No server calls for upsertChallengeProgress or reduceGems in timed mode locally
-      return // Wait for "Next" click
+      return
     }
 
-    // Existing logic for non-timed exercises
     if (status === "wrong") {
       setStatus("none")
       setSelectedOption(undefined)
@@ -232,10 +220,7 @@ export const Quiz = ({
     if (correctOption.id === selectedOption) {
       playCorrect()
       setStatus("correct")
-      setCorrectAttempts((prev) => {
-        const newCorrect = prev + 1
-        return newCorrect
-      })
+      setCorrectAttempts((prev) => prev + 1)
       setPercentage((prev) => prev + 100 / challenges.length)
       if (!initialIsTimed) {
         setPoints((prev) => prev + app.POINTS_PER_CHALLENGE)
@@ -259,7 +244,6 @@ export const Quiz = ({
               openGemsModal()
             }
           })
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           .catch((error) => {
             setStatus("none")
             setSelectedOption(undefined)
@@ -276,10 +260,7 @@ export const Quiz = ({
     } else {
       playIncorrect()
       setStatus("wrong")
-      setIncorrectAttempts((prev) => {
-        const newIncorrect = prev + 1
-        return newIncorrect
-      })
+      setIncorrectAttempts((prev) => prev + 1)
 
       if (!initialIsTimed) {
         if (!isPractice && !userSubscription?.isActive) {
@@ -298,7 +279,6 @@ export const Quiz = ({
               openGemsModal()
             }
           })
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           .catch((error) => {
             setStatus("none")
             setSelectedOption(undefined)
@@ -316,31 +296,25 @@ export const Quiz = ({
 
   useEffect(() => {
     if (isExerciseCompleted && !hasPlayedFinishAudio.current) {
-      hasPlayedFinishAudio.current = true // Prevent playing multiple times
+      hasPlayedFinishAudio.current = true
       playFinish()
 
       if (initialIsTimed) {
-        // Optimistic UI update for points earned in timed exercises
         if (scorePercentage === 100) {
           setPointsEarned(app.REWARD_POINTS_FOR_TIMED)
         } else {
-          setPointsEarned(0) // Optimistically set to 0 if not 100%
+          setPointsEarned(0)
         }
 
         startRewardTransition(() => {
           awardTimedExerciseReward(initialExerciseId, scorePercentage)
             .then((response) => {
-              // Ensure consistency with server response, though UI was updated optimistically
               if (response && typeof response.pointsAwarded === "number") {
                 setPointsEarned(response.pointsAwarded)
-                // Success toast removed as per requirement
               }
-
-              // Handle specific errors that might come with a success=false or error field
               if (response?.error === "not_timed_exercise") {
-                toast.error("This exercise is not timed.") // Should not happen based on initialIsTimed
+                toast.error("This exercise is not timed.")
               }
-              // Other general success cases with 0 points (e.g. <100% score) don't need a toast.
             })
             .catch(() => {
               toast.error("Failed to process timed exercise reward.")
@@ -358,7 +332,6 @@ export const Quiz = ({
   ])
 
   if (isExerciseCompleted) {
-    // Dynamic result message using utility
     const { resultMessage, showGreatJob } = getResultMessage(
       initialIsTimed,
       scorePercentage,
@@ -413,7 +386,6 @@ export const Quiz = ({
                 value={`${scorePercentage}%`}
                 caption="Score"
               />
-
               <ResultCard
                 variant="time"
                 value={formattedTime}
@@ -426,7 +398,7 @@ export const Quiz = ({
             exerciseId={exerciseId}
             isTimed={initialIsTimed}
             status="completed"
-            onCheck={handleQuizCompleteContinue} // Updated handler
+            onCheck={handleQuizCompleteContinue}
           />
         </div>
       </>
@@ -483,9 +455,7 @@ export const Quiz = ({
         }
         isTimed={initialIsTimed}
         status={status}
-        onCheck={() => {
-          onContinue()
-        }}
+        onCheck={onContinue}
       />
     </>
   )
