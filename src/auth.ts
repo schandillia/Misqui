@@ -1,4 +1,4 @@
-// auth.ts
+// src/auth.ts
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
@@ -6,6 +6,7 @@ import { db } from "@/db/drizzle"
 import { accounts, sessions, users, authenticators } from "@/db/schema"
 import { NeonHttpDatabase } from "drizzle-orm/neon-http"
 import * as schema from "@/db/schema"
+import { generateAvatar } from "@/lib/avatar"
 
 type NeonDB = NeonHttpDatabase<typeof schema>
 
@@ -23,9 +24,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       profile(profile) {
         return {
           id: profile.sub,
-          name: profile.name,
+          name: profile.name ?? "Student",
           email: profile.email,
-          image: profile.picture,
+          image: generateAvatar(profile.sub),
         }
       },
     }),
@@ -37,11 +38,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id
+        session.user.image = user.image
       }
       return session
     },
   },
-  // Custom logger with improved cause extraction
   logger: {
     error(error: Error) {
       const causeMessage =

@@ -1,3 +1,4 @@
+// src/components/user-avatar.tsx
 "use client"
 
 import { FC } from "react"
@@ -18,7 +19,11 @@ const getInitials = (name?: string | null) =>
 
 export const UserAvatar: FC<UserAvatarProps> = ({ name, image, className }) => (
   <Avatar className={className}>
-    <AvatarImage src={image ?? ""} alt={name ?? ""} />
+    <AvatarImage
+      src={image ?? "/images/mascots/mascot.svg"}
+      alt={name ?? "User avatar"}
+      className="object-cover"
+    />
     <AvatarFallback className="from-brand-100 to-brand-200 text-brand-600 bg-gradient-to-br">
       {getInitials(name)}
     </AvatarFallback>
