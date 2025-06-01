@@ -1,12 +1,12 @@
 "use client"
 
 import { refillGems } from "@/app/actions/user-progress"
-import { createStripeUrl } from "@/app/actions/user-subscription"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"
 import app from "@/lib/data/app.json"
+import { SubscriptionButton } from "@/components/subscription-button"
 
 type Props = {
   gems: number
@@ -23,16 +23,6 @@ export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
 
     startTransition(() => {
       refillGems().catch(() => toast.error("Something went wrong"))
-    })
-  }
-
-  const onUpgrade = () => {
-    startTransition(() => {
-      createStripeUrl()
-        .then((response) => {
-          if (response.data) window.location.href = response.data
-        })
-        .catch(() => toast.error("Something went wrong"))
     })
   }
 
@@ -78,9 +68,7 @@ export const Items = ({ gems, points, hasActiveSubscription }: Props) => {
             Unlimited gems
           </p>
         </div>
-        <Button disabled={pending} onClick={onUpgrade}>
-          {hasActiveSubscription ? "settings" : "upgrade"}
-        </Button>
+        <SubscriptionButton isPro={hasActiveSubscription} />
       </div>
     </ul>
   )

@@ -10,12 +10,13 @@ import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { SoundToggle } from "@/components/sound-toggle"
 import { NameInput } from "@/app/(main)/settings/name-input"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { SettingsCard } from "@/app/(main)/settings/settings-card"
+import { Button } from "@/components/ui/button"
+import { SubscriptionButton } from "@/components/subscription-button"
 
 const Page = async () => {
   const sessionData = auth()
@@ -60,11 +61,8 @@ const Page = async () => {
 
           <div className="w-full space-y-6 lg:space-y-8">
             {/* Profile Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <SettingsCard title="Profile">
+              <div className="space-y-6">
                 <div className="flex flex-col items-center gap-4 sm:flex-row">
                   <UserAvatar
                     name={session?.user?.name}
@@ -87,15 +85,12 @@ const Page = async () => {
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </SettingsCard>
 
             {/* Preferences */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Preferences</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <SettingsCard title="Preferences">
+              <div className="space-y-6">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                   <div>
                     <Label>Dark Mode</Label>
@@ -127,64 +122,52 @@ const Page = async () => {
                     initialSoundEnabled={userSoundPreference.soundEnabled}
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </SettingsCard>
 
             {/* Subscription Management */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Subscription</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                  <div>
-                    <p className="font-medium">Current Plan</p>
-                    <p className="text-muted-foreground">
-                      {isPro ? "Pro Plan" : "Free Plan"}
-                    </p>
-                  </div>
-                  <Button
-                    variant={isPro ? "primary" : "ghost"}
-                    className="w-full sm:w-auto"
-                  >
-                    {isPro ? "Manage Subscription" : "Upgrade to Pro"}
-                  </Button>
+            <SettingsCard title="Subscription">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                <div>
+                  <p className="font-medium">Current Plan</p>
+                  <p className="text-muted-foreground">
+                    {isPro ? "Pro Plan" : "Free Plan"}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+                <SubscriptionButton
+                  isPro={isPro}
+                  proVariant="ghost"
+                  nonProVariant="ghost"
+                  proLabel="Manage Subscription"
+                  nonProLabel="Upgrade to Pro"
+                />
+              </div>
+            </SettingsCard>
 
             {/* Account Security */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Account Security</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                  <div>
-                    <Label>Connected Account</Label>
-                    <p className="text-muted-foreground">Google Account</p>
-                  </div>
-                  <Button variant="ghost" className="w-full sm:w-auto">
-                    Manage
-                  </Button>
+            <SettingsCard title="Account Security">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                <div>
+                  <Label>Connected Account</Label>
+                  <p className="text-muted-foreground">Google Account</p>
                 </div>
-              </CardContent>
-            </Card>
+                <Button variant="ghost" className="w-full sm:w-auto">
+                  Manage
+                </Button>
+              </div>
+            </SettingsCard>
 
             {/* Data & Privacy */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Data & Privacy</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <SettingsCard title="Data & Privacy">
+              <div className="space-y-4">
                 <Button variant="ghost" className="w-full">
                   Export Data
                 </Button>
                 <Button variant="danger" className="w-full">
                   Delete Account
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </SettingsCard>
           </div>
         </div>
       </FeedWrapper>

@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import Link from "next/link"
 import { CardTitle, CardDescription } from "@/components/ui/card"
 import { SidebarCard } from "@/components/sidebar-card"
+import { SubscriptionButton } from "@/components/subscription-button"
 
 export const Promo = () => {
   return (
@@ -23,9 +22,13 @@ export const Promo = () => {
       <CardDescription className="text-muted-foreground text-base">
         Get unlimited gems and more!
       </CardDescription>
-      <Button className="w-full" size="lg" variant="super" asChild>
-        <Link href="/store">Upgrade today</Link>
-      </Button>
+      <SubscriptionButton
+        isPro={false}
+        size="lg"
+        className="w-full"
+        nonProVariant="super"
+        nonProLabel="Upgrade today"
+      />
     </SidebarCard>
   )
 }
