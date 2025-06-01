@@ -10,8 +10,8 @@ export function generateAvatar(seed: string): string {
     accessoriesProbability: 50,
     accessories: ["eyepatch", "round", "sunglasses"],
     facialHairProbability: 0,
-    top: ["shortCurly", "shortFlat", "longButNotTooLong", "bun"],
-    clothing: ["blazerAndShirt", "graphicShirt", "hoodie"],
+    top: ["shortCurly", "shortFlat", "longButNotTooLong", "bun", "curvy"],
+    clothing: ["blazerAndShirt", "graphicShirt", "hoodie", "shirtCrewNeck"],
   }).toString()
 
   const avatarBase64 = Buffer.from(avatar).toString("base64")
