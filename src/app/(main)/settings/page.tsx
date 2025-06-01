@@ -52,8 +52,8 @@ const Page = async () => {
         <div className="flex w-full flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/settings.svg"
-            imageAlt="Store"
-            title="Store"
+            imageAlt="Settings"
+            title="Settings"
             description="Manage your account settings and preferences"
           />
 
