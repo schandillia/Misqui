@@ -83,6 +83,7 @@ const Page = async () => {
                       id="email"
                       defaultValue={session?.user?.email || ""}
                       disabled
+                      className="rounded-3xl"
                     />
                   </div>
                 </div>

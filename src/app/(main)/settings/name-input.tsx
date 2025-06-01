@@ -48,7 +48,7 @@ export function NameInput({ defaultName }: NameInputProps) {
         onChange={(e) => setName(e.target.value)}
         onBlur={handleSubmit}
         onKeyDown={handleKeyDown}
-        className="w-full"
+        className="w-full rounded-3xl"
         disabled={isPending}
       />
     </div>
