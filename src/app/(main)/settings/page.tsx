@@ -11,10 +11,11 @@ import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { SoundToggle } from "@/components/sound-toggle"
+import { NameInput } from "@/app/(main)/settings/name-input"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 
 const Page = async () => {
   const sessionData = auth()
@@ -75,10 +76,7 @@ const Page = async () => {
                   </Button>
                 </div>
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" defaultValue={session?.user?.name || ""} />
-                  </div>
+                  <NameInput defaultName={session?.user?.name || ""} />
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
