@@ -354,6 +354,10 @@ body,
     transition: background-color 0.3s ease;
   }
 
+  .text-theme-gradient {
+    @apply bg-gradient-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent;
+  }
+
   @keyframes shine {
     0% {
       transform: translateX(-100%) skewX(-15deg);
