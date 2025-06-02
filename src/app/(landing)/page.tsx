@@ -19,7 +19,10 @@ export default async function Home() {
       </div>
 
       <div className="flex w-full max-w-[480px] flex-col items-center gap-8">
-        <h1 className="text-center text-xl font-bold text-neutral-600 lg:text-3xl dark:text-neutral-300">
+        <h1
+          className="text-center text-xl font-bold bg-gradient-to-r from-blue-500 via-violet-500
+            to-pink-500 bg-clip-text text-transparent lg:text-3xl"
+        >
           Learn, practice, and master new skills with {brand.BRAND}
         </h1>
 
