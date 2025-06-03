@@ -1,7 +1,14 @@
 "use client"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Modal } from "@/components/ui/modal"
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalOverlay,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalClose,
+} from "@/components/ui/responsive-modal"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 import { BsApple } from "react-icons/bs"
@@ -56,49 +63,49 @@ export const AuthButton = ({
         {hasIcon && <HiOutlineRocketLaunch className="ml-2 size-6" />}
       </Button>
 
-      {showModal && (
-        <Modal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          title="Let’s Begin!"
-          description="Pick one to get started"
-        >
-          <div className="w-full space-y-6 p-6">
-            <div className="grid gap-4">
-              <Button
-                variant="primaryOutline"
-                className="flex h-12 items-center justify-center gap-2"
-                onClick={() => signInWithGoogle(redirectUrl)}
-              >
-                <FcGoogle className="size-5" />
-                <span>Continue with Google</span>
-              </Button>
-
-              <Button
-                variant="primaryOutline"
-                className="flex h-12 items-center justify-center gap-2"
-              >
-                <BsApple className="size-5 text-black dark:text-white" />
-                <span>Continue with Apple</span>
-              </Button>
-            </div>
-
-            <div className="text-muted-foreground pt-4 text-center text-xs">
-              <p>
-                By continuing, you agree to {brand.BRAND}{" "}
-                <Link href={"/terms"} className="text-brand-500 font-medium">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href={"/privacy"} className="text-brand-500 font-medium">
-                  Privacy Policy
-                </Link>
-                .
-              </p>
-            </div>
+      <ResponsiveModal open={showModal} onOpenChange={setShowModal}>
+        <ResponsiveModalContent side="bottom" className="p-6 space-y-6">
+          <div className="space-y-2 text-center">
+            <ResponsiveModalTitle>Let’s Begin!</ResponsiveModalTitle>
+            <ResponsiveModalDescription>
+              Pick one to get started
+            </ResponsiveModalDescription>
           </div>
-        </Modal>
-      )}
+
+          <div className="grid gap-4">
+            <Button
+              variant="primaryOutline"
+              className="flex h-12 items-center justify-center gap-2"
+              onClick={() => signInWithGoogle(redirectUrl)}
+            >
+              <FcGoogle className="size-5" />
+              <span>Continue with Google</span>
+            </Button>
+
+            <Button
+              variant="primaryOutline"
+              className="flex h-12 items-center justify-center gap-2"
+            >
+              <BsApple className="size-5 text-black dark:text-white" />
+              <span>Continue with Apple</span>
+            </Button>
+          </div>
+
+          <div className="pt-4 text-center text-xs text-muted-foreground">
+            <p>
+              By continuing, you agree to {brand.BRAND}{" "}
+              <Link href="/terms" className="text-brand-500 font-medium">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-brand-500 font-medium">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </div>
+        </ResponsiveModalContent>
+      </ResponsiveModal>
     </>
   )
 }

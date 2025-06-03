@@ -1,6 +1,6 @@
 "use client"
 
-import useSWR from "swr"
+import useSWR, { SWRConfig } from "swr"
 import { Header } from "@/app/(main)/learn/header"
 import { Lesson } from "@/app/(main)/learn/lesson"
 import { FeedWrapper } from "@/components/feed-wrapper"
@@ -48,13 +48,31 @@ type Props = {
 }
 
 export function LearnClient({ initialData }: Props) {
-  const { data } = useSWR<LearnData>("/api/learn-data", fetcher, {
+  return (
+    <SWRConfig value={{ fetcher }}>
+      <LearnClientContent initialData={initialData} />
+    </SWRConfig>
+  )
+}
+
+function LearnClientContent({ initialData }: Props) {
+  const { data, error } = useSWR<LearnData>("/api/learn-data", fetcher, {
     fallbackData: initialData,
-    revalidateOnFocus: false, // Optimize performance
-    revalidateOnMount: false, // Use initialData on mount
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
   })
 
-  if (!data) return null
+  if (error) {
+    return (
+      <div className="text-danger-500 text-center">
+        Error loading data: {error.message}
+      </div>
+    )
+  }
+
+  if (!data) {
+    return <div className="text-center">Loading...</div>
+  }
 
   const {
     userProgress,

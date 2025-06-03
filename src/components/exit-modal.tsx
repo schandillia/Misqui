@@ -4,7 +4,13 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useExitModal } from "@/store/use-exit-modal"
 import { Button } from "@/components/ui/button"
-import { Modal } from "@/components/ui/modal"
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+} from "@/components/ui/responsive-modal"
 import Image from "next/image"
 import exitMessages from "@/lib/data/exit-messages.json"
 import { mutate } from "swr"
@@ -51,40 +57,55 @@ export const ExitModal = () => {
   if (!isClient) return null
 
   return (
-    <Modal
-      showModal={isOpen}
-      setShowModal={close}
-      title={randomMessage.title}
-      description={randomMessage.description}
-    >
-      <div className="w-full space-y-6">
-        <div className="mb-5 flex w-full items-center justify-center">
-          <Image
-            src="/images/mascots/mascot-sad.svg"
-            alt="Mascot"
-            height={80}
-            width={80}
-          />
-        </div>
-        <div className="flex w-full flex-col gap-y-4">
-          <Button
-            variant="primary"
-            className="button-shine-effect w-full"
-            size="lg"
-            onClick={close}
+    <ResponsiveModal open={isOpen} onOpenChange={close}>
+      <ResponsiveModalContent side="bottom">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle
+            className={
+              randomMessage.title ? "text-center text-2xl font-bold" : "sr-only"
+            }
           >
-            Keep learning
-          </Button>
-          <Button
-            variant="dangerOutline"
-            className="w-full"
-            size="lg"
-            onClick={handleEndSession}
+            {randomMessage.title || ""}
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription
+            className={
+              randomMessage.description
+                ? "text-center text-muted-foreground text-base leading-tight mb-4"
+                : "sr-only"
+            }
           >
-            End session
-          </Button>
+            {randomMessage.description || ""}
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
+        <div className="w-full space-y-6">
+          <div className="mb-5 flex w-full items-center justify-center">
+            <Image
+              src="/images/mascots/mascot-sad.svg"
+              alt="Mascot"
+              height={80}
+              width={80}
+            />
+          </div>
+          <div className="flex w-full flex-col gap-y-4">
+            <Button
+              variant="primary"
+              className="button-shine-effect w-full"
+              size="lg"
+              onClick={close}
+            >
+              Keep learning
+            </Button>
+            <Button
+              variant="dangerOutline"
+              className="w-full"
+              size="lg"
+              onClick={handleEndSession}
+            >
+              End session
+            </Button>
+          </div>
         </div>
-      </div>
-    </Modal>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }
