@@ -12,7 +12,7 @@ type Props = {
   activeCourseId?: typeof userProgress.$inferSelect.activeCourseId
 }
 
-export const List = ({ courses, activeCourseId }: Props) => {
+export const CourseList = ({ courses, activeCourseId }: Props) => {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 

@@ -1,4 +1,4 @@
-import { List } from "@/app/(main)/courses/list"
+import { CourseList } from "@/app/(main)/courses/course-list"
 import { getCourses, getUserProgress } from "@/db/queries"
 
 const Page = async () => {
@@ -14,7 +14,10 @@ const Page = async () => {
     <div className="mx-auto h-full max-w-[912px] px-3">
       <h1 className="text-2xl font-bold text-neutral-700">Courses</h1>
 
-      <List courses={courses} activeCourseId={userProgress?.activeCourseId} />
+      <CourseList
+        courses={courses}
+        activeCourseId={userProgress?.activeCourseId}
+      />
     </div>
   )
 }
