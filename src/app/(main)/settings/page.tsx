@@ -5,15 +5,13 @@ import { UserProgress } from "@/components/user-progress"
 import { getUserProgress, getUserSubscription } from "@/db/queries"
 import { getUserSoundPreference } from "@/db/queries/sound-settings"
 import { redirect } from "next/navigation"
-import { UserAvatar } from "@/components/user-avatar"
 import { auth } from "@/auth"
 import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
 import { SoundToggle } from "@/components/sound-toggle"
-import { NameInput } from "@/app/(main)/settings/name-input"
+import { ProfileCard } from "@/app/(main)/settings/profile-card"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { SettingsCard } from "@/app/(main)/settings/settings-card"
 import { Button } from "@/components/ui/button"
 import { SubscriptionButton } from "@/components/subscription-button"
@@ -61,32 +59,7 @@ const Page = async () => {
 
           <div className="w-full space-y-6 lg:space-y-8">
             {/* Profile Information */}
-            <SettingsCard title="Profile">
-              <div className="space-y-6">
-                <div className="flex flex-col items-center gap-4 sm:flex-row">
-                  <UserAvatar
-                    name={session?.user?.name}
-                    image={session?.user?.image}
-                    className="size-16"
-                  />
-                  <Button variant="ghost" className="w-full sm:w-auto">
-                    Change Avatar
-                  </Button>
-                </div>
-                <div className="space-y-4">
-                  <NameInput defaultName={session?.user?.name || ""} />
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      defaultValue={session?.user?.email || ""}
-                      disabled
-                      className="rounded-3xl"
-                    />
-                  </div>
-                </div>
-              </div>
-            </SettingsCard>
+            <ProfileCard session={session} />
 
             {/* Preferences */}
             <SettingsCard title="Preferences">

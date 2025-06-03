@@ -13,7 +13,7 @@ import {
 import type { AdapterAccountType } from "next-auth/adapters"
 import { userProgress } from "@/db/schema/progress"
 import app from "@/lib/data/app.json"
-import { brandColorEnum, themeEnum } from "@/db/schema/types"
+import { brandColorEnum, genderEnum, themeEnum } from "@/db/schema/types"
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -21,6 +21,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image").notNull().default("/images/mascots/mascot.svg"),
+  gender: genderEnum("gender"),
+  birthdate: timestamp("birthdate", { mode: "date" }),
   soundEnabled: boolean("sound_enabled").notNull().default(true),
   theme: themeEnum("theme").notNull().default("system"),
   brandColor: brandColorEnum("brand_color")

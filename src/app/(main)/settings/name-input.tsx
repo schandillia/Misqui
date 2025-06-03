@@ -39,18 +39,15 @@ export function NameInput({ defaultName }: NameInputProps) {
   }
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor="name">Name</Label>
-      <Input
-        id="name"
-        name="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        onBlur={handleSubmit}
-        onKeyDown={handleKeyDown}
-        className="w-full rounded-3xl"
-        disabled={isPending}
-      />
-    </div>
+    <Input
+      id="name"
+      name="name"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      onBlur={handleSubmit}
+      onKeyDown={handleKeyDown}
+      className="w-full rounded-3xl h-10"
+      disabled={isPending}
+    />
   )
 }
