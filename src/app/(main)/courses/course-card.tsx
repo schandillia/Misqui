@@ -25,9 +25,9 @@ export const CourseCard = ({
       onClick={() => onClick(id)}
       className={cn(
         `group relative flex h-full min-h-[200px] w-full cursor-pointer flex-col
-        items-center justify-between overflow-hidden rounded-2xl border-2 bg-white p-4
-        pb-5 shadow-sm transition-all duration-200 hover:bg-black/5
-        dark:hover:bg-neutral-800 sm:min-h-[217px] sm:rounded-3xl sm:p-3 sm:pb-6`,
+        items-center justify-between overflow-hidden rounded-3xl p-4 pb-5 shadow-sm
+        transition-all duration-200 hover:bg-black/5 dark:hover:bg-neutral-800
+        sm:min-h-[217px] sm:rounded-3xl sm:p-3 sm:pb-6`,
         disabled && "pointer-events-none opacity-50"
       )}
     >
