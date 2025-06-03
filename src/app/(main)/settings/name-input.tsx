@@ -3,8 +3,8 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateUserName } from "@/app/actions/update-user-name"
-import { toast } from "sonner"
 import { useState, useTransition } from "react"
+import toast from "react-hot-toast"
 
 interface NameInputProps {
   defaultName: string

@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import meta from "@/lib/data/meta.json"
 import { bodyFont, headingFont } from "@/lib/fonts"
-import { Toaster } from "sonner"
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import { brandColorEnum, themeEnum, users } from "@/db/schema"
@@ -15,6 +14,7 @@ import { GemsModal } from "@/components/gems-modal"
 import { PracticeModal } from "@/components/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { getUserSubscription } from "@/db/queries"
+import { Toaster } from "react-hot-toast"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -73,7 +73,7 @@ export default async function RootLayout({
             defaultBrandColor={brandColor}
           >
             {children}
-            <Toaster />
+            <Toaster position="top-center" />
             <ExitModal />
             <GemsModal />
             <PracticeModal />

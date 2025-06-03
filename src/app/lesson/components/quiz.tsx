@@ -7,7 +7,6 @@ import { useState, useTransition, useMemo } from "react"
 import { Challenge } from "@/app/lesson/components/challenge"
 import { Footer } from "@/app/lesson/components/footer"
 import { upsertChallengeProgress } from "@/app/actions/challenge-progress"
-import { toast } from "sonner"
 import { reduceGems } from "@/app/actions/user-progress"
 import { useWindowSize, useMount } from "react-use"
 import Image from "next/image"
@@ -26,6 +25,7 @@ import {
   getResultMessage,
 } from "@/app/lesson/utils/quiz-utils"
 import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
+import toast from "react-hot-toast"
 
 type Props = {
   initialLessonId: number

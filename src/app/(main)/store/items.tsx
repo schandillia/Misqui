@@ -4,9 +4,9 @@ import { refillGems } from "@/app/actions/user-progress"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useTransition } from "react"
-import { toast } from "sonner"
 import app from "@/lib/data/app.json"
 import { SubscriptionButton } from "@/components/subscription-button"
+import toast from "react-hot-toast"
 
 type Props = {
   gems: number

@@ -5,7 +5,7 @@ import { upsertUserProgress } from "@/app/actions/user-progress"
 import { courses, userProgress } from "@/db/schema"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
-import { toast } from "sonner"
+import toast from "react-hot-toast"
 
 type Props = {
   courses: (typeof courses.$inferSelect)[]

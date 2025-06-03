@@ -4,8 +4,8 @@ import { useTransition } from "react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { toast } from "sonner"
 import { createStripeUrl } from "@/app/actions/user-subscription"
+import toast from "react-hot-toast"
 
 interface SubscriptionButtonProps {
   isPro: boolean
