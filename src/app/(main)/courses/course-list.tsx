@@ -38,7 +38,10 @@ export const CourseList = ({ courses, activeCourseId }: Props) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 pt-6 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
+    <div
+      className="grid auto-rows-fr grid-cols-1 gap-3 pt-6 xs:grid-cols-2 sm:gap-4 md:grid-cols-3
+        lg:grid-cols-4 xl:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
+    >
       {courses.map((course) => (
         <CourseCard
           key={course.id}
