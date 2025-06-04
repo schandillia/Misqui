@@ -33,7 +33,7 @@ Misqui is built with modern web technologies, organized by category:
   - Tailwind CSS v4 with shadcn/ui
   - Radix UI (primitives)
   - Vaul (drawers)
-  - Sonner (toasts)
+  - React-Hot-Toast (toasts)
   - Lucide React & React Icons (icons)
   - React Circular Progressbar (progress visualization)
   - React Confetti (celebratory effects)

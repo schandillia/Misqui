@@ -2,16 +2,9 @@ import { UserAvatar } from "@/components/user-avatar"
 import { NameInput } from "@/app/(main)/settings/name-input"
 import { SettingsCard } from "@/app/(main)/settings/settings-card"
 import { LiaUserEditSolid } from "react-icons/lia"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Session } from "next-auth"
-import { DatePicker } from "@/components/date-picker"
 import { GenderSelect } from "@/app/(main)/settings/gender-select"
+import { BirthdateSelection } from "@/app/(main)/settings/birthdate-selection"
 
 type ProfileCardProps = {
   session: Session | null
@@ -48,7 +41,7 @@ export function ProfileCard({ session }: ProfileCardProps) {
               {session?.user?.email || "No email provided"}
             </p>
             {/* Birthdate */}
-            <DatePicker
+            <BirthdateSelection
               caption="Your birthday"
               className="h-10 normal-case border-2 border-muted font-normal"
             />
