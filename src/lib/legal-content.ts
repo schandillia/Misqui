@@ -23,7 +23,7 @@ marked.setOptions({ renderer })
 
 // Main function
 export async function getLegalContent(
-  fileName: "TERMS.md" | "PRIVACY.md",
+  fileName: string,
   customPlaceholders: Record<string, string> = {}
 ): Promise<string> {
   const filePath = path.join(

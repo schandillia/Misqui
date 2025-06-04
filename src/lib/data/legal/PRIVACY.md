@@ -2,28 +2,55 @@
 
 ## General
 
-{{BRAND_NAME}} websites (“Websites”), mobile applications (“Apps”), and related services (together with the Websites and Apps, the “Service”) are operated by {{BRAND_NAME}}, Inc. (“{{BRAND_NAME}},” “us,” or “we”). Access and use of the Service is subject to the following Terms and Conditions of Service (“Terms and Conditions”). By accessing or using any part of the Service, you represent that you have read, understood, and agree to be bound by these Terms and Conditions including any future modifications. {{BRAND_NAME}} may amend, update, or change these Terms and Conditions. If we do this, we will post a notice that we have made changes to these Terms and Conditions on the Websites for at least 7 days after the changes are posted and will indicate at the bottom of the Terms and Conditions the date these terms were last revised. Any revisions to these Terms and Conditions will become effective the earlier of (i) the end of such 7-day period or (ii) the first time you access or use the Service after such changes. If you do not agree to abide by these Terms and Conditions, you are not authorized to use, access, or participate in the Service.
+{{BRAND_NAME}} (“{{BRAND_NAME}},” “we,” “our,” or “us”) values your privacy. This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our websites (“Websites”), use our mobile applications (“Apps”), and access our related services (collectively, the “Service”). By using the Service, you agree to the collection and use of your information in accordance with this Privacy Policy.
 
-**PLEASE NOTE THAT THESE TERMS AND CONDITIONS CONTAIN A MANDATORY ARBITRATION OF DISPUTES PROVISION THAT REQUIRES THE USE OF ARBITRATION ON AN INDIVIDUAL BASIS TO RESOLVE DISPUTES IN CERTAIN CIRCUMSTANCES, RATHER THAN JURY TRIALS OR CLASS ACTION LAWSUITS.**
+## Information We Collect
 
-## Description of Website and Service
+We may collect both personal and non-personal information from you when you use the Service. This may include:
 
-The Service allows users to access and use a variety of services provided by {{BRAND_NAME}}. {{BRAND_NAME}} may, in its sole discretion and at any time, update, change, suspend, make improvements to, or discontinue any aspect of the Service, temporarily or permanently.
+- **Personal Information**: such as your name, email address, phone number, and payment information when you register, subscribe, or communicate with us.
+- **Usage Data**: such as your IP address, browser type, pages visited, time spent, and other diagnostic data.
+- **Cookies and Tracking Technologies**: to improve your experience and analyze traffic patterns. You can manage cookie preferences through your browser settings.
 
-## Acceptable Use of the Services
+## How We Use Your Information
 
-You are responsible for your use of the Services, and for any use of the Services made using your account. Our goal is to create a positive, useful, and safe user experience. To promote this goal, we prohibit certain kinds of conduct that may be harmful to other users or to us.
+We may use the information we collect to:
 
-## Registration
+- Provide, operate, and maintain the Service
+- Improve and personalize your experience
+- Communicate with you about your account or transactions
+- Send promotional messages (only if you opt in)
+- Detect and prevent fraudulent or unauthorized activity
+- Comply with legal obligations
 
-In connection with registering for and using the Service, you agree (i) to provide accurate, current, and complete information about you and/or your organization as requested by {{BRAND_NAME}}; (ii) to maintain the confidentiality of your password and other information related to the security of your account; (iii) to maintain and promptly update any registration information you provide to {{BRAND_NAME}}, to keep such information accurate, current, and complete; and (iv) to be fully responsible for all use of your account and for any actions that take place through your account.
+## Sharing of Information
 
-## Indemnification of {{BRAND_NAME}}
+We do not sell your personal information. We may share your data only with:
 
-You agree to defend, indemnify, and hold harmless {{BRAND_NAME}} and its directors, officers, employees, contractors, agents, suppliers, licensors, successors, and assigns, from and against any and all losses, claims, causes of action, obligations, liabilities, and damages whatsoever, including attorneys' fees, arising out of or relating to your access or use of the Service.
+- **Service providers** assisting in operating the Service
+- **Legal authorities**, if required by law or in response to valid legal processes
+- **Successors or assigns**, in the event of a merger, acquisition, or asset sale
 
-## Governing Law
+All third-party partners are required to handle your information in a manner consistent with this Privacy Policy.
 
-These Terms and Conditions shall be governed by and construed under the laws of the Commonwealth of Pennsylvania, Lessoned States of America, excluding any conflict of laws provisions, regardless of your country of origin or where you access the Service.
+## Data Security
+
+We implement appropriate technical and organizational measures to protect your information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or method of electronic storage is 100% secure.
+
+## Your Rights and Choices
+
+Depending on your location, you may have certain rights regarding your personal data, including the right to access, correct, delete, or restrict its use. You may also opt out of receiving promotional communications by following the unsubscribe link in our emails.
+
+## Children’s Privacy
+
+The Service is not intended for individuals under the age of 13. We do not knowingly collect personal data from children. If we learn that we have collected such information, we will delete it promptly.
+
+## Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. We will notify you of any changes by updating the “Last revised on” date above. Your continued use of the Service after such changes constitutes your acceptance of the new Privacy Policy.
+
+## Contact Us
+
+If you have any questions or concerns about this Privacy Policy or our practices, you may contact us at the information provided on our Website.
 
 _Last revised on {{LAST_REVISED_DATE}}_
