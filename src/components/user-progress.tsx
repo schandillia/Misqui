@@ -28,15 +28,13 @@ export const UserProgress = ({
   return (
     <div className="flex w-full items-center justify-between gap-x-2">
       <Link href="/courses">
-        <Button variant="ghost">
-          <Image
-            src={activeCourse.image}
-            alt={activeCourse.title}
-            className="rounded-md border"
-            width={32}
-            height={32}
-          />
-        </Button>
+        <Image
+          src={activeCourse.image}
+          alt={activeCourse.title}
+          className="rounded-md border"
+          width={32}
+          height={32}
+        />
       </Link>
       <Link href="/store">
         <Button variant="ghost" className="text-orange-500">
