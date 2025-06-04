@@ -3,7 +3,7 @@ import { pgEnum } from "drizzle-orm/pg-core"
 
 export const challengeTypeEnum = pgEnum("type", ["SELECT", "ASSIST"])
 
-export const genderEnum = pgEnum("gender", ["male", "female"])
+export const genderEnum = pgEnum("gender", ["boy", "girl"])
 
 export const themeEnum = pgEnum("theme", ["light", "dark", "system"])
 export const brandColorEnum = pgEnum("brand_color", [

@@ -17,7 +17,7 @@ declare module "next-auth" {
     email?: string | null
     image?: string | null
     birthdate?: string | null
-    gender?: "male" | "female" | null
+    gender?: (typeof schema.genderEnum.enumValues)[number] | null
   }
 
   interface Session {
@@ -27,7 +27,7 @@ declare module "next-auth" {
       email?: string | null
       image?: string | null
       birthdate?: string | null
-      gender?: "male" | "female" | null
+      gender?: (typeof schema.genderEnum.enumValues)[number] | null
     }
   }
 }
