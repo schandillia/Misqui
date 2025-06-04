@@ -9,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { Session } from "next-auth"
+import { DatePicker } from "@/components/date-picker"
+import { GenderSelect } from "@/app/(main)/settings/gender-select"
 
 type ProfileCardProps = {
   session: Session | null
@@ -39,26 +40,20 @@ export function ProfileCard({ session }: ProfileCardProps) {
             </button>
           </div>
           {/* Name, email, birthday, and gender */}
-          <div className="w-full sm:w-1/2 space-y-4">
+          <div className="w-full sm:w-1/2 space-y-2">
+            {/* Name */}
             <NameInput defaultName={session?.user?.name || ""} />
-            <p className="text-muted-foreground text-sm bg-muted py-2 px-4 rounded-3xl">
+            {/* Email */}
+            <p className="text-muted-foreground text-sm bg-muted rounded-3xl ml-2">
               {session?.user?.email || "No email provided"}
             </p>
-            <Input
-              id="birthday"
-              type="date"
-              defaultValue={session?.user?.birthdate || ""}
-              className="rounded-3xl"
+            {/* Birthdate */}
+            <DatePicker
+              caption="Your birthday"
+              className="h-10 normal-case border-2 border-muted font-normal"
             />
-            <Select defaultValue={session?.user?.gender || ""} name="gender">
-              <SelectTrigger id="gender" className="rounded-3xl">
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Gender */}
+            <GenderSelect defaultValue={session?.user?.gender} />
           </div>
         </div>
       </div>
