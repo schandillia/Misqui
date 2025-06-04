@@ -65,7 +65,7 @@ export default function ColorSwitcher({ isPro }: { isPro: boolean }) {
     return (
       <div className="flex items-center gap-2">
         <span className="h-4 w-16 bg-muted rounded" />
-        <div className="h-6 w-6 rounded-full bg-muted" />
+        <div className="size-6 rounded-full bg-muted" />
       </div>
     )
   }

@@ -67,7 +67,7 @@ export const ChallengeCard = ({
       {audioSrc && image && (
         <Volume2
           className={cn(
-            "absolute top-4 right-4 h-5 w-5 text-neutral-400",
+            "absolute top-4 right-4 size-5 text-neutral-400",
             selected && "text-sky-500",
             selected && status === "correct" && "text-emerald-500",
             selected && status === "wrong" && "text-rose-500"
@@ -96,7 +96,7 @@ export const ChallengeCard = ({
         {audioSrc && !image && (
           <Volume2
             className={cn(
-              "ml-2 h-5 w-5 text-neutral-400",
+              "ml-2 size-5 text-neutral-400",
               selected && "text-sky-500",
               selected && status === "correct" && "text-emerald-500",
               selected && status === "wrong" && "text-rose-500"

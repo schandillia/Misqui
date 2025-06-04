@@ -81,7 +81,7 @@ const ResponsiveModalContent = React.forwardRef<
           focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none
           data-[state=open]:bg-secondary"
       >
-        <X className="h-4 w-4" />
+        <X className="size-4" />
         <span className="sr-only">Close</span>
       </ResponsiveModalClose>
     </DialogPrimitive.Content>

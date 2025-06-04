@@ -72,13 +72,13 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="cursor-pointer">
-            <LuLayoutDashboard className="mr-2 h-4 w-4" />
+            <LuLayoutDashboard className="mr-2 size-4" />
             Dashboard
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/settings" className="cursor-pointer">
-            <LuSettings className="mr-2 h-4 w-4" />
+            <LuSettings className="mr-2 size-4" />
             Settings
           </Link>
         </DropdownMenuItem>

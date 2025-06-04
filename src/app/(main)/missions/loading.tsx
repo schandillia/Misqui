@@ -8,7 +8,7 @@ const Loading = () => (
         <div className="flex flex-col gap-y-4">
           {/* UserProgress skeleton */}
           <div className="mb-4 flex w-full items-center justify-between gap-x-2">
-            <Skeleton className="h-8 w-8" />
+            <Skeleton className="size-8" />
             <Skeleton className="h-8 w-16" />
             <Skeleton className="h-8 w-16" />
             <Skeleton className="h-8 w-12" />
@@ -16,7 +16,7 @@ const Loading = () => (
           {/* Promo skeleton */}
           <div className="space-y-4 rounded-xl border-2 p-4">
             <div className="mb-2 flex items-center gap-x-2">
-              <Skeleton className="h-6 w-6" />
+              <Skeleton className="size-6" />
               <Skeleton className="h-6 w-32" />
             </div>
             <Skeleton className="mb-2 h-4 w-40" />
@@ -30,7 +30,7 @@ const Loading = () => (
       <div className="flex w-full flex-col items-center">
         {/* Header skeleton */}
         <div className="mb-8 flex flex-col items-center gap-y-4">
-          <Skeleton className="h-16 w-16 rounded-full" />
+          <Skeleton className="size-16 rounded-full" />
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-4 w-64" />
         </div>

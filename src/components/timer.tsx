@@ -67,7 +67,7 @@ export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
         aria-label={`Time remaining: ${formattedTime}`}
       >
         <Clock
-          className={`h-5 w-5 ${textColor} transition-colors duration-300`}
+          className={`size-5 ${textColor} transition-colors duration-300`}
         />
         <span
           className={`text-lg font-semibold ${textColor} transition-colors duration-300`}

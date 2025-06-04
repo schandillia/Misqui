@@ -7,10 +7,10 @@ const ExerciseSkeleton = () => (
       className="mx-auto mb-8 flex w-full max-w-[1140px] items-center justify-between gap-x-7
         px-10 pt-[20px] lg:pt-[50px]"
     >
-      <Skeleton className="h-8 w-8 rounded-full" />
+      <Skeleton className="size-8 rounded-full" />
       <Skeleton className="h-4 w-1/2 rounded-full" /> {/* Progress bar */}
       <div className="flex items-center gap-2">
-        <Skeleton className="h-7 w-7 rounded-full" />
+        <Skeleton className="size-7 rounded-full" />
         <Skeleton className="h-7 w-10 rounded" />
       </div>
     </div>
