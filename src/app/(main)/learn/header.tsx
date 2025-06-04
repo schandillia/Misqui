@@ -9,8 +9,8 @@ type Props = {
 export const Header = ({ title }: Props) => {
   return (
     <div
-      className="sticky top-0 mb-5 flex items-center justify-between border-b-2 bg-white pb-3
-        text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] dark:bg-black"
+      className="sticky top-0 mb-5 flex items-center justify-between border-b-2 bg-neutral-50
+        dark:bg-neutral-900 pb-3 text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px]"
     >
       <Link href="/courses">
         <Button size="sm" variant="ghost">
