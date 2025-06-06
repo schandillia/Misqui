@@ -2,12 +2,14 @@
 import { relations } from "drizzle-orm"
 import {
   boolean,
-  timestamp,
-  pgTable,
-  text,
   integer,
+  pgEnum,
+  pgTable,
   serial,
-  uuid,
+  text,
+  timestamp,
+  unique, // Added unique for constraints
+  uuid, // Import uuid
 } from "drizzle-orm/pg-core"
 import { challengeTypeEnum } from "@/db/schema/types"
 import { exercises } from "@/db/schema/courses"
@@ -46,6 +48,11 @@ export const challengeProgress = pgTable("challenge_progress", {
   completed: boolean("completed").notNull().default(false),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+},
+(table) => {
+  return {
+    userChallengeUnique: unique("user_challenge_unique_idx").on(table.userId, table.challengeId),
+  };
 })
 
 // Relations

@@ -370,7 +370,8 @@ export async function getUserStreak(userId: string) {
 
 export async function markExerciseCompleteAndUpdateStreak(
   userId: string,
-  exerciseId: number
+  exerciseId: number,
+  isTimedHundredPercent?: boolean // Optional flag for timed exercises completed with 100%
 ) {
   // Fetch user progress to check lastActivityDate
   const progress = await db.query.userProgress.findFirst({
@@ -398,48 +399,53 @@ export async function markExerciseCompleteAndUpdateStreak(
     return // Already updated today
   }
 
-  // Fetch the current subset of challenge IDs for this user and exercise
-  const subsetIds = await getOrCreateUserExerciseChallengeSubset(
-    userId,
-    exerciseId,
-    false
-  )
-  if (!subsetIds.length) {
-    logger.warn("No subset found for exercise", { userId, exerciseId })
-    return
-  }
+  // If it's not a 100% timed exercise completion, perform the usual subset check
+  if (!isTimedHundredPercent) {
+    // Fetch the current subset of challenge IDs for this user and exercise
+    const subsetIds = await getOrCreateUserExerciseChallengeSubset(
+      userId,
+      exerciseId,
+      false
+    )
+    if (!subsetIds.length) {
+      logger.warn("No subset found for exercise (standard check)", { userId, exerciseId })
+      return
+    }
 
-  logger.info("Checking exercise completion", {
-    userId,
-    exerciseId,
-    subsetIds,
-  })
+    logger.info("Checking exercise completion (standard check)", {
+      userId,
+      exerciseId,
+      subsetIds,
+    })
 
-  // Fetch challenge progress for the user for these subset challenges
-  const progressList = await db.query.challengeProgress.findMany({
-    where: and(
-      eq(challengeProgress.userId, userId),
-      inArray(challengeProgress.challengeId, subsetIds)
-    ),
-  })
+    // Fetch challenge progress for the user for these subset challenges
+    const progressList = await db.query.challengeProgress.findMany({
+      where: and(
+        eq(challengeProgress.userId, userId),
+        inArray(challengeProgress.challengeId, subsetIds)
+      ),
+    })
 
-  // Log progress for debugging
-  logger.info("Challenge progress for subset", {
-    userId,
-    exerciseId,
-    progressList: progressList.map((p) => ({
-      challengeId: p.challengeId,
-      completed: p.completed,
-    })),
-  })
+    // Log progress for debugging
+    logger.info("Challenge progress for subset (standard check)", {
+      userId,
+      exerciseId,
+      progressList: progressList.map((p) => ({
+        challengeId: p.challengeId,
+        completed: p.completed,
+      })),
+    })
 
-  // If all subset challenges are completed
-  const allCompleted = subsetIds.every((id) =>
-    progressList.find((p) => p.challengeId === id && p.completed)
-  )
-  if (!allCompleted) {
-    logger.info("Exercise not fully completed", { userId, exerciseId })
-    return
+    // If all subset challenges are completed
+    const allCompleted = subsetIds.every((id) =>
+      progressList.find((p) => p.challengeId === id && p.completed)
+    )
+    if (!allCompleted) {
+      logger.info("Exercise not fully completed (standard check failed)", { userId, exerciseId })
+      return
+    }
+  } else {
+    logger.info("Bypassing subset check for 100% timed exercise completion", { userId, exerciseId });
   }
 
   // Update streak
@@ -447,5 +453,6 @@ export async function markExerciseCompleteAndUpdateStreak(
   logger.info("Streak updated after exercise completion", {
     userId,
     exerciseId,
+    isTimedHundredPercent: !!isTimedHundredPercent, // Log the flag status
   })
 }
