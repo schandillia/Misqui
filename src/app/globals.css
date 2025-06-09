@@ -3,7 +3,9 @@
 @import "./colors.css";
 
 html,
-body,
+body {
+  @apply min-h-screen bg-neutral-50 dark:bg-neutral-900;
+}
 :root {
   @apply h-full;
 }

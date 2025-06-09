@@ -12,7 +12,7 @@ type Props = {
   active?: boolean
 }
 
-export const CourseCard = ({
+export const SubjectCard = ({
   id,
   title,
   image,

@@ -33,7 +33,8 @@ export const Sidebar = async ({ className }: Props) => {
   return (
     <div
       className={cn(
-        "top-0 left-0 flex h-full flex-col truncate border-r-2 px-4 lg:fixed lg:w-[256px]",
+        `top-0 left-0 flex h-full flex-col truncate border-r-2 px-4 lg:fixed lg:w-[256px]
+        bg-white dark:bg-black`,
         className
       )}
     >

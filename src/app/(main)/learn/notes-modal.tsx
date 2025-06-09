@@ -19,8 +19,8 @@ type NotesModalProps = {
   notes: string | null
   loading: boolean
   error: string | null
-  firstExerciseId?: number
-  firstExerciseUrl: string
+  firstDrillId?: number
+  firstDrillUrl: string
 }
 
 export const NotesModal = ({
@@ -30,8 +30,8 @@ export const NotesModal = ({
   notes,
   loading,
   error,
-  firstExerciseId,
-  firstExerciseUrl,
+  firstDrillId,
+  firstDrillUrl,
 }: NotesModalProps) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
@@ -51,13 +51,13 @@ export const NotesModal = ({
             >
               Close
             </Button>
-            {firstExerciseId && (
+            {firstDrillId && (
               <Button
                 asChild
                 variant="primary"
                 className="button-shine-effect flex-1"
               >
-                <Link href={firstExerciseUrl}>Quiz</Link>
+                <Link href={firstDrillUrl}>Quiz</Link>
               </Button>
             )}
           </div>

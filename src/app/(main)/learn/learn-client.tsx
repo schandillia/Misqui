@@ -1,7 +1,7 @@
 "use client"
 
 import useSWR, { SWRConfig } from "swr"
-import { Header } from "@/app/(main)/learn/header"
+import { Header } from "@/app/(main)/learn/course-header"
 import { Lesson } from "@/app/(main)/learn/lesson"
 import { FeedWrapper } from "@/components/feed-wrapper"
 import { Promo } from "@/components/promo"

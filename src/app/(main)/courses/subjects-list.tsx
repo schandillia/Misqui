@@ -1,31 +1,31 @@
 "use client"
 
-import { CourseCard } from "@/app/(main)/courses/course-card"
-import { upsertUserProgress } from "@/app/actions/user-progress"
-import { courses, userProgress } from "@/db/schema"
+import { SubjectCard } from "@/app/(main)/courses/subject-card"
+import { upsertStat } from "@/app/actions/stats"
+import { subjects, stats } from "@/db/schema"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import toast from "react-hot-toast"
 
 type Props = {
-  courses: (typeof courses.$inferSelect)[]
-  activeCourseId?: typeof userProgress.$inferSelect.activeCourseId
+  subjects: (typeof subjects.$inferSelect)[]
+  activeSubjectId?: typeof stats.$inferSelect.activeSubjectId
 }
 
-export const CourseList = ({ courses, activeCourseId }: Props) => {
+export const SubjectsList = ({ subjects, activeSubjectId }: Props) => {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
   const onClick = (id: number) => {
     if (pending) return
 
-    if (id === activeCourseId) {
+    if (id === activeSubjectId) {
       return router.push("/learn")
     }
 
     startTransition(async () => {
       try {
-        await upsertUserProgress(id)
+        await upsertStat(id)
         router.push("/learn")
       } catch (error) {
         if (error instanceof Error) {
@@ -42,15 +42,15 @@ export const CourseList = ({ courses, activeCourseId }: Props) => {
       className="grid auto-rows-fr grid-cols-1 gap-3 pt-6 xs:grid-cols-2 sm:gap-4 md:grid-cols-3
         lg:grid-cols-4 xl:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
     >
-      {courses.map((course) => (
-        <CourseCard
-          key={course.id}
-          id={course.id}
-          title={course.title}
-          image={course.image}
+      {subjects.map((subject) => (
+        <SubjectCard
+          key={subject.id}
+          id={subject.id}
+          title={subject.title}
+          image={subject.image}
           onClick={onClick}
           disabled={pending}
-          active={course.id === activeCourseId}
+          active={subject.id === activeSubjectId}
         />
       ))}
     </div>
