@@ -1,6 +1,5 @@
 // File: app/(main)/learn/page.tsx
 import { UnitHeader } from "@/app/(main)/learn/unit-header"
-import { Promo } from "@/components/promo"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { getStats, getUnits, getUserSubscription } from "@/db/queries"
 import { drills as drillsTable, userDrillCompletion } from "@/db/schema"
@@ -10,6 +9,8 @@ import { db } from "@/db/drizzle"
 import { upsertUserDrillCompletion } from "@/app/actions/drill-completion"
 import DrillsList from "@/app/(main)/learn/drills-list"
 import { UserStats } from "@/app/(main)/components/user-stats"
+import { PromoCard } from "@/app/(main)/components/promo-card"
+import { MissionsCard } from "@/app/(main)/components/missions-card"
 
 type DrillType = typeof drillsTable.$inferSelect
 
@@ -124,7 +125,8 @@ const Page = async () => {
           currentStreak={stats.currentStreak}
           lastActivityDate={stats.lastActivityDate}
         />
-        {!isPro && <Promo />}
+        {!isPro && <PromoCard />}
+        <MissionsCard points={stats.points} />
       </RightColumn>
     </div>
   )

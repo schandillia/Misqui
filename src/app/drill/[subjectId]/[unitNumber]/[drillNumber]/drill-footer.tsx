@@ -68,15 +68,15 @@ export const DrillFooter = ({
             <Button
               variant="default"
               size={isMobile ? "sm" : "lg"}
-              onClick={() => (window.location.href = "/drill")}
+              onClick={() => window.location.reload()}
             >
-              Practice Again
+              {isTimed ? "Test Again" : "Practice Again"}
             </Button>
             <Button
+              onClick={() => (window.location.href = "/learn")}
               disabled={disabled}
-              onClick={onCheck}
               size={isMobile ? "sm" : "lg"}
-              variant="secondary"
+              variant="primary"
             >
               Continue
             </Button>

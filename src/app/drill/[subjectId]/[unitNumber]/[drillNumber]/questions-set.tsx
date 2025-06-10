@@ -1,7 +1,6 @@
 // questions-set.tsx
 "use client"
 
-import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
 import app from "@/lib/data/app.json"
 import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill-header"
@@ -186,6 +185,8 @@ const QuestionsSet = ({
   }
 
   if (drillFinished || isDrillCompleted) {
+    const scorePercentage =
+      totalAttempts > 0 ? (correctAnswersCount / totalAttempts) * 100 : 0
     return (
       <div className="flex min-h-screen flex-col">
         <div
@@ -203,6 +204,12 @@ const QuestionsSet = ({
             out of{" "}
             <span className="font-semibold text-blue-600">{totalAttempts}</span>{" "}
             attempts correctly.
+          </p>
+          <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
+            Your score:{" "}
+            <span className="font-semibold text-blue-600">
+              {scorePercentage.toFixed(0)}%
+            </span>
           </p>
         </div>
         <DrillFooter
