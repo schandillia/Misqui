@@ -1,4 +1,3 @@
-// @/app/lesson/components/drill-header.tsx
 import { Progress } from "@/components/ui/progress"
 import { useExitModal } from "@/store/use-exit-modal"
 import { InfinityIcon, X } from "lucide-react"
@@ -13,7 +12,7 @@ type Props = {
   drillNumber?: number
   isTimed: boolean
   isDrillCompleted: boolean
-  // isTimerPaused: boolean
+  serverPending: boolean // Updated prop name
 }
 
 export const DrillHeader = ({
@@ -24,7 +23,7 @@ export const DrillHeader = ({
   drillNumber,
   isTimed,
   isDrillCompleted,
-  // isTimerPaused,
+  serverPending,
 }: Props) => {
   const { open } = useExitModal()
 
@@ -36,7 +35,10 @@ export const DrillHeader = ({
       {/* Conditionally render Timer or Drill Title */}
       {isTimed ? (
         <div className="flex w-full justify-center">
-          <Timer isExerciseCompleted={isDrillCompleted} isTimerPaused={false} />
+          <Timer
+            isExerciseCompleted={isDrillCompleted}
+            isTimerPaused={serverPending} // Pass serverPending as isTimerPaused
+          />
         </div>
       ) : (
         drillTitle && (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import app from "@/lib/data/app.json"
 import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill-header"
 import Image from "next/image"
@@ -68,7 +68,19 @@ const Drill = ({
   const [totalAttempts, setTotalAttempts] = useState(0)
   const [serverPending, setServerPending] = useState(false)
   const [questions] = useState(initialQuestions)
+  const [timeTaken, setTimeTaken] = useState(0)
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  // Moved isDrillCompleted declaration before usage
+  const isDrillCompleted =
+    questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
+
+  // Format time as mm:ss
+  const formattedTime = useMemo(() => {
+    const minutes = Math.floor(timeTaken / 60)
+    const seconds = timeTaken % 60
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+  }, [timeTaken])
 
   // Log questions for debugging
   useEffect(() => {
@@ -97,8 +109,16 @@ const Drill = ({
     })
   }, [setSoundEnabled])
 
-  const isDrillCompleted =
-    questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
+  // Timer effect for elapsed time
+  useEffect(() => {
+    if (isDrillCompleted || serverPending) return
+
+    const timer = setInterval(() => {
+      setTimeTaken((prev) => prev + 1)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [isDrillCompleted, serverPending])
 
   useEffect(() => {
     if (isDrillCompleted && !hasPlayedFinishAudio.current) {
@@ -198,7 +218,7 @@ const Drill = ({
         return prev + 1
       })
       if (isTimed) {
-        setQuestionsCompleted((prev) => prev + 1) // Increment for all answers in timed drills
+        setQuestionsCompleted((prev) => prev + 1)
       }
       setSelectedOption(null)
       setShowExplanation(false)
@@ -207,7 +227,7 @@ const Drill = ({
     } else {
       console.log("Setting status to completed")
       if (isTimed) {
-        setQuestionsCompleted((prev) => prev + 1) // Increment for last answer
+        setQuestionsCompleted((prev) => prev + 1)
       }
       setStatus("completed")
     }
@@ -414,6 +434,10 @@ const Drill = ({
               {scorePercentage.toFixed(0)}%
             </span>
           </p>
+          <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
+            Time taken:{" "}
+            <span className="font-semibold text-blue-600">{formattedTime}</span>
+          </p>
           {questions.length < app.QUESTIONS_PER_DRILL && (
             <p className="text-sm text-red-600">
               Note: Only {questions.length} of {app.QUESTIONS_PER_DRILL}{" "}
@@ -462,6 +486,7 @@ const Drill = ({
         drillNumber={initialDrillNumber}
         isTimed={isTimed}
         isDrillCompleted={isDrillCompleted}
+        serverPending={serverPending}
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">
