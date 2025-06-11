@@ -12,7 +12,8 @@ type Props = {
   drillNumber?: number
   isTimed: boolean
   isDrillCompleted: boolean
-  serverPending: boolean // Updated prop name
+  serverPending: boolean
+  onTimerComplete?: () => void // Add onTimerComplete
 }
 
 export const DrillHeader = ({
@@ -24,6 +25,7 @@ export const DrillHeader = ({
   isTimed,
   isDrillCompleted,
   serverPending,
+  onTimerComplete,
 }: Props) => {
   const { open } = useExitModal()
 
@@ -32,12 +34,12 @@ export const DrillHeader = ({
       className="mx-auto flex w-full max-w-[1140px] flex-col items-start gap-y-4 px-10 pt-[20px]
         lg:pt-[50px]"
     >
-      {/* Conditionally render Timer or Drill Title */}
       {isTimed ? (
         <div className="flex w-full justify-center">
           <Timer
             isExerciseCompleted={isDrillCompleted}
-            isTimerPaused={serverPending} // Pass serverPending as isTimerPaused
+            isTimerPaused={serverPending}
+            onComplete={onTimerComplete} // Pass onComplete
           />
         </div>
       ) : (
@@ -50,7 +52,6 @@ export const DrillHeader = ({
           </h1>
         )
       )}
-      {/* Progress Bar and Gems */}
       <div className="flex w-full items-center justify-between gap-x-7">
         <X
           onClick={open}

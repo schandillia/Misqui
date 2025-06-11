@@ -71,7 +71,7 @@ const Drill = ({
   const [timeTaken, setTimeTaken] = useState(0)
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  // Moved isDrillCompleted declaration before usage
+  // Moved isDrillCompleted before usage
   const isDrillCompleted =
     questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
 
@@ -81,6 +81,11 @@ const Drill = ({
     const seconds = timeTaken % 60
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
   }, [timeTaken])
+
+  // Handle timer completion
+  const handleTimerComplete = () => {
+    setStatus("completed")
+  }
 
   // Log questions for debugging
   useEffect(() => {
@@ -132,7 +137,7 @@ const Drill = ({
       playFinish()
       if (isTimed) {
         const scorePercentage =
-          totalAttempts > 0 ? (correctAnswersCount / totalAttempts) * 100 : 0
+          (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
         const pointsEarned =
           scorePercentage === 100 ? app.REWARD_POINTS_FOR_TIMED : 0
         const gemsEarned = scorePercentage === 100 ? 1 : 0
@@ -143,7 +148,7 @@ const Drill = ({
           isTimed,
           pointsEarned,
           gemsEarned,
-          questionsCompleted: questions.length,
+          questionsCompleted, // Use questionsCompleted for partial progress
           isCurrent,
           scorePercentage,
           isDrillCompleted: true,
@@ -152,14 +157,14 @@ const Drill = ({
             if (response.error === "gems") {
               setPoints((prev) => prev - pointsEarned)
               setGemsCount((prev) => Math.max(0, prev - gemsEarned))
-              setQuestionsCompleted((prev) => prev - questions.length)
+              setQuestionsCompleted((prev) => prev - questionsCompleted)
               openGemsModal()
             }
           })
           .catch(() => {
             setPoints((prev) => prev - pointsEarned)
             setGemsCount((prev) => Math.max(0, prev - gemsEarned))
-            setQuestionsCompleted((prev) => prev - questions.length)
+            setQuestionsCompleted((prev) => prev - questionsCompleted)
             toast.error("Failed to save progress. Please try again.")
           })
           .finally(() => {
@@ -178,6 +183,7 @@ const Drill = ({
     totalAttempts,
     questions,
     openGemsModal,
+    questionsCompleted,
   ])
 
   useEffect(() => {
@@ -408,8 +414,11 @@ const Drill = ({
   }
 
   if (status === "completed" || isDrillCompleted) {
-    const scorePercentage =
-      totalAttempts > 0 ? (correctAnswersCount / totalAttempts) * 100 : 0
+    const scorePercentage = isTimed
+      ? (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
+      : totalAttempts > 0
+        ? (correctAnswersCount / totalAttempts) * 100
+        : 0
     return (
       <div className="flex min-h-screen flex-col">
         <div
@@ -425,8 +434,10 @@ const Drill = ({
               {correctAnswersCount}
             </span>{" "}
             out of{" "}
-            <span className="font-semibold text-blue-600">{totalAttempts}</span>{" "}
-            attempts correctly.
+            <span className="font-semibold text-blue-600">
+              {app.QUESTIONS_PER_DRILL}
+            </span>{" "}
+            questions correctly.
           </p>
           <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
             Your score:{" "}
@@ -487,6 +498,7 @@ const Drill = ({
         isTimed={isTimed}
         isDrillCompleted={isDrillCompleted}
         serverPending={serverPending}
+        onTimerComplete={handleTimerComplete} // Pass onTimerComplete
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">
