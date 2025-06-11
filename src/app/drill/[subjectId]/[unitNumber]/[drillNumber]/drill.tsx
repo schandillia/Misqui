@@ -124,6 +124,9 @@ const Drill = ({
           pointsEarned,
           gemsEarned,
           questionsCompleted: questions.length,
+          isCurrent,
+          scorePercentage,
+          isDrillCompleted: true,
         })
           .then((response) => {
             if (response.error === "gems") {
@@ -186,18 +189,26 @@ const Drill = ({
       currentQuestionIndex,
       questionsLength: questions.length,
       questionsCompleted,
+      isTimed,
+      isCorrect,
     })
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => {
         console.log("Incrementing currentQuestionIndex:", prev + 1)
         return prev + 1
       })
+      if (isTimed) {
+        setQuestionsCompleted((prev) => prev + 1) // Increment for all answers in timed drills
+      }
       setSelectedOption(null)
       setShowExplanation(false)
       setIsCorrect(false)
       setStatus("none")
     } else {
       console.log("Setting status to completed")
+      if (isTimed) {
+        setQuestionsCompleted((prev) => prev + 1) // Increment for last answer
+      }
       setStatus("completed")
     }
   }
@@ -276,7 +287,7 @@ const Drill = ({
         pointsEarned: app.POINTS_PER_QUESTION,
         gemsEarned: isCurrent ? 0 : 1,
         questionsCompleted: 1,
-        isDrillCompleted: isLastQuestion, // New flag
+        isDrillCompleted: isLastQuestion,
       })
         .then((response) => {
           if (response.error === "gems") {

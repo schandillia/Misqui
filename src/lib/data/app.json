@@ -11,6 +11,7 @@
   "QUESTIONS_PER_DRILL": 3,
   "SECONDS_PER_QUESTION": 10,
   "POINTS_PER_QUESTION": 10,
+  "PASS_SCORE": 100,
   "MISSIONS": [
     {
       "TITLE": "Earn 20 points",

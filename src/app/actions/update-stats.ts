@@ -15,7 +15,9 @@ type UpdateStatsInput = {
   pointsEarned?: number
   gemsEarned?: number
   questionsCompleted?: number
-  isDrillCompleted?: boolean // New flag
+  isDrillCompleted?: boolean
+  isCurrent?: boolean
+  scorePercentage?: number
 }
 
 export const updateStats = async ({
@@ -26,6 +28,8 @@ export const updateStats = async ({
   gemsEarned = 0,
   questionsCompleted = 0,
   isDrillCompleted = false,
+  isCurrent = false, // Default value
+  scorePercentage = 0, // Default value
 }: UpdateStatsInput) => {
   const session = await auth()
   if (!session?.user?.id) {
@@ -46,6 +50,8 @@ export const updateStats = async ({
       gemsEarned,
       questionsCompleted,
       isDrillCompleted,
+      isCurrent,
+      scorePercentage,
     })
 
     // Fetch current stats
@@ -106,13 +112,18 @@ export const updateStats = async ({
       const currentQuestionsCompleted =
         currentCompletion[0]?.questionsCompleted || 0
 
-      // Check if drill should be advanced
-      if (
-        !isTimed &&
-        (isDrillCompleted ||
-          currentQuestionsCompleted + questionsCompleted >=
-            app.QUESTIONS_PER_DRILL)
-      ) {
+      // Determine if drill should be advanced
+      const shouldAdvanceDrill =
+        (!isTimed &&
+          (isDrillCompleted ||
+            currentQuestionsCompleted + questionsCompleted >=
+              app.QUESTIONS_PER_DRILL)) ||
+        (isTimed &&
+          isCurrent &&
+          scorePercentage === app.PASS_SCORE &&
+          isDrillCompleted)
+
+      if (shouldAdvanceDrill) {
         // Fetch current drill's unitId
         const currentDrill = await db
           .select({ unitId: drills.unitId, order: drills.order })
@@ -239,6 +250,9 @@ export const updateStats = async ({
       } else if (!isTimed && questionsCompleted > 0) {
         // For non-timed drills, increment questions_completed if not completed
         updateFields.questionsCompleted = sql`${userDrillCompletion.questionsCompleted} + ${questionsCompleted}`
+      } else if (isTimed && isCurrent) {
+        // For timed drills, reset questionsCompleted to 0 since we don’t track progress
+        updateFields.questionsCompleted = 0
       }
 
       logger.info("Updating user_drill_completion with fields:", {

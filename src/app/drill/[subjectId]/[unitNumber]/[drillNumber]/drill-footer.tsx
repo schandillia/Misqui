@@ -54,7 +54,7 @@ export const DrillFooter = ({
           <div className="flex flex-col items-start text-base font-bold text-rose-500 lg:text-2xl">
             <div className="flex items-center">
               <XCircle className="mr-4 size-6 lg:size-10" />
-              Try again.
+              {isTimed ? "Oops!" : "Try again"}
             </div>
             {!isTimed && explanation && (
               <div className="mt-2 text-sm text-rose-700 dark:text-rose-300">
