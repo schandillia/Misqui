@@ -213,6 +213,7 @@ const Drill = ({
       selectedOption,
       status,
       currentQuestionIndex,
+      questionsCompleted,
     })
 
     if (isTimed) {
@@ -264,6 +265,13 @@ const Drill = ({
       )
       setQuestionsCompleted((prev) => prev + 1)
 
+      const isLastQuestion = questionsCompleted + 1 === app.QUESTIONS_PER_DRILL
+      console.log("Updating stats:", {
+        isLastQuestion,
+        questionsCompleted: isLastQuestion ? 0 : 1,
+        drillId,
+        subjectId,
+      })
       setServerPending(true)
       updateStats({
         drillId,
@@ -271,7 +279,7 @@ const Drill = ({
         isTimed,
         pointsEarned: app.POINTS_PER_QUESTION,
         gemsEarned: isCurrent ? 0 : 1,
-        questionsCompleted: 1,
+        questionsCompleted: isLastQuestion ? 0 : 1,
       })
         .then((response) => {
           if (response.error === "gems") {
@@ -348,7 +356,7 @@ const Drill = ({
     if (isTimed) {
       return selectedOption === option
         ? "p-2 bg-blue-100 border-blue-500 border-2 rounded transition"
-        : "p-2 bg-gray-100 rounded opacity-70"
+        : "p-2 bg-gray-100 rounded opacity-39"
     }
     if (isCorrect) {
       if (option === selectedOption) {
@@ -359,7 +367,7 @@ const Drill = ({
         return "p-2 bg-red-100 text-red-800 rounded border-2 border-red-500"
       }
     }
-    return "p-2 bg-gray-100 rounded opacity-70"
+    return "p-2 bg-gray-100 rounded opacity-39"
   }
 
   // Warn if insufficient questions
