@@ -54,11 +54,7 @@ const Drill = ({
     useQuizAudio()
   const { open: openGemsModal } = useGemsModal()
   const hasPlayedFinishAudio = useRef(false)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() =>
-    isCurrent && !isTimed
-      ? Math.min(initialCompleted, initialQuestions.length - 1)
-      : 0
-  )
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionsCompleted, setQuestionsCompleted] = useState(initialCompleted)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [gemsCount, setGemsCount] = useState(initialGemsCount ?? 0)
@@ -101,16 +97,15 @@ const Drill = ({
     })
   }, [setSoundEnabled])
 
-  const isDrillCompleted = currentQuestionIndex >= questions.length
+  const isDrillCompleted =
+    questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
 
   useEffect(() => {
-    if (
-      (isDrillCompleted || status === "completed") &&
-      !hasPlayedFinishAudio.current
-    ) {
+    if (isDrillCompleted && !hasPlayedFinishAudio.current) {
       console.log("Drill completed:", {
         currentQuestionIndex,
         questionsLength: questions.length,
+        questionsCompleted,
         status,
       })
       hasPlayedFinishAudio.current = true
@@ -190,6 +185,7 @@ const Drill = ({
     console.log("onNext called:", {
       currentQuestionIndex,
       questionsLength: questions.length,
+      questionsCompleted,
     })
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => {
@@ -279,7 +275,8 @@ const Drill = ({
         isTimed,
         pointsEarned: app.POINTS_PER_QUESTION,
         gemsEarned: isCurrent ? 0 : 1,
-        questionsCompleted: isLastQuestion ? 0 : 1,
+        questionsCompleted: 1,
+        isDrillCompleted: isLastQuestion, // New flag
       })
         .then((response) => {
           if (response.error === "gems") {
@@ -323,6 +320,7 @@ const Drill = ({
           subjectId,
           isTimed,
           gemsEarned: -1,
+          questionsCompleted: 0,
         })
           .then((response) => {
             if (response.error === "gems") {
@@ -359,7 +357,7 @@ const Drill = ({
         : "p-2 bg-gray-100 rounded opacity-39"
     }
     if (isCorrect) {
-      if (option === selectedOption) {
+      if (option === option) {
         return "p-2 bg-green-100 text-green-800 rounded border-2 border-green-500"
       }
     } else {

@@ -15,6 +15,7 @@ type UpdateStatsInput = {
   pointsEarned?: number
   gemsEarned?: number
   questionsCompleted?: number
+  isDrillCompleted?: boolean // New flag
 }
 
 export const updateStats = async ({
@@ -24,6 +25,7 @@ export const updateStats = async ({
   pointsEarned = 0,
   gemsEarned = 0,
   questionsCompleted = 0,
+  isDrillCompleted = false,
 }: UpdateStatsInput) => {
   const session = await auth()
   if (!session?.user?.id) {
@@ -43,6 +45,7 @@ export const updateStats = async ({
       pointsEarned,
       gemsEarned,
       questionsCompleted,
+      isDrillCompleted,
     })
 
     // Fetch current stats
@@ -81,13 +84,35 @@ export const updateStats = async ({
 
     // Update user_drill_completion table
     if (questionsCompleted >= 0) {
-      const isDrillCompleted = questionsCompleted === 0 // Indicates drill completion
       let updateFields: any = {
         updatedAt: new Date(),
       }
 
-      // If drill is completed, check for next drill or unit
-      if (isDrillCompleted && !isTimed) {
+      // Fetch current questionsCompleted for the drill
+      const currentCompletion = await db
+        .select({
+          questionsCompleted: userDrillCompletion.questionsCompleted,
+        })
+        .from(userDrillCompletion)
+        .where(
+          and(
+            eq(userDrillCompletion.userId, userId),
+            eq(userDrillCompletion.subjectId, subjectId),
+            eq(userDrillCompletion.currentDrillId, drillId)
+          )
+        )
+        .limit(1)
+
+      const currentQuestionsCompleted =
+        currentCompletion[0]?.questionsCompleted || 0
+
+      // Check if drill should be advanced
+      if (
+        !isTimed &&
+        (isDrillCompleted ||
+          currentQuestionsCompleted + questionsCompleted >=
+            app.QUESTIONS_PER_DRILL)
+      ) {
         // Fetch current drill's unitId
         const currentDrill = await db
           .select({ unitId: drills.unitId, order: drills.order })
@@ -173,7 +198,7 @@ export const updateStats = async ({
 
           if (nextUnit[0]) {
             // Find the first drill in the next unit
-            const firstDrillInNextUnit = await db
+            const firstDrillInUnit = await db
               .select({ id: drills.id, order: drills.order })
               .from(drills)
               .where(eq(drills.unitId, nextUnit[0].id))
@@ -182,16 +207,16 @@ export const updateStats = async ({
 
             logger.info("First drill in next unit query result:", {
               nextUnitId: nextUnit[0].id,
-              firstDrillId: firstDrillInNextUnit[0]?.id,
-              firstDrillOrder: firstDrillInNextUnit[0]?.order,
+              firstDrillId: firstDrillInUnit[0]?.id,
+              firstDrillOrder: firstDrillInUnit[0]?.order,
             })
 
-            if (firstDrillInNextUnit[0]) {
-              updateFields.currentDrillId = firstDrillInNextUnit[0].id
+            if (firstDrillInUnit[0]) {
+              updateFields.currentDrillId = firstDrillInUnit[0].id
               updateFields.questionsCompleted = 0
               logger.info(
                 "Advancing to first drill in next unit: %s for user: %s",
-                firstDrillInNextUnit[0].id,
+                firstDrillInUnit[0].id,
                 userId
               )
             } else {
@@ -203,14 +228,15 @@ export const updateStats = async ({
               )
             }
           } else {
+            updateFields.questionsCompleted = 0
             logger.info(
-              "No next unit found for subject: %s after unit: %s; preserving questions_completed",
+              "No next unit found for subject: %s after unit: %s; resetting questions_completed",
               subjectId,
               unitId
             )
           }
         }
-      } else if (!isTimed) {
+      } else if (!isTimed && questionsCompleted > 0) {
         // For non-timed drills, increment questions_completed if not completed
         updateFields.questionsCompleted = sql`${userDrillCompletion.questionsCompleted} + ${questionsCompleted}`
       }
