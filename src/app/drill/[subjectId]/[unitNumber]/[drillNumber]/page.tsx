@@ -1,10 +1,9 @@
-// File: app/drill/[subjectId]/[unitNumber]/[drillNumber]/page.tsx
 import { notFound } from "next/navigation"
 import { checkDrillExistence } from "@/app/actions/check-drill-existence"
 import { getDrillQuestions, getUserSubscription, getStats } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
-import QuestionsSet from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/questions-set"
+import Drill from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill"
 
 type Props = {
   params: Promise<{
@@ -26,6 +25,11 @@ const Page = async ({ params }: Props) => {
 
   // Validate params
   if (isNaN(subjectIdNum) || isNaN(unitNumberNum) || isNaN(drillNumberNum)) {
+    logger.warn("Invalid drill parameters", {
+      subjectId,
+      unitNumber,
+      drillNumber,
+    })
     notFound()
   }
 
@@ -35,15 +39,20 @@ const Page = async ({ params }: Props) => {
 
   // If drill doesn't exist or isn't accessible, trigger 404
   if (!exists || !drill) {
+    logger.warn("Drill not found or inaccessible", {
+      subjectId: subjectIdNum,
+      unitNumber: unitNumberNum,
+      drillNumber: drillNumberNum,
+    })
     notFound()
   }
 
   // Log drill details to console using Winston
-  logger.info("Drill details for page", {
+  logger.info("Drill page accessed", {
     subjectId: subjectIdNum,
     unitNumber: unitNumberNum,
     drillNumber: drillNumberNum,
-    drillExists: "Yes",
+    drillExists: true,
     drillId: drill.id,
     drillTitle: drill.title,
     isTimed: drill.isTimed ? "Yes" : "No",
@@ -61,6 +70,13 @@ const Page = async ({ params }: Props) => {
     app.QUESTIONS_PER_DRILL
   )
 
+  // Log fetched questions for debugging
+  logger.info("Questions fetched for drill", {
+    drillId: drill.id,
+    questionsCount: questions.length,
+    questionIds: questions.map((q) => q.id),
+  })
+
   // Fetch user-specific data
   const userSubscriptionData = await getUserSubscription()
   const userStats = await getStats()
@@ -71,7 +87,7 @@ const Page = async ({ params }: Props) => {
 
   return (
     <div className="container mx-auto p-4">
-      <QuestionsSet
+      <Drill
         questions={questions}
         questionsCompleted={questionsCompleted ?? 0}
         isCurrent={isCurrentDrill}
@@ -81,6 +97,8 @@ const Page = async ({ params }: Props) => {
         isPro={isPro}
         initialDrillTitle={drill.title}
         initialDrillNumber={drillNumberNum}
+        drillId={drill.id}
+        subjectId={subjectIdNum}
       />
     </div>
   )
