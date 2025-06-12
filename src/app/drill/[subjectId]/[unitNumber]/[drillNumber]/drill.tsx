@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef, useTransition, useMemo } from "react"
 import app from "@/lib/data/app.json"
 import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill-header"
 import Image from "next/image"
@@ -14,6 +14,7 @@ import toast from "react-hot-toast"
 import ReactConfetti from "react-confetti"
 import { useWindowSize } from "react-use"
 import { ResultCard } from "@/app/lesson/components/result-card"
+import { useRouter } from "next/navigation"
 
 type Question = {
   id: number
@@ -53,15 +54,19 @@ const Drill = ({
   drillId,
   subjectId,
 }: Props) => {
+  const router = useRouter()
   const { playCorrect, playIncorrect, playFinish, setSoundEnabled } =
     useQuizAudio()
   const { open: openGemsModal } = useGemsModal()
   const hasPlayedFinishAudio = useRef(false)
+  const initialPointsRef = useRef(initialPoints)
+  const [isUpdatePending, startUpdateTransition] = useTransition()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionsCompleted, setQuestionsCompleted] = useState(initialCompleted)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [gemsCount, setGemsCount] = useState(initialGemsCount ?? 0)
-  const [points, setPoints] = useState(initialPoints)
+  const [points, setPoints] = useState(initialPointsRef.current)
+  const [pointsEarned, setPointsEarned] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [status, setStatus] = useState<
@@ -76,8 +81,7 @@ const Drill = ({
 
   const { width, height } = useWindowSize()
 
-  const isDrillCompleted =
-    questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
+  const isDrillCompleted = status === "completed"
 
   // Format time as mm:ss
   const formattedTime = useMemo(() => {
@@ -90,6 +94,26 @@ const Drill = ({
   const handleTimerComplete = () => {
     setStatus("completed")
   }
+
+  // Handle drill completion navigation
+  const handleDrillCompleteContinue = () => {
+    window.location.href = "/learn"
+  }
+
+  // Log mount/unmount for debugging
+  useEffect(() => {
+    console.log("Drill component mounted", {
+      points,
+      pointsEarned,
+      initialPoints,
+    })
+    return () =>
+      console.log("Drill component unmounted", {
+        points,
+        pointsEarned,
+        initialPoints,
+      })
+  }, [])
 
   // Log questions for debugging
   useEffect(() => {
@@ -112,6 +136,7 @@ const Drill = ({
     })
   }, [initialQuestions])
 
+  // Fetch sound preference
   useEffect(() => {
     getSoundPreference().then(({ soundEnabled }) => {
       setSoundEnabled(soundEnabled)
@@ -129,6 +154,7 @@ const Drill = ({
     return () => clearInterval(timer)
   }, [isDrillCompleted, serverPending])
 
+  // Handle drill completion
   useEffect(() => {
     if (isDrillCompleted && !hasPlayedFinishAudio.current) {
       console.log("Drill completed:", {
@@ -140,40 +166,49 @@ const Drill = ({
       hasPlayedFinishAudio.current = true
       playFinish()
       if (isTimed) {
-        const scorePercentage =
+        const scorePercentage = Math.round(
           (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
+        )
         const pointsEarned =
           scorePercentage === 100 ? app.REWARD_POINTS_FOR_TIMED : 0
-        const gemsEarned = scorePercentage === 100 ? 1 : 0
-        setServerPending(true)
-        updateStats({
-          drillId,
-          subjectId,
-          isTimed,
-          pointsEarned,
-          gemsEarned,
-          questionsCompleted, // Use questionsCompleted for partial progress
-          isCurrent,
-          scorePercentage,
-          isDrillCompleted: true,
-        })
-          .then((response) => {
-            if (response.error === "gems") {
+        const gemsEarned = 0 // No gems for timed drills
+        setPointsEarned(pointsEarned)
+        setPoints((prev) => prev + pointsEarned)
+        startUpdateTransition(() => {
+          setServerPending(true)
+          updateStats({
+            drillId,
+            subjectId,
+            isTimed,
+            pointsEarned,
+            gemsEarned,
+            questionsCompleted,
+            isCurrent,
+            scorePercentage,
+            isDrillCompleted: true,
+          })
+            .then((response) => {
+              console.log("updateStats response:", response)
+              if (response.error === "gems") {
+                setPoints((prev) => prev - pointsEarned)
+                setPointsEarned(0)
+                setGemsCount((prev) => Math.max(0, prev - gemsEarned))
+                setQuestionsCompleted((prev) => prev - questionsCompleted)
+                openGemsModal()
+              }
+            })
+            .catch((error) => {
+              console.error("updateStats failed:", error)
               setPoints((prev) => prev - pointsEarned)
+              setPointsEarned(0)
               setGemsCount((prev) => Math.max(0, prev - gemsEarned))
               setQuestionsCompleted((prev) => prev - questionsCompleted)
-              openGemsModal()
-            }
-          })
-          .catch(() => {
-            setPoints((prev) => prev - pointsEarned)
-            setGemsCount((prev) => Math.max(0, prev - gemsEarned))
-            setQuestionsCompleted((prev) => prev - questionsCompleted)
-            toast.error("Failed to save progress. Please try again.")
-          })
-          .finally(() => {
-            setServerPending(false)
-          })
+              toast.error("Failed to save progress. Please try again.")
+            })
+            .finally(() => {
+              setServerPending(false)
+            })
+        })
       }
     }
   }, [
@@ -190,6 +225,7 @@ const Drill = ({
     questionsCompleted,
   ])
 
+  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (status !== "none" || serverPending) return
@@ -236,11 +272,52 @@ const Drill = ({
       setStatus("none")
     } else {
       console.log("Setting status to completed")
+      setStatus("completed")
       if (isTimed) {
         setQuestionsCompleted((prev) => prev + 1)
       }
-      setStatus("completed")
+      // Update stats for drill completion
+      const isLastQuestion = currentQuestionIndex === questions.length - 1
+      if (isLastQuestion && !isTimed) {
+        callUpdateStats({
+          drillId,
+          subjectId,
+          isTimed,
+          pointsEarned: 0, // No additional points for completion
+          gemsEarned: 0, // No additional gems for completion
+          questionsCompleted: 0, // No additional questions completed
+          isDrillCompleted: true, // Mark drill as completed
+        })
+      }
     }
+  }
+
+  const callUpdateStats = (params: any) => {
+    startUpdateTransition(() => {
+      setServerPending(true)
+      updateStats(params)
+        .then((response) => {
+          console.log("updateStats response:", response)
+          if (response.error === "gems" && params.pointsEarned > 0) {
+            setPoints((prev) => prev - params.pointsEarned)
+            setPointsEarned((prev) => prev - params.pointsEarned)
+            setGemsCount((prev) => Math.max(0, prev - params.gemsEarned))
+            setQuestionsCompleted((prev) => prev - params.questionsCompleted)
+            openGemsModal()
+          }
+        })
+        .catch((error) => {
+          console.error("updateStats failed:", error)
+          setPoints((prev) => prev - params.pointsEarned)
+          setPointsEarned((prev) => prev - params.pointsEarned)
+          setGemsCount((prev) => Math.max(0, prev - params.gemsEarned))
+          setQuestionsCompleted((prev) => prev - params.questionsCompleted)
+          toast.error("Failed to save progress. Please try again.")
+        })
+        .finally(() => {
+          setServerPending(false)
+        })
+    })
   }
 
   const onContinue = () => {
@@ -297,57 +374,29 @@ const Drill = ({
       setStatus("correct")
       setShowExplanation(true)
       setPoints((prev) => prev + app.POINTS_PER_QUESTION)
+      setPointsEarned((prev) => prev + app.POINTS_PER_QUESTION)
       setGemsCount((prev) =>
         Math.min(prev + (isCurrent ? 0 : 1), app.GEMS_LIMIT)
       )
       setQuestionsCompleted((prev) => prev + 1)
 
-      const isLastQuestion = questionsCompleted + 1 === app.QUESTIONS_PER_DRILL
+      // Determine if this is the last question
+      const isLastQuestion = currentQuestionIndex === questions.length - 1
       console.log("Updating stats:", {
         isLastQuestion,
-        questionsCompleted: isLastQuestion ? 0 : 1,
+        questionsCompleted: 1,
         drillId,
         subjectId,
       })
-      setServerPending(true)
-      updateStats({
+      callUpdateStats({
         drillId,
         subjectId,
         isTimed,
         pointsEarned: app.POINTS_PER_QUESTION,
         gemsEarned: isCurrent ? 0 : 1,
         questionsCompleted: 1,
-        isDrillCompleted: isLastQuestion,
+        isDrillCompleted: false, // Defer completion to onNext
       })
-        .then((response) => {
-          if (response.error === "gems") {
-            setStatus("none")
-            setSelectedOption(null)
-            setShowExplanation(false)
-            setIsCorrect(false)
-            setCorrectAnswersCount((prev) => prev - 1)
-            setTotalAttempts((prev) => prev - 1)
-            setPoints((prev) => prev - app.POINTS_PER_QUESTION)
-            setGemsCount((prev) => Math.max(0, prev - (isCurrent ? 0 : 1)))
-            setQuestionsCompleted((prev) => prev - 1)
-            openGemsModal()
-          }
-        })
-        .catch(() => {
-          setStatus("none")
-          setSelectedOption(null)
-          setShowExplanation(false)
-          setIsCorrect(false)
-          setCorrectAnswersCount((prev) => prev - 1)
-          setTotalAttempts((prev) => prev - 1)
-          setPoints((prev) => prev - app.POINTS_PER_QUESTION)
-          setGemsCount((prev) => Math.max(0, prev - (isCurrent ? 0 : 1)))
-          setQuestionsCompleted((prev) => prev - 1)
-          toast.error("Failed to save progress. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
     } else {
       playIncorrect()
       setStatus("wrong")
@@ -355,58 +404,16 @@ const Drill = ({
 
       if (isCurrent && !isPro) {
         setGemsCount((prev) => Math.max(0, prev - 1))
-        setServerPending(true)
-        updateStats({
+        callUpdateStats({
           drillId,
           subjectId,
           isTimed,
           gemsEarned: -1,
           questionsCompleted: 0,
+          isDrillCompleted: false,
         })
-          .then((response) => {
-            if (response.error === "gems") {
-              setStatus("none")
-              setSelectedOption(null)
-              setShowExplanation(false)
-              setGemsCount((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-              openGemsModal()
-            }
-          })
-          .catch(() => {
-            setStatus("none")
-            setSelectedOption(null)
-            setShowExplanation(false)
-            setGemsCount((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-            toast.error("Failed to save progress. Please try again.")
-          })
-          .finally(() => {
-            setServerPending(false)
-          })
       }
     }
-  }
-
-  const getButtonClass = (option: number) => {
-    if (status === "none") {
-      return selectedOption === option
-        ? "p-2 bg-blue-100 border-blue-500 border-2 rounded transition"
-        : "p-2 bg-gray-100 rounded hover:bg-gray-200 transition"
-    }
-    if (isTimed) {
-      return selectedOption === option
-        ? "p-2 bg-blue-100 border-blue-500 border-2 rounded transition"
-        : "p-2 bg-gray-100 rounded opacity-39"
-    }
-    if (isCorrect) {
-      if (option === option) {
-        return "p-2 bg-green-100 text-green-800 rounded border-2 border-green-500"
-      }
-    } else {
-      if (option === selectedOption) {
-        return "p-2 bg-red-100 text-red-800 rounded border-2 border-red-500"
-      }
-    }
-    return "p-2 bg-gray-100 rounded opacity-39"
   }
 
   // Warn if insufficient questions
@@ -417,13 +424,12 @@ const Drill = ({
     })
   }
 
-  if (status === "completed" || isDrillCompleted) {
+  if (isDrillCompleted) {
     const scorePercentage = isTimed
-      ? (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
+      ? Math.round((correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100)
       : totalAttempts > 0
-        ? (correctAnswersCount / totalAttempts) * 100
+        ? Math.round((correctAnswersCount / totalAttempts) * 100)
         : 0
-    const sessionPoints = points - initialPoints
     return (
       <>
         <ReactConfetti
@@ -433,7 +439,7 @@ const Drill = ({
           numberOfPieces={500}
           tweenDuration={10000}
         />
-        <div className="flex min-h-screen flex-col">
+        <div className="flex flex-col">
           <div
             className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4
               text-center lg:gap-y-8"
@@ -461,7 +467,7 @@ const Drill = ({
             <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
               <ResultCard
                 variant="points"
-                value={sessionPoints} // Use sessionPoints instead of points
+                value={pointsEarned}
                 caption="Points Earned"
               />
               <ResultCard
@@ -476,7 +482,7 @@ const Drill = ({
             disabled={false}
             isTimed={isTimed}
             status="completed"
-            onCheck={() => window.location.reload()}
+            onCheck={handleDrillCompleteContinue}
           />
         </div>
       </>
@@ -514,8 +520,8 @@ const Drill = ({
         drillNumber={initialDrillNumber}
         isTimed={isTimed}
         isDrillCompleted={isDrillCompleted}
-        serverPending={serverPending}
-        onTimerComplete={handleTimerComplete} // Pass onTimerComplete
+        serverPending={serverPending || isUpdatePending}
+        onTimerComplete={handleTimerComplete}
       />
       <div className="flex-1">
         <div className="flex h-full items-center justify-center">
@@ -563,7 +569,9 @@ const Drill = ({
                             ? "wrong"
                             : "none"
                       }
-                      disabled={status !== "none" || serverPending}
+                      disabled={
+                        status !== "none" || serverPending || isUpdatePending
+                      }
                       onSelect={() => onSelect(optionNum)}
                       audio={null}
                     />
@@ -575,7 +583,10 @@ const Drill = ({
         </div>
       </div>
       <DrillFooter
-        disabled={status === "none" && (!selectedOption || serverPending)}
+        disabled={
+          status === "none" &&
+          (!selectedOption || serverPending || isUpdatePending)
+        }
         isTimed={isTimed}
         status={status}
         onCheck={onContinue}
