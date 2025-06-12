@@ -11,6 +11,9 @@ import { DrillFooter } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/
 import { updateStats } from "@/app/actions/update-stats"
 import { useGemsModal } from "@/store/use-gems-modal"
 import toast from "react-hot-toast"
+import ReactConfetti from "react-confetti"
+import { useWindowSize } from "react-use"
+import { ResultCard } from "@/app/lesson/components/result-card"
 
 type Question = {
   id: number
@@ -71,7 +74,8 @@ const Drill = ({
   const [timeTaken, setTimeTaken] = useState(0)
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  // Moved isDrillCompleted before usage
+  const { width, height } = useWindowSize()
+
   const isDrillCompleted =
     questionsCompleted >= app.QUESTIONS_PER_DRILL || status === "completed"
 
@@ -420,49 +424,61 @@ const Drill = ({
         ? (correctAnswersCount / totalAttempts) * 100
         : 0
     return (
-      <div className="flex min-h-screen flex-col">
-        <div
-          className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4
-            text-center lg:gap-y-8"
-        >
-          <h2 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-            Drill Finished!
-          </h2>
-          <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
-            You answered{" "}
-            <span className="font-semibold text-blue-600">
-              {correctAnswersCount}
-            </span>{" "}
-            out of{" "}
-            <span className="font-semibold text-blue-600">
-              {app.QUESTIONS_PER_DRILL}
-            </span>{" "}
-            questions correctly.
-          </p>
-          <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
-            Your score:{" "}
-            <span className="font-semibold text-blue-600">
-              {scorePercentage.toFixed(0)}%
-            </span>
-          </p>
-          <p className="text-lg text-neutral-600 lg:text-xl dark:text-neutral-400">
-            Time taken:{" "}
-            <span className="font-semibold text-blue-600">{formattedTime}</span>
-          </p>
-          {questions.length < app.QUESTIONS_PER_DRILL && (
-            <p className="text-sm text-red-600">
-              Note: Only {questions.length} of {app.QUESTIONS_PER_DRILL}{" "}
-              questions were available.
-            </p>
-          )}
-        </div>
-        <DrillFooter
-          disabled={false}
-          isTimed={isTimed}
-          status="completed"
-          onCheck={() => window.location.reload()}
+      <>
+        <ReactConfetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          tweenDuration={10000}
         />
-      </div>
+        <div className="flex min-h-screen flex-col">
+          <div
+            className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-y-4
+              text-center lg:gap-y-8"
+          >
+            <Image
+              src="/images/icons/finish.svg"
+              height={100}
+              width={100}
+              alt="Finish"
+              className="hidden lg:block"
+            />
+            <Image
+              src="/images/icons/finish.svg"
+              height={50}
+              width={50}
+              alt="Finish"
+              className="block lg:hidden"
+            />
+            <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
+              Drill done
+            </h1>
+            <p className="text-lg font-semibold text-neutral-600 lg:text-xl dark:text-neutral-400">
+              really done
+            </p>
+            <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
+              <ResultCard
+                variant="points"
+                value={points}
+                caption="Points Earned"
+              />
+              <ResultCard
+                variant="score"
+                value={`${scorePercentage}%`}
+                caption="Score"
+              />
+              <ResultCard variant="time" value={formattedTime} caption="Time" />
+            </div>
+          </div>
+          <DrillFooter
+            disabled={false}
+            isTimed={isTimed}
+            status="completed"
+            onCheck={() => window.location.reload()}
+          />
+        </div>
+      </>
     )
   }
 
