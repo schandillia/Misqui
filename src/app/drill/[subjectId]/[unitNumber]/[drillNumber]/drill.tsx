@@ -423,6 +423,7 @@ const Drill = ({
       : totalAttempts > 0
         ? (correctAnswersCount / totalAttempts) * 100
         : 0
+    const sessionPoints = points - initialPoints
     return (
       <>
         <ReactConfetti
@@ -460,7 +461,7 @@ const Drill = ({
             <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
               <ResultCard
                 variant="points"
-                value={points}
+                value={sessionPoints} // Use sessionPoints instead of points
                 caption="Points Earned"
               />
               <ResultCard
