@@ -17,11 +17,11 @@ export const RightColumn = ({ children }: Props) => {
           <Link href="/about" className="whitespace-nowrap hover:underline">
             About
           </Link>
-          <Link href="/store" className="whitespace-nowrap hover:underline">
-            Store
+          <Link href="/support" className="whitespace-nowrap hover:underline">
+            Support
           </Link>
-          <Link href="/efficacy" className="whitespace-nowrap hover:underline">
-            Efficacy
+          <Link href="/method" className="whitespace-nowrap hover:underline">
+            Method
           </Link>
           <Link href="/terms" className="whitespace-nowrap hover:underline">
             Terms
