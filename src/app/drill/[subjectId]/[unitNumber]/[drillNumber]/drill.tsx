@@ -15,6 +15,7 @@ import ReactConfetti from "react-confetti"
 import { useWindowSize } from "react-use"
 import { ResultCard } from "@/app/lesson/components/result-card"
 import { useRouter } from "next/navigation"
+import { getSession } from "next-auth/react"
 
 type Question = {
   id: number
@@ -80,7 +81,6 @@ const Drill = ({
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const { width, height } = useWindowSize()
-
   const isDrillCompleted = status === "completed"
 
   // Format time as mm:ss
@@ -96,8 +96,15 @@ const Drill = ({
   }
 
   // Handle drill completion navigation
-  const handleDrillCompleteContinue = () => {
-    window.location.href = "/learn"
+  const handleDrillCompleteContinue = async () => {
+    if (isUpdatePending || serverPending) {
+      console.log("Navigation blocked: waiting for pending updates")
+      return
+    }
+    // Revalidate session before navigation
+    await getSession()
+    console.log("Navigating to /learn")
+    router.push("/learn")
   }
 
   // Log mount/unmount for debugging
@@ -146,15 +153,13 @@ const Drill = ({
   // Timer effect for elapsed time
   useEffect(() => {
     if (isDrillCompleted || serverPending) return
-
     const timer = setInterval(() => {
       setTimeTaken((prev) => prev + 1)
     }, 1000)
-
     return () => clearInterval(timer)
   }, [isDrillCompleted, serverPending])
 
-  // Handle drill completion
+  // Handle drill completion stats update
   useEffect(() => {
     if (isDrillCompleted && !hasPlayedFinishAudio.current) {
       console.log("Drill completed:", {
@@ -162,54 +167,67 @@ const Drill = ({
         questionsLength: questions.length,
         questionsCompleted,
         status,
+        pointsEarned,
+        correctAnswersCount,
       })
       hasPlayedFinishAudio.current = true
       playFinish()
-      if (isTimed) {
-        const scorePercentage = Math.round(
-          (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
-        )
-        const pointsEarned =
-          scorePercentage === 100 ? app.REWARD_POINTS_FOR_TIMED : 0
-        const gemsEarned = 0 // No gems for timed drills
-        setPointsEarned(pointsEarned)
-        setPoints((prev) => prev + pointsEarned)
-        startUpdateTransition(() => {
-          setServerPending(true)
-          updateStats({
-            drillId,
-            subjectId,
-            isTimed,
-            pointsEarned,
-            gemsEarned,
-            questionsCompleted,
-            isCurrent,
-            scorePercentage,
-            isDrillCompleted: true,
-          })
-            .then((response) => {
-              console.log("updateStats response:", response)
-              if (response.error === "gems") {
-                setPoints((prev) => prev - pointsEarned)
-                setPointsEarned(0)
-                setGemsCount((prev) => Math.max(0, prev - gemsEarned))
-                setQuestionsCompleted((prev) => prev - questionsCompleted)
-                openGemsModal()
-              }
-            })
-            .catch((error) => {
-              console.error("updateStats failed:", error)
-              setPoints((prev) => prev - pointsEarned)
-              setPointsEarned(0)
-              setGemsCount((prev) => Math.max(0, prev - gemsEarned))
-              setQuestionsCompleted((prev) => prev - questionsCompleted)
-              toast.error("Failed to save progress. Please try again.")
-            })
-            .finally(() => {
-              setServerPending(false)
-            })
+
+      const scorePercentage = isTimed
+        ? Math.round((correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100)
+        : totalAttempts > 0
+          ? Math.round((correctAnswersCount / totalAttempts) * 100)
+          : 0
+
+      const finalPointsEarned = isTimed
+        ? scorePercentage === app.PASS_SCORE
+          ? app.REWARD_POINTS_FOR_TIMED
+          : 0
+        : 0 // No points in useEffect for non-timed to avoid duplication
+
+      const finalGemsEarned = 0 // Gems updated per question in onContinue
+
+      console.log("Calling updateStats on drill completion:", {
+        pointsEarned: finalPointsEarned,
+        gemsEarned: finalGemsEarned,
+        questionsCompleted: isTimed ? 0 : questionsCompleted,
+      })
+
+      startUpdateTransition(() => {
+        setServerPending(true)
+        updateStats({
+          drillId,
+          subjectId,
+          isTimed,
+          pointsEarned: finalPointsEarned,
+          gemsEarned: finalGemsEarned,
+          questionsCompleted: isTimed ? 0 : questionsCompleted,
+          isDrillCompleted: true,
+          isCurrent,
+          scorePercentage,
         })
-      }
+          .then((response) => {
+            console.log("Final updateStats response:", response)
+            if (response.error === "gems") {
+              setPoints((prev) => prev - finalPointsEarned)
+              setPointsEarned((prev) => prev - finalPointsEarned)
+              setGemsCount((prev) => Math.max(0, prev - finalGemsEarned))
+              setQuestionsCompleted((prev) => prev - questionsCompleted)
+              openGemsModal()
+            }
+          })
+          .catch((error) => {
+            console.error("Final updateStats failed:", error)
+            setPoints((prev) => prev - finalPointsEarned)
+            setPointsEarned((prev) => prev - finalPointsEarned)
+            setGemsCount((prev) => Math.max(0, prev - finalGemsEarned))
+            setQuestionsCompleted((prev) => prev - questionsCompleted)
+            toast.error("Failed to save progress. Please try again.")
+          })
+          .finally(() => {
+            setServerPending(false)
+          })
+      })
     }
   }, [
     isDrillCompleted,
@@ -220,9 +238,10 @@ const Drill = ({
     subjectId,
     correctAnswersCount,
     totalAttempts,
-    questions,
-    openGemsModal,
     questionsCompleted,
+    pointsEarned,
+    openGemsModal,
+    isCurrent,
   ])
 
   // Handle keyboard shortcuts
@@ -276,23 +295,11 @@ const Drill = ({
       if (isTimed) {
         setQuestionsCompleted((prev) => prev + 1)
       }
-      // Update stats for drill completion
-      const isLastQuestion = currentQuestionIndex === questions.length - 1
-      if (isLastQuestion && !isTimed) {
-        callUpdateStats({
-          drillId,
-          subjectId,
-          isTimed,
-          pointsEarned: 0, // No additional points for completion
-          gemsEarned: 0, // No additional gems for completion
-          questionsCompleted: 0, // No additional questions completed
-          isDrillCompleted: true, // Mark drill as completed
-        })
-      }
     }
   }
 
   const callUpdateStats = (params: any) => {
+    console.log("Calling updateStats:", params)
     startUpdateTransition(() => {
       setServerPending(true)
       updateStats(params)
@@ -328,6 +335,8 @@ const Drill = ({
       status,
       currentQuestionIndex,
       questionsCompleted,
+      points,
+      pointsEarned,
     })
 
     if (isTimed) {
@@ -373,29 +382,22 @@ const Drill = ({
       playCorrect()
       setStatus("correct")
       setShowExplanation(true)
-      setPoints((prev) => prev + app.POINTS_PER_QUESTION)
-      setPointsEarned((prev) => prev + app.POINTS_PER_QUESTION)
+      const pointsForQuestion = app.POINTS_PER_QUESTION
+      setPoints((prev) => prev + pointsForQuestion)
+      setPointsEarned((prev) => prev + pointsForQuestion)
       setGemsCount((prev) =>
         Math.min(prev + (isCurrent ? 0 : 1), app.GEMS_LIMIT)
       )
       setQuestionsCompleted((prev) => prev + 1)
 
-      // Determine if this is the last question
-      const isLastQuestion = currentQuestionIndex === questions.length - 1
-      console.log("Updating stats:", {
-        isLastQuestion,
-        questionsCompleted: 1,
-        drillId,
-        subjectId,
-      })
       callUpdateStats({
         drillId,
         subjectId,
         isTimed,
-        pointsEarned: app.POINTS_PER_QUESTION,
+        pointsEarned: pointsForQuestion,
         gemsEarned: isCurrent ? 0 : 1,
         questionsCompleted: 1,
-        isDrillCompleted: false, // Defer completion to onNext
+        isDrillCompleted: false,
       })
     } else {
       playIncorrect()
@@ -479,7 +481,7 @@ const Drill = ({
             </div>
           </div>
           <DrillFooter
-            disabled={false}
+            disabled={isUpdatePending || serverPending}
             isTimed={isTimed}
             status="completed"
             onCheck={handleDrillCompleteContinue}
