@@ -183,14 +183,20 @@ const Drill = ({
         ? scorePercentage === app.PASS_SCORE
           ? app.REWARD_POINTS_FOR_TIMED
           : 0
-        : 0 // No points in useEffect for non-timed to avoid duplication
+        : 0
 
-      const finalGemsEarned = 0 // Gems updated per question in onContinue
+      const finalGemsEarned = 0
+
+      if (finalPointsEarned > 0) {
+        setPoints((prev) => prev + finalPointsEarned)
+        setPointsEarned((prev) => prev + finalPointsEarned)
+      }
 
       console.log("Calling updateStats on drill completion:", {
         pointsEarned: finalPointsEarned,
         gemsEarned: finalGemsEarned,
         questionsCompleted: isTimed ? 0 : questionsCompleted,
+        scorePercentage,
       })
 
       startUpdateTransition(() => {
@@ -290,41 +296,11 @@ const Drill = ({
       setIsCorrect(false)
       setStatus("none")
     } else {
-      console.log("Setting status to completed")
       setStatus("completed")
       if (isTimed) {
         setQuestionsCompleted((prev) => prev + 1)
       }
     }
-  }
-
-  const callUpdateStats = (params: any) => {
-    console.log("Calling updateStats:", params)
-    startUpdateTransition(() => {
-      setServerPending(true)
-      updateStats(params)
-        .then((response) => {
-          console.log("updateStats response:", response)
-          if (response.error === "gems" && params.pointsEarned > 0) {
-            setPoints((prev) => prev - params.pointsEarned)
-            setPointsEarned((prev) => prev - params.pointsEarned)
-            setGemsCount((prev) => Math.max(0, prev - params.gemsEarned))
-            setQuestionsCompleted((prev) => prev - params.questionsCompleted)
-            openGemsModal()
-          }
-        })
-        .catch((error) => {
-          console.error("updateStats failed:", error)
-          setPoints((prev) => prev - params.pointsEarned)
-          setPointsEarned((prev) => prev - params.pointsEarned)
-          setGemsCount((prev) => Math.max(0, prev - params.gemsEarned))
-          setQuestionsCompleted((prev) => prev - params.questionsCompleted)
-          toast.error("Failed to save progress. Please try again.")
-        })
-        .finally(() => {
-          setServerPending(false)
-        })
-    })
   }
 
   const onContinue = () => {
@@ -343,6 +319,10 @@ const Drill = ({
       if (status === "correct" || status === "wrong") {
         onNext()
         return
+      }
+
+      if (currentQuestionIndex === questions.length - 1) {
+        setQuestionsCompleted((prev) => prev + 1) // Ensure progress bar reaches 100%
       }
 
       const correct = selectedOption === currentQuestion.correctOption
@@ -390,7 +370,7 @@ const Drill = ({
       )
       setQuestionsCompleted((prev) => prev + 1)
 
-      callUpdateStats({
+      updateStats({
         drillId,
         subjectId,
         isTimed,
@@ -406,7 +386,7 @@ const Drill = ({
 
       if (isCurrent && !isPro) {
         setGemsCount((prev) => Math.max(0, prev - 1))
-        callUpdateStats({
+        updateStats({
           drillId,
           subjectId,
           isTimed,
