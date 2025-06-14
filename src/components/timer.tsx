@@ -20,7 +20,7 @@ export const Timer = ({
 
   // Countdown logic
   useEffect(() => {
-    if (isExerciseCompleted || secondsLeft <= 0 || isTimerPaused) {
+    if (isExerciseCompleted || isTimerPaused) {
       return
     }
 
@@ -28,6 +28,7 @@ export const Timer = ({
       setSecondsLeft((prev) => {
         const newSeconds = prev - 1
         if (newSeconds <= 0) {
+          clearInterval(timer) // Clear interval when time is up
           return 0
         }
         return newSeconds
@@ -35,7 +36,7 @@ export const Timer = ({
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [isExerciseCompleted, isTimerPaused]) // Removed secondsLeft, onComplete
+  }, [isExerciseCompleted, isTimerPaused])
 
   // Trigger onComplete when time runs out
   useEffect(() => {
