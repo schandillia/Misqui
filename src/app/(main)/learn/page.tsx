@@ -2,7 +2,7 @@
 import { UnitHeader } from "@/app/(main)/learn/components/unit-header"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { getStats, getUnits, getUserSubscription } from "@/db/queries"
-import { drills as drillsTable, userDrillCompletion } from "@/db/schema"
+import { userDrillCompletion } from "@/db/schema"
 import { redirect } from "next/navigation"
 import { eq, and } from "drizzle-orm"
 import { db } from "@/db/drizzle"
@@ -11,22 +11,7 @@ import DrillsList from "@/app/(main)/learn/components/drills-list"
 import { UserStats } from "@/app/(main)/components/user-stats"
 import { PromoCard } from "@/app/(main)/components/promo-card"
 import { MissionsCard } from "@/app/(main)/components/missions-card"
-
-type DrillType = typeof drillsTable.$inferSelect
-
-type UnitType = {
-  id: number
-  title: string
-  description: string
-  createdAt: Date
-  updatedAt: Date
-  subjectId: number
-  order: number
-  unitNumber: number
-  drills: DrillType[]
-  currentDrillId: number | null
-  questionsCompleted: number | null
-}
+import { UnitWithDrills } from "@/db/queries/types"
 
 const Page = async () => {
   const [userSubscription, stats, units] = await Promise.all([
@@ -37,15 +22,13 @@ const Page = async () => {
 
   const isPro = !!userSubscription?.isActive
 
-  // Explicit type guard to narrow stats and activeSubject
   if (!stats || !stats.activeSubject) {
     redirect("/courses")
   }
 
-  // Explicitly narrow type for TypeScript
   const activeSubject = stats.activeSubject
   if (!activeSubject) {
-    redirect("/courses") // Redundant but ensures TypeScript narrows type
+    redirect("/courses")
   }
 
   const userId = stats.userId
@@ -77,22 +60,21 @@ const Page = async () => {
       questionsCompleted
     )
 
-  const currentUnit = units.find((unit: UnitType) =>
+  const currentUnit = units.find((unit: UnitWithDrills) =>
     unit.drills.some((drill) => drill.id === currentDrillId)
   )
-  const currentUnitOrder = currentUnit ? currentUnit.order : units[0]?.order
+  const currentUnitOrder = currentUnit?.order ?? units[0]?.order ?? 0
 
   return (
     <div className="flex flex-row gap-[48px] px-6">
       <div className="relative top-0 flex-1 pb-10">
         <div
           className="sticky top-0 mb-5 flex items-center justify-center border-b-2 pb-3
-            text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] bg-neutral-50
-            dark:bg-neutral-900"
+            text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] bg-neutral-900"
         >
           <h1 className="text-lg font-bold uppercase">{activeSubject.title}</h1>
         </div>
-        {units.map((unit: UnitType) => {
+        {units.map((unit: UnitWithDrills) => {
           const isActive = unit.order <= currentUnitOrder
           return (
             <div key={unit.id} className="mb-16">
@@ -107,7 +89,7 @@ const Page = async () => {
                 <DrillsList
                   drills={unit.drills}
                   currentDrillId={currentDrillId}
-                  questionsCompleted={updatedQuestionsCompleted}
+                  questionsCompleted={updatedQuestionsCompleted ?? 0} // Coerce to number
                   subjectId={activeSubject.id}
                   unitNumber={unit.unitNumber}
                   gems={stats.gems}

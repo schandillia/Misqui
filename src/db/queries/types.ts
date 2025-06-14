@@ -2,12 +2,12 @@
 export type UnitWithDrills = {
   id: number
   title: string
-  description: string | null
+  description: string
   subjectId: number
   unitNumber: number
   order: number
   createdAt: Date
-  updatedAt: Date | null
+  updatedAt: Date
   drills: {
     id: number
     title: string
@@ -16,7 +16,7 @@ export type UnitWithDrills = {
     drill_number: number
     isTimed: boolean
     createdAt: Date
-    updatedAt: Date | null
+    updatedAt: Date
   }[]
   currentDrillId: number | null
   questionsCompleted: number | null

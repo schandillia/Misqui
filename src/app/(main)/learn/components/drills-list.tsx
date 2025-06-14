@@ -1,15 +1,14 @@
+// File: app/(main)/learn/components/drills-list.tsx
 import Link from "next/link"
-import { drills as drillsTable } from "@/db/schema"
+import { UnitWithDrills } from "@/db/queries/types" // Import UnitWithDrills
 import app from "src/lib/data/app.json"
 import DrillButton from "@/app/(main)/learn/components/drill-button"
 import DrillButtonWrapper from "@/app/(main)/learn/components/drill-button-wrapper"
 
-type DrillType = typeof drillsTable.$inferSelect
-
 type DrillsListProps = {
-  drills: DrillType[]
+  drills: UnitWithDrills["drills"] // Align with query output
   currentDrillId: number | null
-  questionsCompleted: number | null
+  questionsCompleted: number // Non-nullable, as guaranteed by page.tsx
   subjectId: number
   unitNumber: number
   gems: number
@@ -37,19 +36,17 @@ const DrillsList = ({
 
           let label: string | null = null
           if (isCurrent) {
-            if (questionsCompleted && questionsCompleted > 0 && !isTimed) {
+            if (questionsCompleted > 0 && !isTimed) {
               label = "Resume"
             } else {
               label = "Start"
             }
           }
 
-          const percentage = questionsCompleted
-            ? Math.min(
-                100,
-                (questionsCompleted / app.QUESTIONS_PER_DRILL) * 100
-              )
-            : 0
+          const percentage = Math.min(
+            100,
+            (questionsCompleted / app.QUESTIONS_PER_DRILL) * 100
+          )
 
           const wrappedButton = (
             <DrillButtonWrapper
