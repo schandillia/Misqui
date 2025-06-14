@@ -1,4 +1,3 @@
-// File: app/(main)/learn/components/drills-list.tsx
 import Link from "next/link"
 import { drills as drillsTable } from "@/db/schema"
 import app from "src/lib/data/app.json"
@@ -12,7 +11,9 @@ type DrillsListProps = {
   currentDrillId: number | null
   questionsCompleted: number | null
   subjectId: number
-  unitNumber: number // Add unitNumber to props
+  unitNumber: number
+  gems: number
+  isPro: boolean
 }
 
 const DrillsList = ({
@@ -20,7 +21,9 @@ const DrillsList = ({
   currentDrillId,
   questionsCompleted,
   subjectId,
-  unitNumber, // Destructure unitNumber
+  unitNumber,
+  gems,
+  isPro,
 }: DrillsListProps) => {
   return (
     <div className="mt-9 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -56,6 +59,8 @@ const DrillsList = ({
               current={isCurrent}
               label={label}
               drillId={drill.id}
+              gems={gems}
+              isPro={isPro}
             >
               <DrillButton
                 isUnlocked={isUnlocked}

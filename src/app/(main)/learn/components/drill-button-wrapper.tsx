@@ -1,6 +1,8 @@
 "use client"
 
 import { ReactNode, useEffect, useRef } from "react"
+import { useGemsModal } from "@/store/use-gems-modal"
+import { InsufficientGemsModal } from "@/app/(main)/learn/components/insufficient-gems-modal"
 
 type DrillButtonWrapperProps = {
   index: number
@@ -10,6 +12,8 @@ type DrillButtonWrapperProps = {
   current?: boolean
   label?: string | null
   drillId?: number
+  gems: number
+  isPro: boolean
 }
 
 const DrillButtonWrapper = ({
@@ -17,8 +21,11 @@ const DrillButtonWrapper = ({
   current,
   label,
   drillId,
+  gems,
+  isPro,
 }: DrillButtonWrapperProps) => {
   const ref = useRef<HTMLDivElement>(null)
+  const { open } = useGemsModal()
 
   useEffect(() => {
     if (current && ref.current) {
@@ -29,10 +36,18 @@ const DrillButtonWrapper = ({
     }
   }, [current])
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isPro && gems === 0) {
+      e.preventDefault()
+      open()
+    }
+  }
+
   return (
     <div
       ref={ref}
       className="relative flex h-[102px] flex-col items-center justify-center pt-0"
+      onClick={handleClick}
     >
       <div className="mb-2 flex h-12 items-end justify-center">
         {current && label ? (
@@ -57,6 +72,7 @@ const DrillButtonWrapper = ({
         )}
       </div>
       {children}
+      <InsufficientGemsModal />
     </div>
   )
 }

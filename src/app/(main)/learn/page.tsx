@@ -22,7 +22,7 @@ type UnitType = {
   updatedAt: Date
   subjectId: number
   order: number
-  unitNumber: number // Add unitNumber to type
+  unitNumber: number
   drills: DrillType[]
   currentDrillId: number | null
   questionsCompleted: number | null
@@ -110,6 +110,8 @@ const Page = async () => {
                   questionsCompleted={updatedQuestionsCompleted}
                   subjectId={activeSubject.id}
                   unitNumber={unit.unitNumber}
+                  gems={stats.gems}
+                  isPro={isPro}
                 />
               )}
             </div>
