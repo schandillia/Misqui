@@ -28,8 +28,8 @@ export const updateStats = async ({
   gemsEarned = 0,
   questionsCompleted = 0,
   isDrillCompleted = false,
-  isCurrent = false, // Default value
-  scorePercentage = 0, // Default value
+  isCurrent = false,
+  scorePercentage = 0,
 }: UpdateStatsInput) => {
   const session = await auth()
   if (!session?.user?.id) {
@@ -38,6 +38,7 @@ export const updateStats = async ({
   }
 
   const userId = session.user.id
+  const today = new Date().toISOString().split("T")[0]
 
   try {
     // Log input for debugging
@@ -59,6 +60,9 @@ export const updateStats = async ({
       .select({
         gems: stats.gems,
         points: stats.points,
+        currentStreak: stats.currentStreak,
+        longestStreak: stats.longestStreak,
+        lastActivityDate: stats.lastActivityDate,
       })
       .from(stats)
       .where(eq(stats.userId, userId))
@@ -71,11 +75,45 @@ export const updateStats = async ({
 
     const currentGems = currentStats[0].gems
     const currentPoints = currentStats[0].points
+    const currentStreak = currentStats[0].currentStreak
+    const longestStreak = currentStats[0].longestStreak
+    const lastActivityDate = currentStats[0].lastActivityDate
 
     // Validate gems
     if (currentGems + gemsEarned < 0) {
       logger.warn("Insufficient gems for user: %s", userId)
       return { error: "gems" }
+    }
+
+    // Calculate streak updates
+    let newCurrentStreak = currentStreak
+    let newLongestStreak = longestStreak
+    let newLastActivityDate = lastActivityDate
+
+    if (isDrillCompleted) {
+      const lastActivity = lastActivityDate ? new Date(lastActivityDate) : null
+      const todayDate = new Date(today)
+
+      // Check if streak should be reset (more than one day since last activity)
+      if (
+        lastActivity &&
+        lastActivity < new Date(todayDate.getTime() - 24 * 60 * 60 * 1000)
+      ) {
+        newCurrentStreak = 0
+        logger.info("Streak reset to 0 for user: %s due to inactivity", userId)
+      }
+
+      // Increment streak if it's the first completion today
+      if (!lastActivityDate || lastActivityDate !== today) {
+        newCurrentStreak += 1
+        newLastActivityDate = today
+        newLongestStreak = Math.max(newCurrentStreak, longestStreak)
+        logger.info(
+          "Streak incremented to %d for user: %s",
+          newCurrentStreak,
+          userId
+        )
+      }
     }
 
     // Update stats table
@@ -84,6 +122,9 @@ export const updateStats = async ({
       .set({
         gems: Math.min(currentGems + gemsEarned, app.GEMS_LIMIT),
         points: currentPoints + pointsEarned,
+        currentStreak: newCurrentStreak,
+        longestStreak: newLongestStreak,
+        lastActivityDate: newLastActivityDate,
         updatedAt: new Date(),
       })
       .where(eq(stats.userId, userId))

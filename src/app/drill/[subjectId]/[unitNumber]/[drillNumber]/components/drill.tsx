@@ -2,20 +2,25 @@
 
 import { useState, useEffect, useRef, useTransition, useMemo } from "react"
 import app from "@/lib/data/app.json"
-import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill-header"
+import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill-header"
 import Image from "next/image"
-import { Option } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/option"
+import { Option } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/option"
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
-import { DrillFooter } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill-footer"
+import { DrillFooter } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill-footer"
 import { updateStats } from "@/app/actions/update-stats"
 import { useGemsModal } from "@/store/use-gems-modal"
 import toast from "react-hot-toast"
 import ReactConfetti from "react-confetti"
 import { useWindowSize } from "react-use"
-import { ResultCard } from "@/app/lesson/components/result-card"
+import { ResultCard } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/result-card"
 import { useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
+import {
+  getDrillResultMessage,
+  getDrillTimeCaption,
+  getDrillTimeStatus,
+} from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 
 type Question = {
   id: number
@@ -306,6 +311,11 @@ const Drill = ({
   const onContinue = () => {
     if (!selectedOption && status !== "wrong") return
 
+    if (!isPro && gemsCount === 0) {
+      openGemsModal()
+      return
+    }
+
     console.log("onContinue called:", {
       selectedOption,
       status,
@@ -322,7 +332,7 @@ const Drill = ({
       }
 
       if (currentQuestionIndex === questions.length - 1) {
-        setQuestionsCompleted((prev) => prev + 1) // Ensure progress bar reaches 100%
+        setQuestionsCompleted((prev) => prev + 1)
       }
 
       const correct = selectedOption === currentQuestion.correctOption
@@ -365,26 +375,35 @@ const Drill = ({
       const pointsForQuestion = app.POINTS_PER_QUESTION
       setPoints((prev) => prev + pointsForQuestion)
       setPointsEarned((prev) => prev + pointsForQuestion)
-      setGemsCount((prev) =>
-        Math.min(prev + (isCurrent ? 0 : 1), app.GEMS_LIMIT)
-      )
+      if (!isPro && !isCurrent) {
+        setGemsCount((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
+        updateStats({
+          drillId,
+          subjectId,
+          isTimed,
+          pointsEarned: pointsForQuestion,
+          gemsEarned: 1,
+          questionsCompleted: 1,
+          isDrillCompleted: false,
+        })
+      } else {
+        updateStats({
+          drillId,
+          subjectId,
+          isTimed,
+          pointsEarned: pointsForQuestion,
+          gemsEarned: 0,
+          questionsCompleted: 1,
+          isDrillCompleted: false,
+        })
+      }
       setQuestionsCompleted((prev) => prev + 1)
-
-      updateStats({
-        drillId,
-        subjectId,
-        isTimed,
-        pointsEarned: pointsForQuestion,
-        gemsEarned: isCurrent ? 0 : 1,
-        questionsCompleted: 1,
-        isDrillCompleted: false,
-      })
     } else {
       playIncorrect()
       setStatus("wrong")
       setShowExplanation(true)
 
-      if (isCurrent && !isPro) {
+      if (isCurrent && !isPro && gemsCount > 0) {
         setGemsCount((prev) => Math.max(0, prev - 1))
         updateStats({
           drillId,
@@ -405,6 +424,34 @@ const Drill = ({
       received: questions.length,
     })
   }
+
+  const expectedTime = app.QUESTIONS_PER_DRILL * app.SECONDS_PER_QUESTION
+
+  const { resultMessage, showGreatJob } = useMemo(
+    () =>
+      getDrillResultMessage(
+        isTimed,
+        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100,
+        timeTaken,
+        expectedTime
+      ),
+    [isTimed, correctAnswersCount, timeTaken, expectedTime]
+  )
+
+  const timeCaption = useMemo(
+    () => getDrillTimeCaption(timeTaken, expectedTime),
+    [timeTaken, expectedTime]
+  )
+
+  const timeStatus = useMemo(
+    () =>
+      getDrillTimeStatus(
+        timeTaken,
+        expectedTime,
+        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
+      ),
+    [timeTaken, expectedTime, correctAnswersCount]
+  )
 
   if (isDrillCompleted) {
     const scorePercentage = isTimed
@@ -441,23 +488,29 @@ const Drill = ({
               className="block lg:hidden"
             />
             <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-              Drill done
+              {showGreatJob && "Great job!"}
+              {showGreatJob && <br />}
+              {resultMessage}
             </h1>
             <p className="text-lg font-semibold text-neutral-600 lg:text-xl dark:text-neutral-400">
-              really done
+              {timeStatus}
             </p>
             <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
               <ResultCard
                 variant="points"
                 value={pointsEarned}
-                caption="Points Earned"
+                caption="Points"
               />
               <ResultCard
                 variant="score"
                 value={`${scorePercentage}%`}
                 caption="Score"
               />
-              <ResultCard variant="time" value={formattedTime} caption="Time" />
+              <ResultCard
+                variant="time"
+                value={formattedTime}
+                caption={timeCaption}
+              />
             </div>
           </div>
           <DrillFooter

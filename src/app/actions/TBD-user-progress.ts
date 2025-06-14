@@ -4,11 +4,12 @@ import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import {
   getCourseById,
+  getStats,
   getUserProgress,
   getUserSubscription,
   markExerciseCompleteAndUpdateStreak,
 } from "@/db/queries"
-import { challengeProgress, challenges, userProgress } from "@/db/schema"
+import { challengeProgress, challenges, stats, userProgress } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
@@ -57,7 +58,7 @@ export const reduceGems = async (challengeId: number) => {
     throw new Error("Unauthorized")
   }
 
-  const currentUserProgress = await getUserProgress()
+  const currentUserStats = await getUserProgress()
   const userSubscription = await getUserSubscription()
 
   const challenge = await db.query.challenges.findFirst({
@@ -78,14 +79,14 @@ export const reduceGems = async (challengeId: number) => {
   const isPractice = !!existingChallengeProgress
 
   if (isPractice) return { error: "practice" }
-  if (!currentUserProgress) throw new Error("User progress not found")
+  if (!currentUserStats) throw new Error("User progress not found")
   if (userSubscription?.isActive) return { error: "subscription" }
-  if (currentUserProgress.gems == 0) return { error: "gems" }
+  if (currentUserStats.gems == 0) return { error: "gems" }
 
   await db
     .update(userProgress)
     .set({
-      gems: Math.max(currentUserProgress.gems - 1, 0),
+      gems: Math.max(currentUserStats.gems - 1, 0),
     })
     .where(eq(userProgress.userId, session.user.id))
 
@@ -97,23 +98,23 @@ export const reduceGems = async (challengeId: number) => {
 }
 
 export const refillGems = async () => {
-  const currentUserProgress = await getUserProgress()
+  const currentUserStats = await getStats()
 
-  if (!currentUserProgress) throw new Error("User progress not found")
+  if (!currentUserStats) throw new Error("User progress not found")
 
-  if (currentUserProgress.gems === app.GEMS_LIMIT)
+  if (currentUserStats.gems === app.GEMS_LIMIT)
     throw new Error("Gems are already full")
 
-  if (currentUserProgress.points < app.POINTS_TO_REFILL)
+  if (currentUserStats.points < app.POINTS_TO_REFILL)
     throw new Error("Not enough points")
 
   await db
-    .update(userProgress)
+    .update(stats)
     .set({
       gems: app.GEMS_LIMIT,
-      points: currentUserProgress.points - app.POINTS_TO_REFILL,
+      points: currentUserStats.points - app.POINTS_TO_REFILL,
     })
-    .where(eq(userProgress.userId, currentUserProgress.userId))
+    .where(eq(userProgress.userId, currentUserStats.userId))
 
   revalidatePath("/store")
   revalidatePath("/learn")

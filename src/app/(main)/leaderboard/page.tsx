@@ -1,47 +1,43 @@
-import { FeedWrapper } from "@/components/feed-wrapper"
-import { HeaderSection } from "@/components/header-section"
-import { Missions } from "@/components/missions"
-import { Promo } from "@/components/promo"
-import { StickyWrapper } from "@/components/sticky-wrapper"
+import { Feed } from "@/app/(main)/components/feed"
+import { HeaderSection } from "@/app/(main)/components/header-section"
+import { MissionsCard } from "@/app/(main)/components/missions-card"
+import { PromoCard } from "@/app/(main)/components/promo-card"
+import { RightColumn } from "@/app/(main)/components/right-column"
+import { UserStats } from "@/app/(main)/components/user-stats"
 import { UserAvatar } from "@/components/user-avatar"
-import { UserProgress } from "@/components/user-progress"
-import {
-  getTopTenUsers,
-  getUserProgress,
-  getUserSubscription,
-} from "@/db/queries"
+import { getStats, getTopTenUsers, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 
 const Page = async () => {
-  const userProgressData = getUserProgress()
+  const userStatsData = getStats()
   const userSubscriptionData = getUserSubscription()
   const leaderboardData = getTopTenUsers()
 
-  const [userProgress, userSubscription, leaderboard] = await Promise.all([
-    userProgressData,
+  const [userStats, userSubscription, leaderboard] = await Promise.all([
+    userStatsData,
     userSubscriptionData,
     leaderboardData,
   ])
 
-  if (!userProgress || !userProgress.activeCourse) redirect("/courses")
+  if (!userStats || !userStats.activeSubject) redirect("/courses")
 
   const isPro = !!userSubscription?.isActive
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          gems={userProgress.gems}
-          points={userProgress.points}
+      <RightColumn>
+        <UserStats
+          activeSubject={userStats.activeSubject}
+          gems={userStats.gems}
+          points={userStats.points}
           hasActiveSubscription={isPro}
-          currentStreak={userProgress.currentStreak}
-          lastActivityDate={userProgress.lastActivityDate}
+          currentStreak={userStats.currentStreak}
+          lastActivityDate={userStats.lastActivityDate}
         />
-        {!isPro && <Promo />}
-        <Missions points={userProgress.points} />
-      </StickyWrapper>
-      <FeedWrapper>
+        {!isPro && <PromoCard />}
+        <MissionsCard points={userStats.points} />
+      </RightColumn>
+      <Feed>
         <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/leaderboard.svg"
@@ -50,9 +46,9 @@ const Page = async () => {
             description="See where you stand among your peers"
             separator
           />
-          {leaderboard.map((userProgress, index) => (
+          {leaderboard.map((userStats, index) => (
             <div
-              key={userProgress.userId}
+              key={userStats.userId}
               className="hover:bg-brand-200/50 dark:hover:bg-brand-500/10 flex w-full items-center
                 rounded-3xl p-2 px-4"
             >
@@ -85,20 +81,18 @@ const Page = async () => {
                 </p>
               )}
               <UserAvatar
-                image={userProgress.image}
-                name={userProgress.name}
+                image={userStats.image}
+                name={userStats.name}
                 className="mr-6 ml-5 size-12 cursor-pointer"
               />
               <p className="text-natural-800 flex-1 font-bold">
-                {userProgress.name}
+                {userStats.name}
               </p>
-              <p className="text-muted-foreground">
-                {userProgress.points} points
-              </p>
+              <p className="text-muted-foreground">{userStats.points} points</p>
             </div>
           ))}
         </div>
-      </FeedWrapper>
+      </Feed>
     </div>
   )
 }

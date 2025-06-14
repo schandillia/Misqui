@@ -1,11 +1,8 @@
 import { MobileHeader } from "@/components/mobile-header"
 import { Sidebar } from "@/components/sidebar"
+import type { ReactNode } from "react"
 
-type Props = {
-  children: React.ReactNode
-}
-
-const Layout = ({ children }: Props) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <MobileHeader />

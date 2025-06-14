@@ -1,7 +1,7 @@
 import { cache } from "react"
 import { db } from "@/db/drizzle"
 import { auth } from "@/auth"
-import { eq, and, sql } from "drizzle-orm"
+import { eq, and, sql, desc } from "drizzle-orm"
 import {
   users,
   userSubscription,
@@ -421,3 +421,48 @@ export const getDrillQuestions = cache(
     }
   }
 )
+
+export const getTopTenUsers = cache(async () => {
+  const session = await auth()
+  if (!session?.user?.id) return []
+  const data = await db
+    .select({
+      userId: stats.userId,
+      points: stats.points,
+      name: users.name,
+      image: users.image,
+    })
+    .from(stats)
+    .innerJoin(users, eq(stats.userId, users.id))
+    .orderBy(desc(stats.points))
+    .limit(10)
+
+  return data
+})
+
+export async function getLeaderboard(topN: number = 10) {
+  logger.info("Fetching leaderboard", { topN })
+  try {
+    const leaderboard = await db
+      .select({
+        userId: stats.userId,
+        points: stats.points,
+        name: users.name,
+        image: users.image,
+      })
+      .from(stats)
+      .innerJoin(users, eq(stats.userId, users.id))
+      .orderBy(desc(stats.points))
+      .limit(topN)
+
+    if (!leaderboard || leaderboard.length === 0) {
+      logger.warn("No leaderboard data found")
+      return []
+    }
+    logger.info("Leaderboard fetched", { count: leaderboard.length })
+    return leaderboard
+  } catch (error) {
+    logger.error("Error fetching leaderboard", { error })
+    throw error
+  }
+}

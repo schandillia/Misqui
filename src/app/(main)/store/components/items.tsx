@@ -1,12 +1,12 @@
 "use client"
 
-import { refillGems } from "@/app/actions/user-progress"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useTransition } from "react"
 import app from "@/lib/data/app.json"
 import { SubscriptionButton } from "@/components/subscription-button"
 import toast from "react-hot-toast"
+import { refillGems } from "@/app/actions/refill-gems"
 
 type Props = {
   gems: number

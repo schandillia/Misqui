@@ -3,7 +3,7 @@ import { checkDrillExistence } from "@/app/actions/check-drill-existence"
 import { getDrillQuestions, getUserSubscription, getStats } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
-import Drill from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/drill"
+import Drill from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill"
 
 type Props = {
   params: Promise<{

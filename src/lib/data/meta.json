@@ -7,6 +7,21 @@
     "TITLE": "Your Learning Dashboard | Misqui",
     "DESCRIPTION": "Track progress, pick up where you left off, and explore new challenges—all in your personalized Misqui dashboard."
   },
+  "DRILL": {
+    "DESCRIPTION": "Practice drills designed to reinforce key concepts, unit by unit, across every subject—tailored for effective learning and long-term retention."
+  },
+  "LEADERBOARD": {
+    "TITLE": "Leaderboard | Misqui",
+    "DESCRIPTION": "Celebrate your progress and see how you stack up against other young learners. Climb the ranks by completing drills, unlocking achievements, and earning stars."
+  },
+  "MISSIONS": {
+    "TITLE": "Missions | Misqui",
+    "DESCRIPTION": "Complete fun daily and weekly missions to stay motivated, earn rewards, and build smart learning habits—all while having a blast!"
+  },
+  "STORE": {
+    "TITLE": "Store | Misqui",
+    "DESCRIPTION": "Exchange points for extra gems or go pro for unlimited gems."
+  },
   "SETTINGS": {
     "TITLE": "Settings | Misqui",
     "DESCRIPTION": "Manage your account settings, preferences, and notifications."

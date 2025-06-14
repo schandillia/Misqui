@@ -1,10 +1,10 @@
 import { UserAvatar } from "@/components/user-avatar"
-import { NameInput } from "@/app/(main)/settings/name-input"
-import { SettingsCard } from "@/app/(main)/settings/settings-card"
+import { NameInput } from "@/app/(main)/settings/components/name-input"
+import { SettingsCard } from "@/app/(main)/settings/components/settings-card"
 import { LiaUserEditSolid } from "react-icons/lia"
 import { Session } from "next-auth"
-import { GenderSelect } from "@/app/(main)/settings/gender-select"
-import { BirthdateSelection } from "@/app/(main)/settings/birthdate-selection"
+import { GenderSelect } from "@/app/(main)/settings/components/gender-select"
+import { BirthdateSelection } from "@/app/(main)/settings/components/birthdate-selection"
 
 type ProfileCardProps = {
   session: Session | null
