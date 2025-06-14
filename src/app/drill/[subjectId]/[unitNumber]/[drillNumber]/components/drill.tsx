@@ -71,10 +71,8 @@ const Drill = ({
   const [questionsCompleted, setQuestionsCompleted] = useState(initialCompleted)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [gemsCount, setGemsCount] = useState(initialGemsCount ?? 0)
-  const [points, setPoints] = useState(initialPointsRef.current)
   const [pointsEarned, setPointsEarned] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
   const [status, setStatus] = useState<
     "correct" | "wrong" | "none" | "completed"
   >("none")
@@ -147,7 +145,6 @@ const Drill = ({
       const finalGemsEarned = 0
 
       if (finalPointsEarned > 0) {
-        setPoints((prev) => prev + finalPointsEarned)
         setPointsEarned((prev) => prev + finalPointsEarned)
       }
 
@@ -166,7 +163,6 @@ const Drill = ({
         })
           .then((response) => {
             if (response.error === "gems") {
-              setPoints((prev) => prev - finalPointsEarned)
               setPointsEarned((prev) => prev - finalPointsEarned)
               setGemsCount((prev) => Math.max(0, prev - finalGemsEarned))
               setQuestionsCompleted((prev) => prev - questionsCompleted)
@@ -175,7 +171,6 @@ const Drill = ({
           })
           .catch((error) => {
             console.error("Final updateStats failed:", error)
-            setPoints((prev) => prev - finalPointsEarned)
             setPointsEarned((prev) => prev - finalPointsEarned)
             setGemsCount((prev) => Math.max(0, prev - finalGemsEarned))
             setQuestionsCompleted((prev) => prev - questionsCompleted)
@@ -236,7 +231,6 @@ const Drill = ({
       }
       setSelectedOption(null)
       setShowExplanation(false)
-      setIsCorrect(false)
       setStatus("none")
     } else {
       setStatus("completed")
@@ -260,7 +254,6 @@ const Drill = ({
       }
 
       const correct = selectedOption === currentQuestion.correctOption
-      setIsCorrect(correct)
       setTotalAttempts((prev) => prev + 1)
 
       if (correct) {
@@ -278,7 +271,6 @@ const Drill = ({
       setStatus("none")
       setSelectedOption(null)
       setShowExplanation(false)
-      setIsCorrect(false)
       return
     }
 
@@ -288,7 +280,6 @@ const Drill = ({
     }
 
     const correct = selectedOption === currentQuestion.correctOption
-    setIsCorrect(correct)
     setTotalAttempts((prev) => prev + 1)
 
     if (correct) {
@@ -297,7 +288,6 @@ const Drill = ({
       setStatus("correct")
       setShowExplanation(true)
       const pointsForQuestion = app.POINTS_PER_QUESTION
-      setPoints((prev) => prev + pointsForQuestion)
       setPointsEarned((prev) => prev + pointsForQuestion)
       setGemsCount((prev) =>
         Math.min(prev + (isCurrent ? 0 : 1), app.GEMS_LIMIT)
@@ -351,11 +341,6 @@ const Drill = ({
         expectedTime
       ),
     [isTimed, correctAnswersCount, timeTaken, expectedTime]
-  )
-
-  const timeCaption = useMemo(
-    () => getDrillTimeCaption(timeTaken, expectedTime),
-    [timeTaken, expectedTime]
   )
 
   const timeStatus = useMemo(
