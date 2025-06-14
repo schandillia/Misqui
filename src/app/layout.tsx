@@ -9,12 +9,12 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import { logger } from "@/lib/logger"
 import "./globals.css"
 import { cn } from "@/lib/utils"
-import { ExitModal } from "@/components/exit-modal"
-import { PracticeModal } from "@/components/practice-modal"
+import { ExitModal } from "@/components/modals/exit-modal"
+import { PracticeModal } from "@/components/modals/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { getUserSubscription } from "@/db/queries"
 import { Toaster } from "react-hot-toast"
-import { InsufficientGemsModal } from "@/components/insufficient-gems-modal"
+import { InsufficientGemsModal } from "@/components/modals/insufficient-gems-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,

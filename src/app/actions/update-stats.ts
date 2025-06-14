@@ -3,6 +3,7 @@
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import { stats, userDrillCompletion, drills, units } from "@/db/schema"
+import { getSubjectById } from "@/db/queries"
 import { eq, and, sql, gt } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
@@ -335,4 +336,51 @@ export const updateStats = async ({
     )
     throw new Error("Failed to update stats")
   }
+}
+
+export const upsertStat = async (subjectId: number) => {
+  const session = await auth()
+  if (!session?.user?.id) {
+    logger.warn("Unauthorized access attempt in upsertStat")
+    throw new Error("Unauthorized")
+  }
+
+  const subject = await getSubjectById(subjectId)
+
+  if (!subject) {
+    logger.warn("Subject not found: %s", subjectId)
+    throw new Error("Subject not found")
+  }
+
+  if (!subject.units.length || !subject.units[0].drills.length) {
+    logger.warn("Subject has no drills: %s", subjectId)
+    throw new Error("Subject has no drills")
+  }
+
+  const existingUserStats = await db.query.stats.findFirst({
+    where: (stats, { eq }) => eq(stats.userId, session.user.id),
+  })
+
+  if (existingUserStats) {
+    await db
+      .update(stats)
+      .set({
+        activeSubjectId: subjectId,
+        updatedAt: new Date(),
+      })
+      .where(eq(stats.userId, session.user.id))
+
+    revalidatePath("/learn")
+    revalidatePath("/courses")
+    return { success: true }
+  }
+
+  await db.insert(stats).values({
+    userId: session.user.id,
+    activeSubjectId: subjectId,
+  })
+
+  revalidatePath("/learn")
+  revalidatePath("/courses")
+  return { success: true }
 }

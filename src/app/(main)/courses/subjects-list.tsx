@@ -1,7 +1,7 @@
 "use client"
 
 import { SubjectCard } from "@/app/(main)/courses/subject-card"
-import { upsertStat } from "@/app/actions/stats"
+import { upsertStat } from "@/app/actions/update-stats"
 import { subjects, stats } from "@/db/schema"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
