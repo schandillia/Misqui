@@ -4,7 +4,7 @@ import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import { stats, userDrillCompletion, drills, units } from "@/db/schema"
 import { getSubjectById } from "@/db/queries"
-import { eq, and, sql, gt } from "drizzle-orm"
+import { eq, and, sql, gt, SQL } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
@@ -19,6 +19,13 @@ type UpdateStatsInput = {
   isDrillCompleted?: boolean
   isCurrent?: boolean
   scorePercentage?: number
+}
+
+// Type for the updateFields object
+type UserDrillCompletionUpdateFields = {
+  updatedAt: Date
+  currentDrillId?: number
+  questionsCompleted?: number | SQL<unknown>
 }
 
 export const updateStats = async ({
@@ -132,7 +139,7 @@ export const updateStats = async ({
 
     // Update user_drill_completion table
     if (questionsCompleted >= 0) {
-      let updateFields: any = {
+      const updateFields: UserDrillCompletionUpdateFields = {
         updatedAt: new Date(),
       }
 
@@ -293,7 +300,7 @@ export const updateStats = async ({
         // For non-timed drills, increment questions_completed if not completed
         updateFields.questionsCompleted = sql`${userDrillCompletion.questionsCompleted} + ${questionsCompleted}`
       } else if (isTimed && isCurrent) {
-        // For timed drills, reset questionsCompleted to 0 since we don’t track progress
+        // For timed drills, reset questionsCompleted to 0 since we don't track progress
         updateFields.questionsCompleted = 0
       }
 
@@ -327,7 +334,7 @@ export const updateStats = async ({
       drillId
     )
     return { success: true }
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(
       "Error updating stats for user: %s, drill: %s, error: %O",
       userId,
