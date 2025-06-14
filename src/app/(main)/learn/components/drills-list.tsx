@@ -1,9 +1,9 @@
-// File: app/(main)/learn/drills-list.tsx
+// File: app/(main)/learn/components/drills-list.tsx
 import Link from "next/link"
 import { drills as drillsTable } from "@/db/schema"
 import app from "src/lib/data/app.json"
-import DrillButton from "@/app/(main)/learn/drill-button"
-import DrillButtonWrapper from "@/app/(main)/learn/drill-button-wrapper"
+import DrillButton from "@/app/(main)/learn/components/drill-button"
+import DrillButtonWrapper from "@/app/(main)/learn/components/drill-button-wrapper"
 
 type DrillType = typeof drillsTable.$inferSelect
 

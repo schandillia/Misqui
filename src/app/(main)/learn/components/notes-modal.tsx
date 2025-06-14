@@ -10,7 +10,7 @@ import {
   ResponsiveModalTitle,
   ResponsiveModalFooter,
 } from "@/components/ui/responsive-modal"
-import { NotesContent } from "@/app/(main)/learn/notes-content"
+import { NotesContent } from "@/app/(main)/learn/components/notes-content"
 
 type NotesModalProps = {
   open: boolean

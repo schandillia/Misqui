@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { NotesModal } from "@/app/(main)/learn/notes-modal"
+import { NotesModal } from "@/app/(main)/learn/components/notes-modal"
 import { BookOpenText } from "lucide-react"
 import { getUnitNotes } from "@/app/actions/get-unit-notes"
 
