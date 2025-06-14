@@ -19,7 +19,6 @@ const DrillButtonWrapper = ({
   children,
   current,
   label,
-  drillId,
   gems,
   isPro,
 }: DrillButtonWrapperProps) => {
