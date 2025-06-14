@@ -16,6 +16,11 @@ import { useWindowSize } from "react-use"
 import { useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
 import { ResultCard } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/result-card"
+import {
+  getDrillResultMessage,
+  getDrillTimeCaption,
+  getDrillTimeStatus,
+} from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 
 type Question = {
   id: number
@@ -406,6 +411,34 @@ const Drill = ({
     })
   }
 
+  const expectedTime = app.QUESTIONS_PER_DRILL * app.SECONDS_PER_QUESTION
+
+  const { resultMessage, showGreatJob } = useMemo(
+    () =>
+      getDrillResultMessage(
+        isTimed,
+        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100,
+        timeTaken,
+        expectedTime
+      ),
+    [isTimed, correctAnswersCount, timeTaken, expectedTime]
+  )
+
+  const timeCaption = useMemo(
+    () => getDrillTimeCaption(timeTaken, expectedTime),
+    [timeTaken, expectedTime]
+  )
+
+  const timeStatus = useMemo(
+    () =>
+      getDrillTimeStatus(
+        timeTaken,
+        expectedTime,
+        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
+      ),
+    [timeTaken, expectedTime, correctAnswersCount]
+  )
+
   if (isDrillCompleted) {
     const scorePercentage = isTimed
       ? Math.round((correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100)
@@ -441,10 +474,12 @@ const Drill = ({
               className="block lg:hidden"
             />
             <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-              Drill done
+              {showGreatJob && "Great job!"}
+              {showGreatJob && <br />}
+              {resultMessage}
             </h1>
             <p className="text-lg font-semibold text-neutral-600 lg:text-xl dark:text-neutral-400">
-              really done
+              {timeStatus}
             </p>
             <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
               <ResultCard
