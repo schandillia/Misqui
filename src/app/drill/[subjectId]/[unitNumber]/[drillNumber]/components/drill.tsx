@@ -103,50 +103,12 @@ const Drill = ({
   // Handle drill completion navigation
   const handleDrillCompleteContinue = async () => {
     if (isUpdatePending || serverPending) {
-      console.log("Navigation blocked: waiting for pending updates")
       return
     }
     // Revalidate session before navigation
     await getSession()
-    console.log("Navigating to /learn")
     router.push("/learn")
   }
-
-  // Log mount/unmount for debugging
-  useEffect(() => {
-    console.log("Drill component mounted", {
-      points,
-      pointsEarned,
-      initialPoints,
-    })
-    return () =>
-      console.log("Drill component unmounted", {
-        points,
-        pointsEarned,
-        initialPoints,
-      })
-  }, [])
-
-  // Log questions for debugging
-  useEffect(() => {
-    console.log("Drill questions:", {
-      length: questions.length,
-      ids: questions.map((q) => q.id),
-      questions,
-      currentQuestionIndex,
-      questionsCompleted,
-      isTimed,
-      isCurrent,
-    })
-  }, [questions, currentQuestionIndex, questionsCompleted, isTimed, isCurrent])
-
-  // Log initialQuestions changes for debugging
-  useEffect(() => {
-    console.log("initialQuestions prop changed:", {
-      length: initialQuestions.length,
-      ids: initialQuestions.map((q) => q.id),
-    })
-  }, [initialQuestions])
 
   // Fetch sound preference
   useEffect(() => {
@@ -167,14 +129,6 @@ const Drill = ({
   // Handle drill completion stats update
   useEffect(() => {
     if (isDrillCompleted && !hasPlayedFinishAudio.current) {
-      console.log("Drill completed:", {
-        currentQuestionIndex,
-        questionsLength: questions.length,
-        questionsCompleted,
-        status,
-        pointsEarned,
-        correctAnswersCount,
-      })
       hasPlayedFinishAudio.current = true
       playFinish()
 
@@ -197,13 +151,6 @@ const Drill = ({
         setPointsEarned((prev) => prev + finalPointsEarned)
       }
 
-      console.log("Calling updateStats on drill completion:", {
-        pointsEarned: finalPointsEarned,
-        gemsEarned: finalGemsEarned,
-        questionsCompleted: isTimed ? 0 : questionsCompleted,
-        scorePercentage,
-      })
-
       startUpdateTransition(() => {
         setServerPending(true)
         updateStats({
@@ -218,7 +165,6 @@ const Drill = ({
           scorePercentage,
         })
           .then((response) => {
-            console.log("Final updateStats response:", response)
             if (response.error === "gems") {
               setPoints((prev) => prev - finalPointsEarned)
               setPointsEarned((prev) => prev - finalPointsEarned)
@@ -281,16 +227,8 @@ const Drill = ({
   }
 
   const onNext = () => {
-    console.log("onNext called:", {
-      currentQuestionIndex,
-      questionsLength: questions.length,
-      questionsCompleted,
-      isTimed,
-      isCorrect,
-    })
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => {
-        console.log("Incrementing currentQuestionIndex:", prev + 1)
         return prev + 1
       })
       if (isTimed) {
@@ -310,15 +248,6 @@ const Drill = ({
 
   const onContinue = () => {
     if (!selectedOption && status !== "wrong") return
-
-    console.log("onContinue called:", {
-      selectedOption,
-      status,
-      currentQuestionIndex,
-      questionsCompleted,
-      points,
-      pointsEarned,
-    })
 
     if (isTimed) {
       if (status === "correct" || status === "wrong") {

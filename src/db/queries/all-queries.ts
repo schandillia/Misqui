@@ -15,6 +15,7 @@ import {
   questions,
 } from "@/db/schema"
 import { logger } from "@/lib/logger"
+import { UnitWithDrills } from "@/db/queries/types"
 
 const DAY_IN_MS = 86_400_000
 
@@ -302,7 +303,7 @@ export const getUnits = cache(async () => {
         }
         return acc
       },
-      {} as Record<number, any>
+      {} as Record<number, UnitWithDrills>
     )
 
     const result = Object.values(groupedData).sort((a, b) => a.order - b.order)
