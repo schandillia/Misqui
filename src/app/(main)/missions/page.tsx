@@ -1,43 +1,43 @@
-import { FeedWrapper } from "@/components/feed-wrapper"
-import { Promo } from "@/components/promo"
-import { StickyWrapper } from "@/components/sticky-wrapper"
 import { Progress } from "@/components/ui/progress"
-import { UserProgress } from "@/components/user-progress"
-import { getUserProgress, getUserSubscription } from "@/db/queries"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import app from "@/lib/data/app.json"
-import { HeaderSection } from "@/components/header-section"
+import { HeaderSection } from "@/app/(main)/components/header-section"
+import { getStats, getUserSubscription } from "@/db/queries"
+import { Feed } from "@/app/(main)/components/feed"
+import { UserStats } from "@/app/(main)/components/user-stats"
+import { RightColumn } from "@/app/(main)/components/right-column"
+import { PromoCard } from "@/app/(main)/components/promo-card"
 
 const missions = app.MISSIONS
 
 const Page = async () => {
-  const userProgressData = getUserProgress()
+  const userStatsData = getStats()
   const userSubscriptionData = getUserSubscription()
 
-  const [userProgress, userSubscription] = await Promise.all([
-    userProgressData,
+  const [userStats, userSubscription] = await Promise.all([
+    userStatsData,
     userSubscriptionData,
   ])
 
-  if (!userProgress || !userProgress.activeCourse) redirect("/courses")
+  if (!userStats || !userStats.activeSubject) redirect("/courses")
 
   const isPro = !!userSubscription?.isActive
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          gems={userProgress.gems}
-          points={userProgress.points}
+      <RightColumn>
+        <UserStats
+          activeSubject={userStats.activeSubject}
+          gems={userStats.gems}
+          points={userStats.points}
           hasActiveSubscription={isPro}
-          currentStreak={userProgress.currentStreak}
-          lastActivityDate={userProgress.lastActivityDate}
+          currentStreak={userStats.currentStreak}
+          lastActivityDate={userStats.lastActivityDate}
         />
-        {!isPro && <Promo />}
-      </StickyWrapper>
-      <FeedWrapper>
+        {!isPro && <PromoCard />}
+      </RightColumn>
+      <Feed>
         <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/missions.svg"
@@ -47,7 +47,7 @@ const Page = async () => {
           />
           <ul className="w-full">
             {missions.map((mission) => {
-              const progress = (userProgress.points / mission.VALUE) * 100
+              const progress = (userStats.points / mission.VALUE) * 100
               return (
                 <div
                   key={mission.TITLE}
@@ -70,7 +70,7 @@ const Page = async () => {
             })}
           </ul>
         </div>
-      </FeedWrapper>
+      </Feed>
     </div>
   )
 }

@@ -51,25 +51,17 @@ const Loading = () => (
     <div className="relative top-0 flex-1 pb-10">
       {/* Header skeleton */}
       <div
-        className="sticky top-0 mb-5 flex items-center justify-between border-b-2 bg-white pb-3
-          text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px] dark:bg-black"
+        className="sticky top-0 mb-5 flex items-center justify-center border-b-2 pb-3
+          text-neutral-400 lg:z-50 lg:mt-[-28px] lg:pt-[28px]"
       >
-        <Skeleton className="h-8 w-10" />
         <Skeleton className="h-8 w-40" />
-        <Skeleton className="h-8 w-10" />
       </div>
-      {/* Lessons skeleton */}
-      {[...Array(2)].map((_, lessonIdx) => (
-        <div key={lessonIdx} className="mb-10">
-          {/* LessonBanner skeleton */}
-          <div className="bg-muted mb-8 flex w-full items-center justify-between rounded-3xl p-5">
-            <div className="space-y-2.5">
-              <Skeleton className="mb-2 h-8 w-32" />
-              <Skeleton className="h-6 w-64" />
-            </div>
-            <Skeleton className="h-10 w-24" />
-          </div>
-          {/* Exercise buttons skeleton */}
+      {/* Units skeleton */}
+      {[...Array(2)].map((_, UnitIdx) => (
+        <div key={UnitIdx} className="mb-10">
+          {/* UnitHeader skeleton */}
+          <Skeleton className="w-full h-[130px] rounded-3xl" />
+          {/* Drill buttons skeleton */}
           <div className="mt-12">
             <div className="flex w-full flex-wrap justify-between gap-y-16">
               {[...Array(4)].map((_, i) => (

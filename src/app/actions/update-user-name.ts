@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
-import { users } from "@/db/schema/auth"
+import { users } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"

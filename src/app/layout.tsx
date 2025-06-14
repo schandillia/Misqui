@@ -9,12 +9,12 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import { logger } from "@/lib/logger"
 import "./globals.css"
 import { cn } from "@/lib/utils"
-import { ExitModal } from "@/components/exit-modal"
-import { GemsModal } from "@/components/gems-modal"
-import { PracticeModal } from "@/components/practice-modal"
+import { ExitModal } from "@/components/modals/exit-modal"
+import { PracticeModal } from "@/components/modals/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { getUserSubscription } from "@/db/queries"
 import { Toaster } from "react-hot-toast"
+import { InsufficientGemsModal } from "@/components/modals/insufficient-gems-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -44,7 +44,7 @@ export default async function RootLayout({
         .limit(1)
       if (user) {
         theme = user.theme
-        brandColor = user.brandColor // eslint-disable-line @typescript-eslint/no-unused-vars
+        brandColor = user.brandColor
       }
     } catch (error) {
       // Log errors using Winston
@@ -75,8 +75,8 @@ export default async function RootLayout({
             {children}
             <Toaster position="top-center" />
             <ExitModal />
-            <GemsModal />
             <PracticeModal />
+            <InsufficientGemsModal />
           </ThemeProvider>
         </AuthProvider>
       </body>

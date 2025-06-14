@@ -1,54 +1,54 @@
-import { FeedWrapper } from "@/components/feed-wrapper"
-import { HeaderSection } from "@/components/header-section"
-import { StickyWrapper } from "@/components/sticky-wrapper"
-import { UserProgress } from "@/components/user-progress"
-import { getUserProgress, getUserSubscription } from "@/db/queries"
-import { getUserSoundPreference } from "@/db/queries/sound-settings"
+import { HeaderSection } from "@/app/(main)/components/header-section"
+import { getUserSubscription } from "@/db/queries"
+import { getStats, getUserSoundPreference } from "@/db/queries/all-queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
-import { Promo } from "@/components/promo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
 import { SoundToggle } from "@/components/sound-toggle"
-import { ProfileCard } from "@/app/(main)/settings/profile-card"
+import { ProfileCard } from "@/app/(main)/settings/components/profile-card"
 import { Label } from "@/components/ui/label"
-import { SettingsCard } from "@/app/(main)/settings/settings-card"
+import { SettingsCard } from "@/app/(main)/settings/components/settings-card"
 import { Button } from "@/components/ui/button"
 import { SubscriptionButton } from "@/components/subscription-button"
+import { UserStats } from "@/app/(main)/components/user-stats"
+import { PromoCard } from "@/app/(main)/components/promo-card"
+import { RightColumn } from "@/app/(main)/components/right-column"
+import { Feed } from "@/app/(main)/components/feed"
 
 const Page = async () => {
   const sessionData = auth()
-  const userProgressData = getUserProgress()
+  const statsData = getStats()
   const userSubscriptionData = getUserSubscription()
   const userSoundPreferenceData = getUserSoundPreference()
 
-  const [session, userProgress, userSubscription, userSoundPreference] =
+  const [session, stats, userSubscription, userSoundPreference] =
     await Promise.all([
       sessionData,
-      userProgressData,
+      statsData,
       userSubscriptionData,
       userSoundPreferenceData,
     ])
 
-  if (!userProgress || !userProgress.activeCourse) redirect("/courses")
+  if (!stats || !stats.activeSubject) redirect("/courses")
   if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
 
   const isPro = !!userSubscription?.isActive
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          gems={userProgress.gems}
-          points={userProgress.points}
+      <RightColumn>
+        <UserStats
+          activeSubject={stats.activeSubject}
+          gems={stats.gems}
+          points={stats.points}
           hasActiveSubscription={isPro}
-          currentStreak={userProgress.currentStreak}
-          lastActivityDate={userProgress.lastActivityDate}
+          currentStreak={stats.currentStreak}
+          lastActivityDate={stats.lastActivityDate}
         />
-        {!isPro && <Promo />}
-      </StickyWrapper>
-      <FeedWrapper>
+        {!isPro && <PromoCard />}
+      </RightColumn>
+      <Feed>
         <div className="flex w-full flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/settings.svg"
@@ -143,7 +143,7 @@ const Page = async () => {
             </SettingsCard>
           </div>
         </div>
-      </FeedWrapper>
+      </Feed>
     </div>
   )
 }

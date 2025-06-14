@@ -1,41 +1,41 @@
-import { Items } from "@/app/(main)/store/items"
-import { FeedWrapper } from "@/components/feed-wrapper"
-import { HeaderSection } from "@/components/header-section"
-import { Promo } from "@/components/promo"
-import { Missions } from "@/components/missions"
-import { StickyWrapper } from "@/components/sticky-wrapper"
-import { UserProgress } from "@/components/user-progress"
-import { getUserProgress, getUserSubscription } from "@/db/queries"
+import { Items } from "@/app/(main)/store/components/items"
+import { HeaderSection } from "@/app/(main)/components/header-section"
+import { getStats, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
+import { UserStats } from "@/app/(main)/components/user-stats"
+import { PromoCard } from "@/app/(main)/components/promo-card"
+import { RightColumn } from "@/app/(main)/components/right-column"
+import { Feed } from "@/app/(main)/components/feed"
+import { MissionsCard } from "@/app/(main)/components/missions-card"
 
 const Page = async () => {
-  const userProgressData = getUserProgress()
+  const userStatsData = getStats()
   const userSubscriptionData = getUserSubscription()
 
-  const [userProgress, userSubscription] = await Promise.all([
-    userProgressData,
+  const [userStats, userSubscription] = await Promise.all([
+    userStatsData,
     userSubscriptionData,
   ])
 
-  if (!userProgress || !userProgress.activeCourse) redirect("/courses")
+  if (!userStats || !userStats.activeSubject) redirect("/courses")
 
   const isPro = !!userSubscription?.isActive
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          gems={userProgress.gems}
-          points={userProgress.points}
+      <RightColumn>
+        <UserStats
+          activeSubject={userStats.activeSubject}
+          gems={userStats.gems}
+          points={userStats.points}
           hasActiveSubscription={isPro}
-          currentStreak={userProgress.currentStreak}
-          lastActivityDate={userProgress.lastActivityDate}
+          currentStreak={userStats.currentStreak}
+          lastActivityDate={userStats.lastActivityDate}
         />
-        {!isPro && <Promo />}
-        <Missions points={userProgress.points} />
-      </StickyWrapper>
-      <FeedWrapper>
+        {!isPro && <PromoCard />}
+        <MissionsCard points={userStats.points} />
+      </RightColumn>
+      <Feed>
         <div className="flex w-full flex-col items-center">
           <HeaderSection
             imageSrc="/images/icons/store.svg"
@@ -44,12 +44,12 @@ const Page = async () => {
             description="Spend your points on cool stuff"
           />
           <Items
-            gems={userProgress.gems}
-            points={userProgress.points}
+            gems={userStats.gems}
+            points={userStats.points}
             hasActiveSubscription={isPro}
           />
         </div>
-      </FeedWrapper>
+      </Feed>
     </div>
   )
 }

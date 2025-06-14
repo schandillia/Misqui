@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { updateUserSoundSetting } from "@/db/queries/sound-settings"
+import { updateUserSoundSetting } from "@/db/queries/all-queries"
 import { logger } from "@/lib/logger"
 
 interface SoundRequest {

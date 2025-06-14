@@ -14,13 +14,7 @@ const Layout = async ({ children }: Props) => {
     <>
       <MobileHeader />
       {showSidebar && <Sidebar className="hidden lg:flex" />}
-      <main
-        className={
-          showSidebar
-            ? "h-full lg:pl-[256px]"
-            : "h-full bg-neutral-50 dark:bg-neutral-900"
-        }
-      >
+      <main className={showSidebar ? "h-full lg:pl-[256px]" : "h-full"}>
         <div className="mx-auto h-full max-w-[1056px]">{children}</div>
       </main>
     </>

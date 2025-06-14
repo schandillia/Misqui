@@ -4,10 +4,8 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import {
   ResponsiveModal,
   ResponsiveModalContent,
-  ResponsiveModalOverlay,
   ResponsiveModalTitle,
   ResponsiveModalDescription,
-  ResponsiveModalClose,
 } from "@/components/ui/responsive-modal"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"

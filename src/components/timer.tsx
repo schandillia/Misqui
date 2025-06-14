@@ -1,4 +1,3 @@
-// src/components/timer.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -7,54 +6,64 @@ import app from "@/lib/data/app.json"
 
 type Props = {
   isExerciseCompleted: boolean
-  isTimerPaused: boolean // Add isTimerPaused to Props
+  isTimerPaused: boolean
+  onComplete?: () => void
 }
 
-export const Timer = ({ isExerciseCompleted, isTimerPaused }: Props) => {
-  const totalSeconds = app.CHALLENGES_PER_EXERCISE * app.SECONDS_PER_CHALLENGE
+export const Timer = ({
+  isExerciseCompleted,
+  isTimerPaused,
+  onComplete,
+}: Props) => {
+  const totalSeconds = app.QUESTIONS_PER_DRILL * app.SECONDS_PER_QUESTION
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds)
 
   // Countdown logic
   useEffect(() => {
-    if (isExerciseCompleted || secondsLeft <= 0 || isTimerPaused) {
-      return // Stop the timer if exercise is completed, time is up, or paused
+    if (isExerciseCompleted || isTimerPaused) {
+      return
     }
 
     const timer = setInterval(() => {
       setSecondsLeft((prev) => {
         const newSeconds = prev - 1
         if (newSeconds <= 0) {
-          clearInterval(timer)
+          clearInterval(timer) // Clear interval when time is up
           return 0
         }
         return newSeconds
       })
     }, 1000)
 
-    return () => clearInterval(timer) // Cleanup on unmount or when stopping
-  }, [isExerciseCompleted, secondsLeft, isTimerPaused])
+    return () => clearInterval(timer)
+  }, [isExerciseCompleted, isTimerPaused])
+
+  // Trigger onComplete when time runs out
+  useEffect(() => {
+    if (secondsLeft <= 0 && onComplete) {
+      onComplete()
+    }
+  }, [secondsLeft, onComplete])
 
   // Format time as MM:SS
   const minutes = Math.floor(secondsLeft / 60)
   const seconds = secondsLeft % 60
-  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-    seconds
-  ).padStart(2, "0")}`
+  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
 
   // Granular color transition: amber at 30%, red at 20%
-  const amberThreshold = totalSeconds * 0.3 // 30% of total time
-  const redThreshold = totalSeconds * 0.2 // 20% of total time
+  const amberThreshold = totalSeconds * 0.3
+  const redThreshold = totalSeconds * 0.2
   const isAmberTime =
     secondsLeft <= amberThreshold && secondsLeft > redThreshold
   const isRedTime = secondsLeft <= redThreshold
   const textColor = isRedTime
-    ? "text-danger-500"
+    ? "text-red-500"
     : isAmberTime
       ? "text-amber-500"
       : "text-neutral-700 dark:text-neutral-300"
 
   if (isExerciseCompleted || secondsLeft <= 0) {
-    return null // Hide timer when exercise is completed or time is up
+    return null
   }
 
   return (
