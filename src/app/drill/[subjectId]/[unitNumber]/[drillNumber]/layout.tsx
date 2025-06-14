@@ -2,12 +2,12 @@ import { Metadata } from "next"
 import meta from "@/lib/data/meta.json"
 import type { ReactNode } from "react"
 
-// Route params type
-type Params = {
+// Route params type - now a Promise
+type Params = Promise<{
   subjectId: string
   unitNumber: string
   drillNumber: string
-}
+}>
 
 // Metadata generator
 export async function generateMetadata({
@@ -15,7 +15,8 @@ export async function generateMetadata({
 }: {
   params: Params
 }): Promise<Metadata> {
-  const { unitNumber, drillNumber } = params
+  // Await params before accessing properties
+  const { unitNumber, drillNumber } = await params
 
   return {
     title: `Unit ${unitNumber} | Drill ${drillNumber}`,

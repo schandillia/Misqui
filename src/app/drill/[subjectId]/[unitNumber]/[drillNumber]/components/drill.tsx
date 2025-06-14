@@ -13,14 +13,9 @@ import { useGemsModal } from "@/store/use-gems-modal"
 import toast from "react-hot-toast"
 import ReactConfetti from "react-confetti"
 import { useWindowSize } from "react-use"
-import { ResultCard } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/result-card"
 import { useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
-import {
-  getDrillResultMessage,
-  getDrillTimeCaption,
-  getDrillTimeStatus,
-} from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/utils/drill-utils"
+import { ResultCard } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/result-card"
 
 type Question = {
   id: number
@@ -311,11 +306,6 @@ const Drill = ({
   const onContinue = () => {
     if (!selectedOption && status !== "wrong") return
 
-    if (!isPro && gemsCount === 0) {
-      openGemsModal()
-      return
-    }
-
     console.log("onContinue called:", {
       selectedOption,
       status,
@@ -332,7 +322,7 @@ const Drill = ({
       }
 
       if (currentQuestionIndex === questions.length - 1) {
-        setQuestionsCompleted((prev) => prev + 1)
+        setQuestionsCompleted((prev) => prev + 1) // Ensure progress bar reaches 100%
       }
 
       const correct = selectedOption === currentQuestion.correctOption
@@ -375,35 +365,26 @@ const Drill = ({
       const pointsForQuestion = app.POINTS_PER_QUESTION
       setPoints((prev) => prev + pointsForQuestion)
       setPointsEarned((prev) => prev + pointsForQuestion)
-      if (!isPro && !isCurrent) {
-        setGemsCount((prev) => Math.min(prev + 1, app.GEMS_LIMIT))
-        updateStats({
-          drillId,
-          subjectId,
-          isTimed,
-          pointsEarned: pointsForQuestion,
-          gemsEarned: 1,
-          questionsCompleted: 1,
-          isDrillCompleted: false,
-        })
-      } else {
-        updateStats({
-          drillId,
-          subjectId,
-          isTimed,
-          pointsEarned: pointsForQuestion,
-          gemsEarned: 0,
-          questionsCompleted: 1,
-          isDrillCompleted: false,
-        })
-      }
+      setGemsCount((prev) =>
+        Math.min(prev + (isCurrent ? 0 : 1), app.GEMS_LIMIT)
+      )
       setQuestionsCompleted((prev) => prev + 1)
+
+      updateStats({
+        drillId,
+        subjectId,
+        isTimed,
+        pointsEarned: pointsForQuestion,
+        gemsEarned: isCurrent ? 0 : 1,
+        questionsCompleted: 1,
+        isDrillCompleted: false,
+      })
     } else {
       playIncorrect()
       setStatus("wrong")
       setShowExplanation(true)
 
-      if (isCurrent && !isPro && gemsCount > 0) {
+      if (isCurrent && !isPro) {
         setGemsCount((prev) => Math.max(0, prev - 1))
         updateStats({
           drillId,
@@ -424,34 +405,6 @@ const Drill = ({
       received: questions.length,
     })
   }
-
-  const expectedTime = app.QUESTIONS_PER_DRILL * app.SECONDS_PER_QUESTION
-
-  const { resultMessage, showGreatJob } = useMemo(
-    () =>
-      getDrillResultMessage(
-        isTimed,
-        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100,
-        timeTaken,
-        expectedTime
-      ),
-    [isTimed, correctAnswersCount, timeTaken, expectedTime]
-  )
-
-  const timeCaption = useMemo(
-    () => getDrillTimeCaption(timeTaken, expectedTime),
-    [timeTaken, expectedTime]
-  )
-
-  const timeStatus = useMemo(
-    () =>
-      getDrillTimeStatus(
-        timeTaken,
-        expectedTime,
-        (correctAnswersCount / app.QUESTIONS_PER_DRILL) * 100
-      ),
-    [timeTaken, expectedTime, correctAnswersCount]
-  )
 
   if (isDrillCompleted) {
     const scorePercentage = isTimed
@@ -488,29 +441,23 @@ const Drill = ({
               className="block lg:hidden"
             />
             <h1 className="text-xl font-bold text-neutral-700 lg:text-3xl dark:text-neutral-300">
-              {showGreatJob && "Great job!"}
-              {showGreatJob && <br />}
-              {resultMessage}
+              Drill done
             </h1>
             <p className="text-lg font-semibold text-neutral-600 lg:text-xl dark:text-neutral-400">
-              {timeStatus}
+              really done
             </p>
             <div className="flex w-full flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
               <ResultCard
                 variant="points"
                 value={pointsEarned}
-                caption="Points"
+                caption="Points Earned"
               />
               <ResultCard
                 variant="score"
                 value={`${scorePercentage}%`}
                 caption="Score"
               />
-              <ResultCard
-                variant="time"
-                value={formattedTime}
-                caption={timeCaption}
-              />
+              <ResultCard variant="time" value={formattedTime} caption="Time" />
             </div>
           </div>
           <DrillFooter

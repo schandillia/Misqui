@@ -14,9 +14,8 @@ type Props = {
 }
 
 const Page = async ({ params }: Props) => {
-  // Await the params Promise to resolve its properties
-  const resolvedParams = await params
-  const { subjectId, unitNumber, drillNumber } = resolvedParams
+  // Await params before accessing properties
+  const { subjectId, unitNumber, drillNumber } = await params
 
   // Convert string params to numbers
   const subjectIdNum = parseInt(subjectId, 10)
@@ -37,7 +36,6 @@ const Page = async ({ params }: Props) => {
   const { exists, drill, isCurrentDrill, questionsCompleted } =
     await checkDrillExistence(subjectIdNum, unitNumberNum, drillNumberNum)
 
-  // If drill doesn't exist or isn't accessible, trigger 404
   if (!exists || !drill) {
     logger.warn("Drill not found or inaccessible", {
       subjectId: subjectIdNum,
@@ -47,7 +45,7 @@ const Page = async ({ params }: Props) => {
     notFound()
   }
 
-  // Log drill details to console using Winston
+  // Log drill access
   logger.info("Drill page accessed", {
     subjectId: subjectIdNum,
     unitNumber: unitNumberNum,
@@ -70,7 +68,6 @@ const Page = async ({ params }: Props) => {
     app.QUESTIONS_PER_DRILL
   )
 
-  // Log fetched questions for debugging
   logger.info("Questions fetched for drill", {
     drillId: drill.id,
     questionsCount: questions.length,
