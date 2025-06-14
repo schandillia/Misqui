@@ -14,7 +14,7 @@ import { PracticeModal } from "@/components/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { getUserSubscription } from "@/db/queries"
 import { Toaster } from "react-hot-toast"
-import { InsufficientGemsModal } from "@/app/(main)/learn/components/insufficient-gems-modal"
+import { InsufficientGemsModal } from "@/components/insufficient-gems-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,

@@ -33,7 +33,7 @@ const Loading = () => (
     </div>
     {/* Footer skeleton */}
     <div className="mt-auto flex w-full items-center justify-end border-t-2 px-6 pt-6 pb-8 lg:px-10">
-      <Skeleton className="h-12 w-32 rounded-lg" />
+      <Skeleton className="h-12 w-32 rounded-3xl" />
     </div>
   </div>
 )

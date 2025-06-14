@@ -327,7 +327,7 @@ const Drill = ({
       }
 
       if (currentQuestionIndex === questions.length - 1) {
-        setQuestionsCompleted((prev) => prev + 1) // Ensure progress bar reaches 100%
+        setQuestionsCompleted((prev) => prev + 1)
       }
 
       const correct = selectedOption === currentQuestion.correctOption
