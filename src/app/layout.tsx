@@ -10,11 +10,11 @@ import { logger } from "@/lib/logger"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ExitModal } from "@/components/exit-modal"
-import { GemsModal } from "@/components/gems-modal"
 import { PracticeModal } from "@/components/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { getUserSubscription } from "@/db/queries"
 import { Toaster } from "react-hot-toast"
+import { InsufficientGemsModal } from "@/app/(main)/learn/components/insufficient-gems-modal"
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
@@ -75,8 +75,8 @@ export default async function RootLayout({
             {children}
             <Toaster position="top-center" />
             <ExitModal />
-            <GemsModal />
             <PracticeModal />
+            <InsufficientGemsModal />
           </ThemeProvider>
         </AuthProvider>
       </body>

@@ -2,7 +2,6 @@
 
 import { ReactNode, useEffect, useRef } from "react"
 import { useGemsModal } from "@/store/use-gems-modal"
-import { InsufficientGemsModal } from "@/app/(main)/learn/components/insufficient-gems-modal"
 
 type DrillButtonWrapperProps = {
   index: number
@@ -72,7 +71,6 @@ const DrillButtonWrapper = ({
         )}
       </div>
       {children}
-      <InsufficientGemsModal />
     </div>
   )
 }
