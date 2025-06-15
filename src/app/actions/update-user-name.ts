@@ -4,24 +4,10 @@ import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { logger } from "@/lib/logger"
+import { nameSchema } from "@/lib/schemas/name"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-
-// Define Zod schema for name validation
-const updateNameSchema = z
-  .string()
-  .trim()
-  .min(1, "Name must be at least 1 character long")
-  .max(50, "Name must be at most 50 characters long")
-  .regex(
-    /^[a-zA-Z\s]+$/,
-    "Name must contain only letters and spaces (no numbers, emojis, or special characters)"
-  )
-  .refine((val) => /[a-zA-Z]/.test(val), {
-    message: "Name must contain at least one letter",
-  })
-  .transform((val) => val.replace(/\s+/g, " "))
 
 export async function updateUserName(formData: FormData) {
   const session = await auth()
@@ -32,7 +18,7 @@ export async function updateUserName(formData: FormData) {
   // Extract and validate name
   const name = formData.get("name")?.toString()
   try {
-    const validatedName = updateNameSchema.parse(name)
+    const validatedName = nameSchema.parse(name)
     await db
       .update(users)
       .set({ name: validatedName, updatedAt: new Date() })

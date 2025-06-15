@@ -4,19 +4,7 @@ import { Input } from "@/components/ui/input"
 import { updateUserName } from "@/app/actions/update-user-name"
 import { useState, useTransition } from "react"
 import toast from "react-hot-toast"
-import { z } from "zod"
-
-// Client-side Zod schema (mirrors server-side for immediate feedback)
-const nameSchema = z
-  .string()
-  .trim()
-  .min(1, "Name must be at least 1 character long")
-  .max(50, "Name must be at most 50 characters long")
-  .regex(/^[a-zA-Z\s]+$/, "Name must contain only letters and spaces")
-  .refine((val) => /[a-zA-Z]/.test(val), {
-    message: "Name must contain at least one letter",
-  })
-  .transform((val) => val.replace(/\s+/g, " "))
+import { nameSchema } from "@/lib/schemas/name"
 
 interface NameInputProps {
   defaultName: string
