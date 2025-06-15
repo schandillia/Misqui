@@ -29,4 +29,4 @@ export const apiRoutes = "/api/"
 /**
  * The default redirect path after sign-in
  */
-export const DEFAULT_LOGIN_REDIRECT = "/dashboard"
+export const DEFAULT_LOGIN_REDIRECT = "/learn"
