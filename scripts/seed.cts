@@ -32,14 +32,14 @@ const main = async () => {
     await Promise.all([
       db.delete(schema.questions), // Depends on drills
       db.delete(schema.drills), // Depends on units
-      db.delete(schema.units), // Depends on subjects
-      db.delete(schema.stats), // Depends on subjects
-      db.delete(schema.subjects), // Base table
+      db.delete(schema.units), // Depends on courses
+      db.delete(schema.stats), // Depends on courses
+      db.delete(schema.courses), // Base table
     ])
     logger.debug("Cleared existing data from relevant tables")
 
-    // Insert subjects
-    await db.insert(schema.subjects).values([
+    // Insert courses
+    await db.insert(schema.courses).values([
       {
         id: 1,
         title: "Chess",
@@ -59,14 +59,14 @@ const main = async () => {
         image: "/images/icons/math-icon.svg",
       },
     ])
-    logger.debug("Inserted subjects")
+    logger.debug("Inserted courses")
 
     // Insert units
     await db.insert(schema.units).values([
       {
         id: 1,
         unit_number: 1,
-        subjectId: 1, // Chess
+        courseId: 1, // Chess
         title: "Unit 1",
         description: "Learn the basics of Chess",
         order: 1,
@@ -102,7 +102,7 @@ Master these basics to prepare for more advanced strategies in later units!`,
       {
         id: 2,
         unit_number: 2,
-        subjectId: 1, // Chess
+        courseId: 1, // Chess
         title: "Unit 2",
         description: "Explore intermediate chess concepts",
         order: 2,
@@ -136,7 +136,7 @@ Prepare for more complex strategies and deeper gameplay in this unit!`,
       {
         id: 3,
         unit_number: 3,
-        subjectId: 1, // Chess
+        courseId: 1, // Chess
         title: "Unit 3",
         description: "Master advanced chess strategies",
         order: 3,

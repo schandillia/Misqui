@@ -7,7 +7,7 @@ import {
   userSubscription,
   themeEnum,
   brandColorEnum,
-  subjects,
+  courses,
   stats,
   units,
   userDrillCompletion,
@@ -177,25 +177,25 @@ export async function updateUserColor(
   }
 }
 
-// Fetch all subjects
-export const getSubjects = cache(async () => {
-  logger.info("Fetching all subjects")
+// Fetch all courses
+export const getCourses = cache(async () => {
+  logger.info("Fetching all courses")
   try {
-    const allSubjects = await db.query.subjects.findMany({})
-    logger.info("All subjects fetched", { count: allSubjects.length })
-    return allSubjects
+    const allCourses = await db.query.courses.findMany({})
+    logger.info("All courses fetched", { count: allCourses.length })
+    return allCourses
   } catch (error) {
-    logger.error("Error fetching all subjects", { error })
+    logger.error("Error fetching all courses", { error })
     throw error
   }
 })
 
-// Fetch a subject by ID with related units and drills
-export const getSubjectById = cache(async (subjectId: number) => {
-  logger.info("Fetching subject by ID", { subjectId })
+// Fetch a course by ID with related units and drills
+export const getCourseById = cache(async (courseId: number) => {
+  logger.info("Fetching course by ID", { courseId })
   try {
-    const data = await db.query.subjects.findFirst({
-      where: eq(subjects.id, subjectId),
+    const data = await db.query.courses.findFirst({
+      where: eq(courses.id, courseId),
       with: {
         units: {
           orderBy: (units, { asc }) => [asc(units.order)],
@@ -208,13 +208,13 @@ export const getSubjectById = cache(async (subjectId: number) => {
       },
     })
     if (!data) {
-      logger.warn("Subject not found", { subjectId })
+      logger.warn("Course not found", { courseId })
       return null
     }
-    logger.info("Subject fetched", { subjectId, data })
+    logger.info("Course fetched", { courseId, data })
     return data
   } catch (error) {
-    logger.error("Error fetching subject by ID", { subjectId, error })
+    logger.error("Error fetching course by ID", { courseId, error })
     throw error
   }
 })
@@ -224,16 +224,16 @@ export const getUnits = cache(async () => {
   const session = await auth()
   const stats = await getStats()
 
-  if (!session?.user?.id || !stats?.activeSubjectId) {
-    logger.warn("No user or active subject for units query", {
+  if (!session?.user?.id || !stats?.activeCourseId) {
+    logger.warn("No user or active course for units query", {
       userId: session?.user?.id,
-      activeSubjectId: stats?.activeSubjectId,
+      activeCourseId: stats?.activeCourseId,
     })
     return []
   }
 
-  logger.info("Fetching units for subject", {
-    activeSubjectId: stats.activeSubjectId,
+  logger.info("Fetching units for course", {
+    activeCourseId: stats.activeCourseId,
     userId: session.user.id,
   })
   try {
@@ -242,7 +242,7 @@ export const getUnits = cache(async () => {
         id: units.id,
         title: units.title,
         description: units.description,
-        subjectId: units.subjectId,
+        courseId: units.courseId,
         unitNumber: units.unit_number,
         order: units.order,
         createdAt: units.createdAt,
@@ -266,15 +266,15 @@ export const getUnits = cache(async () => {
         userDrillCompletion,
         and(
           eq(userDrillCompletion.userId, session.user.id),
-          eq(userDrillCompletion.subjectId, stats.activeSubjectId)
+          eq(userDrillCompletion.courseId, stats.activeCourseId)
         )
       )
-      .where(eq(units.subjectId, stats.activeSubjectId))
+      .where(eq(units.courseId, stats.activeCourseId))
       .orderBy(units.order)
 
     if (!data.length) {
-      logger.warn("No units found for subject", {
-        activeSubjectId: stats.activeSubjectId,
+      logger.warn("No units found for course", {
+        activeCourseId: stats.activeCourseId,
       })
       return []
     }
@@ -288,7 +288,7 @@ export const getUnits = cache(async () => {
             id: row.id,
             title: row.title,
             description: row.description,
-            subjectId: row.subjectId,
+            courseId: row.courseId,
             unitNumber: row.unitNumber,
             order: row.order,
             createdAt: row.createdAt,
@@ -308,14 +308,14 @@ export const getUnits = cache(async () => {
 
     const result = Object.values(groupedData).sort((a, b) => a.order - b.order)
 
-    logger.info("Units fetched for subject", {
-      activeSubjectId: stats.activeSubjectId,
+    logger.info("Units fetched for course", {
+      activeCourseId: stats.activeCourseId,
       count: result.length,
     })
     return result
   } catch (error) {
-    logger.error("Error fetching units for subject", {
-      activeSubjectId: stats.activeSubjectId,
+    logger.error("Error fetching units for course", {
+      activeCourseId: stats.activeCourseId,
       error,
     })
     throw error
@@ -342,7 +342,7 @@ export const getStats = cache(async () => {
     const data = await db.query.stats.findFirst({
       where: eq(stats.userId, session.user.id),
       with: {
-        activeSubject: true,
+        activeCourse: true,
       },
     })
     if (!data) {

@@ -3,7 +3,7 @@ export type UnitWithDrills = {
   id: number
   title: string
   description: string
-  subjectId: number
+  courseId: number
   unitNumber: number
   order: number
   createdAt: Date

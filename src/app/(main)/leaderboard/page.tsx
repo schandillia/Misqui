@@ -19,7 +19,7 @@ const Page = async () => {
     leaderboardData,
   ])
 
-  if (!userStats || !userStats.activeSubject) redirect("/courses")
+  if (!userStats || !userStats.activeCourse) redirect("/courses")
 
   const isPro = !!userSubscription?.isActive
 
@@ -27,7 +27,7 @@ const Page = async () => {
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <RightColumn>
         <UserStats
-          activeSubject={userStats.activeSubject}
+          activeCourse={userStats.activeCourse}
           gems={userStats.gems}
           points={userStats.points}
           hasActiveSubscription={isPro}

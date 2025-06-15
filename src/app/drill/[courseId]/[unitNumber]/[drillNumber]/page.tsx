@@ -3,11 +3,11 @@ import { checkDrillExistence } from "@/app/actions/check-drill-existence"
 import { getDrillQuestions, getUserSubscription, getStats } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
-import Drill from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill"
+import Drill from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill"
 
 type Props = {
   params: Promise<{
-    subjectId: string
+    courseId: string
     unitNumber: string
     drillNumber: string
   }>
@@ -15,17 +15,17 @@ type Props = {
 
 const Page = async ({ params }: Props) => {
   // Await params before accessing properties
-  const { subjectId, unitNumber, drillNumber } = await params
+  const { courseId, unitNumber, drillNumber } = await params
 
   // Convert string params to numbers
-  const subjectIdNum = parseInt(subjectId, 10)
+  const courseIdNum = parseInt(courseId, 10)
   const unitNumberNum = parseInt(unitNumber, 10)
   const drillNumberNum = parseInt(drillNumber, 10)
 
   // Validate params
-  if (isNaN(subjectIdNum) || isNaN(unitNumberNum) || isNaN(drillNumberNum)) {
+  if (isNaN(courseIdNum) || isNaN(unitNumberNum) || isNaN(drillNumberNum)) {
     logger.warn("Invalid drill parameters", {
-      subjectId,
+      courseId,
       unitNumber,
       drillNumber,
     })
@@ -34,11 +34,11 @@ const Page = async ({ params }: Props) => {
 
   // Check if drill exists and is accessible to user
   const { exists, drill, isCurrentDrill, questionsCompleted } =
-    await checkDrillExistence(subjectIdNum, unitNumberNum, drillNumberNum)
+    await checkDrillExistence(courseIdNum, unitNumberNum, drillNumberNum)
 
   if (!exists || !drill) {
     logger.warn("Drill not found or inaccessible", {
-      subjectId: subjectIdNum,
+      courseId: courseIdNum,
       unitNumber: unitNumberNum,
       drillNumber: drillNumberNum,
     })
@@ -47,7 +47,7 @@ const Page = async ({ params }: Props) => {
 
   // Log drill access
   logger.info("Drill page accessed", {
-    subjectId: subjectIdNum,
+    courseId: courseIdNum,
     unitNumber: unitNumberNum,
     drillNumber: drillNumberNum,
     drillExists: true,
@@ -95,7 +95,7 @@ const Page = async ({ params }: Props) => {
         initialDrillTitle={drill.title}
         initialDrillNumber={drillNumberNum}
         drillId={drill.id}
-        subjectId={subjectIdNum}
+        courseId={courseIdNum}
       />
     </div>
   )

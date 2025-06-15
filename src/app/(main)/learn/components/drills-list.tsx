@@ -9,7 +9,7 @@ type DrillsListProps = {
   drills: UnitWithDrills["drills"] // Align with query output
   currentDrillId: number | null
   questionsCompleted: number // Non-nullable, as guaranteed by page.tsx
-  subjectId: number
+  courseId: number
   unitNumber: number
   gems: number
   isPro: boolean
@@ -19,7 +19,7 @@ const DrillsList = ({
   drills,
   currentDrillId,
   questionsCompleted,
-  subjectId,
+  courseId,
   unitNumber,
   gems,
   isPro,
@@ -73,7 +73,7 @@ const DrillsList = ({
           return isUnlocked ? (
             <Link
               key={drill.id}
-              href={`/drill/${subjectId}/${unitNumber}/${drill.drill_number}`}
+              href={`/drill/${courseId}/${unitNumber}/${drill.drill_number}`}
               className="mb-2"
             >
               {wrappedButton}

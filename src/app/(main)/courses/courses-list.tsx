@@ -1,25 +1,25 @@
 "use client"
 
-import { SubjectCard } from "@/app/(main)/courses/subject-card"
+import { CourseCard } from "@/app/(main)/courses/course-card"
 import { upsertStat } from "@/app/actions/update-stats"
-import { subjects, stats } from "@/db/schema"
+import { courses, stats } from "@/db/schema"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import toast from "react-hot-toast"
 
 type Props = {
-  subjects: (typeof subjects.$inferSelect)[]
-  activeSubjectId?: typeof stats.$inferSelect.activeSubjectId
+  courses: (typeof courses.$inferSelect)[]
+  activeCourseId?: typeof stats.$inferSelect.activeCourseId
 }
 
-export const SubjectsList = ({ subjects, activeSubjectId }: Props) => {
+export const CoursesList = ({ courses, activeCourseId }: Props) => {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
   const onClick = (id: number) => {
     if (pending) return
 
-    if (id === activeSubjectId) {
+    if (id === activeCourseId) {
       return router.push("/learn")
     }
 
@@ -42,15 +42,15 @@ export const SubjectsList = ({ subjects, activeSubjectId }: Props) => {
       className="grid auto-rows-fr grid-cols-1 gap-3 pt-6 xs:grid-cols-2 sm:gap-4 md:grid-cols-3
         lg:grid-cols-4 xl:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
     >
-      {subjects.map((subject) => (
-        <SubjectCard
-          key={subject.id}
-          id={subject.id}
-          title={subject.title}
-          image={subject.image}
+      {courses.map((course) => (
+        <CourseCard
+          key={course.id}
+          id={course.id}
+          title={course.title}
+          image={course.image}
           onClick={onClick}
           disabled={pending}
-          active={subject.id === activeSubjectId}
+          active={course.id === activeCourseId}
         />
       ))}
     </div>

@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { subjects } from "@/db/schema"
+import { courses } from "@/db/schema"
 import { InfinityIcon } from "lucide-react"
 import { FaFireFlameCurved } from "react-icons/fa6"
 import Image from "next/image"
 import Link from "next/link"
 
 type Props = {
-  activeSubject: typeof subjects.$inferSelect
+  activeCourse: typeof courses.$inferSelect
   gems: number
   points: number
   hasActiveSubscription: boolean
@@ -15,7 +15,7 @@ type Props = {
 }
 
 export const UserStats = ({
-  activeSubject,
+  activeCourse,
   gems,
   points,
   hasActiveSubscription,
@@ -29,8 +29,8 @@ export const UserStats = ({
     <div className="flex w-full items-center justify-between gap-x-2">
       <Link href="/courses">
         <Image
-          src={activeSubject.image}
-          alt={activeSubject.title}
+          src={activeCourse.image}
+          alt={activeCourse.title}
           className="rounded-md border"
           width={32}
           height={32}

@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 
 // Route params type - now a Promise
 type Params = Promise<{
-  subjectId: string
+  courseId: string
   unitNumber: string
   drillNumber: string
 }>

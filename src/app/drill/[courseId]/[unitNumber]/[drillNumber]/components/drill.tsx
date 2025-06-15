@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef, useTransition, useMemo } from "react"
 import app from "@/lib/data/app.json"
-import { DrillHeader } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill-header"
+import { DrillHeader } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-header"
 import Image from "next/image"
-import { Option } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/option"
+import { Option } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/option"
 import { useQuizAudio } from "@/store/use-quiz-audio"
 import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
-import { DrillFooter } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/drill-footer"
+import { DrillFooter } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-footer"
 import { updateStats } from "@/app/actions/update-stats"
 import { useGemsModal } from "@/store/use-gems-modal"
 import toast from "react-hot-toast"
@@ -15,12 +15,12 @@ import ReactConfetti from "react-confetti"
 import { useWindowSize } from "react-use"
 import { useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
-import { ResultCard } from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/components/result-card"
+import { ResultCard } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/result-card"
 import {
   getDrillResultMessage,
   getDrillTimeCaption,
   getDrillTimeStatus,
-} from "@/app/drill/[subjectId]/[unitNumber]/[drillNumber]/utils/drill-utils"
+} from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 
 type Question = {
   id: number
@@ -44,7 +44,7 @@ type Props = {
   initialDrillTitle: string
   initialDrillNumber: number
   drillId: number
-  subjectId: number
+  courseId: number
 }
 
 const Drill = ({
@@ -58,7 +58,7 @@ const Drill = ({
   initialDrillTitle,
   initialDrillNumber,
   drillId,
-  subjectId,
+  courseId,
 }: Props) => {
   const router = useRouter()
   const { playCorrect, playIncorrect, playFinish, setSoundEnabled } =
@@ -152,7 +152,7 @@ const Drill = ({
         setServerPending(true)
         updateStats({
           drillId,
-          subjectId,
+          courseId,
           isTimed,
           pointsEarned: finalPointsEarned,
           gemsEarned: finalGemsEarned,
@@ -188,7 +188,7 @@ const Drill = ({
     playFinish,
     isTimed,
     drillId,
-    subjectId,
+    courseId,
     correctAnswersCount,
     totalAttempts,
     questionsCompleted,
@@ -297,7 +297,7 @@ const Drill = ({
 
       updateStats({
         drillId,
-        subjectId,
+        courseId,
         isTimed,
         pointsEarned: pointsForQuestion,
         gemsEarned: isCurrent ? 0 : 1,
@@ -313,7 +313,7 @@ const Drill = ({
         setGemsCount((prev) => Math.max(0, prev - 1))
         updateStats({
           drillId,
-          subjectId,
+          courseId,
           isTimed,
           gemsEarned: -1,
           questionsCompleted: 0,

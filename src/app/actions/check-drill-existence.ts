@@ -2,13 +2,7 @@
 "use server"
 
 import { db } from "@/db/drizzle"
-import {
-  subjects,
-  units,
-  drills,
-  stats,
-  userDrillCompletion,
-} from "@/db/schema"
+import { courses, units, drills, stats, userDrillCompletion } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import { logger } from "@/lib/logger"
 import { cache } from "react"
@@ -23,13 +17,13 @@ type CheckDrillResult = {
 
 export const checkDrillExistence = cache(
   async (
-    subjectId: number,
+    courseId: number,
     unitNumber: number,
     drillNumber: number
   ): Promise<CheckDrillResult> => {
     try {
       logger.info("Checking drill existence", {
-        subjectId,
+        courseId,
         unitNumber,
         drillNumber,
       })
@@ -38,7 +32,7 @@ export const checkDrillExistence = cache(
       const session = await auth()
       if (!session?.user?.id) {
         logger.warn("No authenticated user for drill check", {
-          subjectId,
+          courseId,
           unitNumber,
           drillNumber,
         })
@@ -50,22 +44,22 @@ export const checkDrillExistence = cache(
         }
       }
 
-      // Fetch user's active subject from stats table
+      // Fetch user's active course from stats table
       const userStats = await db
         .select({
-          activeSubjectId: stats.activeSubjectId,
+          activeCourseId: stats.activeCourseId,
         })
         .from(stats)
         .where(eq(stats.userId, session.user.id))
         .limit(1)
 
-      const activeSubjectId = userStats[0]?.activeSubjectId ?? null
-      if (activeSubjectId === null || activeSubjectId !== subjectId) {
-        logger.warn("Drill does not belong to user's active subject", {
-          subjectId,
+      const activeCourseId = userStats[0]?.activeCourseId ?? null
+      if (activeCourseId === null || activeCourseId !== courseId) {
+        logger.warn("Drill does not belong to user's active course", {
+          courseId,
           unitNumber,
           drillNumber,
-          activeSubjectId,
+          activeCourseId,
         })
         return {
           exists: false,
@@ -84,10 +78,10 @@ export const checkDrillExistence = cache(
         })
         .from(drills)
         .innerJoin(units, eq(drills.unitId, units.id))
-        .innerJoin(subjects, eq(units.subjectId, subjects.id))
+        .innerJoin(courses, eq(units.courseId, courses.id))
         .where(
           and(
-            eq(subjects.id, subjectId),
+            eq(courses.id, courseId),
             eq(units.unit_number, unitNumber),
             eq(drills.drill_number, drillNumber)
           )
@@ -95,7 +89,7 @@ export const checkDrillExistence = cache(
         .limit(1)
 
       if (result.length === 0) {
-        logger.warn("Drill not found", { subjectId, unitNumber, drillNumber })
+        logger.warn("Drill not found", { courseId, unitNumber, drillNumber })
         return {
           exists: false,
           drill: null,
@@ -117,7 +111,7 @@ export const checkDrillExistence = cache(
         .where(
           and(
             eq(userDrillCompletion.userId, session.user.id),
-            eq(userDrillCompletion.subjectId, subjectId)
+            eq(userDrillCompletion.courseId, courseId)
           )
         )
         .limit(1)
@@ -155,7 +149,7 @@ export const checkDrillExistence = cache(
         // Check if the requested unit is accessible
         if (unitNumber > currentUnitNumber) {
           logger.warn("Unit not accessible to user", {
-            subjectId,
+            courseId,
             unitNumber,
             drillNumber,
             currentUnitNumber,
@@ -174,7 +168,7 @@ export const checkDrillExistence = cache(
           drillNumber > currentDrillNumber
         ) {
           logger.warn("Drill not accessible to user", {
-            subjectId,
+            courseId,
             unitNumber,
             drillNumber,
             currentDrillNumber,
@@ -189,7 +183,7 @@ export const checkDrillExistence = cache(
       }
 
       logger.info("Drill found", {
-        subjectId,
+        courseId,
         unitNumber,
         drillNumber,
         drillId,
@@ -208,7 +202,7 @@ export const checkDrillExistence = cache(
       }
     } catch (error) {
       logger.error("Error checking drill existence", {
-        subjectId,
+        courseId,
         unitNumber,
         drillNumber,
         error,

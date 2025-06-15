@@ -12,7 +12,7 @@ type UpsertDrillCompletionResult = {
 // Universal server action to upsert user drill completion record
 export const upsertUserDrillCompletion = async (
   userId: string,
-  subjectId: number,
+  courseId: number,
   drillId: number,
   questionCount: number
 ): Promise<UpsertDrillCompletionResult> => {
@@ -22,13 +22,13 @@ export const upsertUserDrillCompletion = async (
       .insert(userDrillCompletion)
       .values({
         userId,
-        subjectId,
+        courseId,
         currentDrillId: drillId,
         questionsCompleted: questionCount,
         updatedAt: new Date(),
       })
       .onConflictDoUpdate({
-        target: [userDrillCompletion.userId, userDrillCompletion.subjectId],
+        target: [userDrillCompletion.userId, userDrillCompletion.courseId],
         set: {
           currentDrillId: drillId,
           questionsCompleted: questionCount,
@@ -43,7 +43,7 @@ export const upsertUserDrillCompletion = async (
     if (!result.length) {
       logger.warn("No record created or updated for user drill completion", {
         userId,
-        subjectId,
+        courseId,
         drillId,
         questionCount,
       })
@@ -52,7 +52,7 @@ export const upsertUserDrillCompletion = async (
 
     logger.info("Upserted user drill completion record", {
       userId,
-      subjectId,
+      courseId,
       drillId,
       questionCount,
     })
@@ -63,7 +63,7 @@ export const upsertUserDrillCompletion = async (
   } catch (error) {
     logger.error("Error upserting user drill completion", {
       userId,
-      subjectId,
+      courseId,
       drillId,
       questionCount,
       error,

@@ -3,7 +3,7 @@
 import { auth } from "@/auth"
 import { db } from "@/db/drizzle"
 import { stats, userDrillCompletion, drills, units } from "@/db/schema"
-import { getSubjectById } from "@/db/queries"
+import { getCourseById } from "@/db/queries"
 import { eq, and, sql, gt, SQL } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import app from "@/lib/data/app.json"
@@ -11,7 +11,7 @@ import { logger } from "@/lib/logger"
 
 type UpdateStatsInput = {
   drillId: number
-  subjectId: number
+  courseId: number
   isTimed: boolean
   pointsEarned?: number
   gemsEarned?: number
@@ -30,7 +30,7 @@ type UserDrillCompletionUpdateFields = {
 
 export const updateStats = async ({
   drillId,
-  subjectId,
+  courseId,
   isTimed,
   pointsEarned = 0,
   gemsEarned = 0,
@@ -53,7 +53,7 @@ export const updateStats = async ({
     logger.info("updateStats called:", {
       userId,
       drillId,
-      subjectId,
+      courseId,
       isTimed,
       pointsEarned,
       gemsEarned,
@@ -152,7 +152,7 @@ export const updateStats = async ({
         .where(
           and(
             eq(userDrillCompletion.userId, userId),
-            eq(userDrillCompletion.subjectId, subjectId),
+            eq(userDrillCompletion.courseId, courseId),
             eq(userDrillCompletion.currentDrillId, drillId)
           )
         )
@@ -221,7 +221,7 @@ export const updateStats = async ({
             userId
           )
         } else {
-          // Check for next unit in the subject
+          // Check for next unit in the course
           const currentUnit = await db
             .select({ order: units.order })
             .from(units)
@@ -243,7 +243,7 @@ export const updateStats = async ({
             .from(units)
             .where(
               and(
-                eq(units.subjectId, subjectId),
+                eq(units.courseId, courseId),
                 gt(units.order, currentUnit[0].order)
               )
             )
@@ -251,7 +251,7 @@ export const updateStats = async ({
             .limit(1)
 
           logger.info("Next unit query result:", {
-            subjectId,
+            courseId,
             nextUnitId: nextUnit[0]?.id,
             nextUnitOrder: nextUnit[0]?.order,
           })
@@ -282,16 +282,16 @@ export const updateStats = async ({
             } else {
               updateFields.questionsCompleted = 0
               logger.info(
-                "No drills found in next unit: %s for subject: %s",
+                "No drills found in next unit: %s for course: %s",
                 nextUnit[0].id,
-                subjectId
+                courseId
               )
             }
           } else {
             updateFields.questionsCompleted = 0
             logger.info(
-              "No next unit found for subject: %s after unit: %s; resetting questions_completed",
-              subjectId,
+              "No next unit found for course: %s after unit: %s; resetting questions_completed",
+              courseId,
               unitId
             )
           }
@@ -306,7 +306,7 @@ export const updateStats = async ({
 
       logger.info("Updating user_drill_completion with fields:", {
         userId,
-        subjectId,
+        courseId,
         drillId,
         updateFields,
       })
@@ -317,7 +317,7 @@ export const updateStats = async ({
         .where(
           and(
             eq(userDrillCompletion.userId, userId),
-            eq(userDrillCompletion.subjectId, subjectId),
+            eq(userDrillCompletion.courseId, courseId),
             eq(userDrillCompletion.currentDrillId, drillId)
           )
         )
@@ -345,23 +345,23 @@ export const updateStats = async ({
   }
 }
 
-export const upsertStat = async (subjectId: number) => {
+export const upsertStat = async (courseId: number) => {
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("Unauthorized access attempt in upsertStat")
     throw new Error("Unauthorized")
   }
 
-  const subject = await getSubjectById(subjectId)
+  const course = await getCourseById(courseId)
 
-  if (!subject) {
-    logger.warn("Subject not found: %s", subjectId)
-    throw new Error("Subject not found")
+  if (!course) {
+    logger.warn("Course not found: %s", courseId)
+    throw new Error("Course not found")
   }
 
-  if (!subject.units.length || !subject.units[0].drills.length) {
-    logger.warn("Subject has no drills: %s", subjectId)
-    throw new Error("Subject has no drills")
+  if (!course.units.length || !course.units[0].drills.length) {
+    logger.warn("Course has no drills: %s", courseId)
+    throw new Error("Course has no drills")
   }
 
   const existingUserStats = await db.query.stats.findFirst({
@@ -372,7 +372,7 @@ export const upsertStat = async (subjectId: number) => {
     await db
       .update(stats)
       .set({
-        activeSubjectId: subjectId,
+        activeCourseId: courseId,
         updatedAt: new Date(),
       })
       .where(eq(stats.userId, session.user.id))
@@ -384,7 +384,7 @@ export const upsertStat = async (subjectId: number) => {
 
   await db.insert(stats).values({
     userId: session.user.id,
-    activeSubjectId: subjectId,
+    activeCourseId: courseId,
   })
 
   revalidatePath("/learn")

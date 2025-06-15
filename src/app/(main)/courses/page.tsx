@@ -1,27 +1,27 @@
-import { getStats, getSubjects } from "@/db/queries"
-import { SubjectsList } from "@/app/(main)/courses/subjects-list"
+import { getStats, getCourses } from "@/db/queries"
+import { CoursesList } from "@/app/(main)/courses/courses-list"
 
 const Page = async () => {
-  const subjectsData = getSubjects()
+  const coursesData = getCourses()
   const statsData = getStats()
 
-  const [subjects, stats] = await Promise.all([subjectsData, statsData])
+  const [courses, stats] = await Promise.all([coursesData, statsData])
 
-  const activeSubjectId = stats?.activeSubjectId || null
+  const activeCourseId = stats?.activeCourseId || null
 
   return (
     <div className="mx-auto h-full max-w-[912px] px-3">
       <h1 className="text-2xl font-bold text-neutral-700 dark:text-neutral-400">
-        Subjects
+        Courses
       </h1>
       <div className="mt-4">
-        {subjects.length === 0 ? (
-          <p className="text-neutral-500">No subjects available.</p>
+        {courses.length === 0 ? (
+          <p className="text-neutral-500">No courses available.</p>
         ) : (
-          <SubjectsList subjects={subjects} activeSubjectId={activeSubjectId} />
+          <CoursesList courses={courses} activeCourseId={activeCourseId} />
         )}
-        {!activeSubjectId && subjects.length > 0 && (
-          <p className="mt-4 text-neutral-500">No subject has been selected.</p>
+        {!activeCourseId && courses.length > 0 && (
+          <p className="mt-4 text-neutral-500">No course has been selected.</p>
         )}
       </div>
     </div>

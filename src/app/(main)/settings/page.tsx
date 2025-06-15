@@ -30,7 +30,7 @@ const Page = async () => {
       userSoundPreferenceData,
     ])
 
-  if (!stats || !stats.activeSubject) redirect("/courses")
+  if (!stats || !stats.activeCourse) redirect("/courses")
   if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
 
   const isPro = !!userSubscription?.isActive
@@ -39,7 +39,7 @@ const Page = async () => {
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <RightColumn>
         <UserStats
-          activeSubject={stats.activeSubject}
+          activeCourse={stats.activeCourse}
           gems={stats.gems}
           points={stats.points}
           hasActiveSubscription={isPro}

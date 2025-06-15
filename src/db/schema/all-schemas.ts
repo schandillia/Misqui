@@ -16,9 +16,9 @@ import type { AdapterAccountType } from "next-auth/adapters"
 import app from "@/lib/data/app.json"
 import { brandColorEnum, genderEnum, themeEnum } from "@/db/schema/types"
 
-// Subjects Table
-export const subjects = pgTable(
-  "subjects",
+// Courses Table
+export const courses = pgTable(
+  "courses",
   {
     id: serial("id").primaryKey().notNull(),
     title: text("title").notNull(),
@@ -27,14 +27,14 @@ export const subjects = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
-  (subject) => [index("title_index").on(subject.title)]
+  (course) => [index("title_index").on(course.title)]
 )
 
 // Units Table
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
-  subjectId: integer("subject_id")
-    .references(() => subjects.id, { onDelete: "cascade" })
+  courseId: integer("course_id")
+    .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
   unit_number: integer("unit_number").notNull(),
   order: integer("order").notNull(),
@@ -103,7 +103,7 @@ export const users = pgTable("users", {
 // Stats Table
 export const stats = pgTable("stats", {
   userId: uuid("user_id").primaryKey().notNull(),
-  activeSubjectId: integer("active_subject_id").references(() => subjects.id, {
+  activeCourseId: integer("active_course_id").references(() => courses.id, {
     onDelete: "cascade",
   }),
   gems: integer("gems").notNull().default(app.GEMS_LIMIT),
@@ -199,9 +199,9 @@ export const userDrillCompletion = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    subjectId: integer("subject_id")
+    courseId: integer("course_id")
       .notNull()
-      .references(() => subjects.id, { onDelete: "cascade" }),
+      .references(() => courses.id, { onDelete: "cascade" }),
     currentDrillId: integer("current_drill_id")
       .notNull()
       .references(() => drills.id, { onDelete: "cascade" }),
@@ -209,20 +209,20 @@ export const userDrillCompletion = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.subjectId] })]
+  (table) => [primaryKey({ columns: [table.userId, table.courseId] })]
 )
 
 // Relations
-export const subjectsRelations = relations(subjects, ({ many }) => ({
+export const coursesRelations = relations(courses, ({ many }) => ({
   stats: many(stats),
   units: many(units),
   userDrillCompletion: many(userDrillCompletion),
 }))
 
 export const unitsRelations = relations(units, ({ many, one }) => ({
-  subject: one(subjects, {
-    fields: [units.subjectId],
-    references: [subjects.id],
+  course: one(courses, {
+    fields: [units.courseId],
+    references: [courses.id],
   }),
   drills: many(drills),
 }))
@@ -243,9 +243,9 @@ export const questionsRelations = relations(questions, ({ one }) => ({
 }))
 
 export const statsRelations = relations(stats, ({ one }) => ({
-  activeSubject: one(subjects, {
-    fields: [stats.activeSubjectId],
-    references: [subjects.id],
+  activeCourse: one(courses, {
+    fields: [stats.activeCourseId],
+    references: [courses.id],
   }),
 }))
 
@@ -296,9 +296,9 @@ export const userDrillCompletionRelations = relations(
       fields: [userDrillCompletion.userId],
       references: [users.id],
     }),
-    subject: one(subjects, {
-      fields: [userDrillCompletion.subjectId],
-      references: [subjects.id],
+    course: one(courses, {
+      fields: [userDrillCompletion.courseId],
+      references: [courses.id],
     }),
     currentDrill: one(drills, {
       fields: [userDrillCompletion.currentDrillId],
