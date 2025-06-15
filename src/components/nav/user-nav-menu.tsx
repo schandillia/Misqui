@@ -12,12 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/user-avatar"
 import Link from "next/link"
-import {
-  LuLayoutDashboard,
-  LuLogOut,
-  LuSettings,
-  LuShield,
-} from "react-icons/lu"
+import { LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu"
+import { GrUserAdmin } from "react-icons/gr"
 import { logOut } from "@/app/actions/auth"
 
 interface UserNavMenuProps {
@@ -79,7 +75,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
         {user.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin" className="cursor-pointer">
-              <LuShield className="mr-2 size-4" />
+              <GrUserAdmin className="mr-2 size-4" />
               Admin
             </Link>
           </DropdownMenuItem>
