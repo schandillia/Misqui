@@ -163,6 +163,7 @@ const Drill = ({
         })
           .then((response) => {
             if (response.error === "gems") {
+              console.error("GEMS ARE 0")
               setPointsEarned((prev) => prev - finalPointsEarned)
               setGemsCount((prev) => Math.max(0, prev - finalGemsEarned))
               setQuestionsCompleted((prev) => prev - questionsCompleted)
@@ -318,6 +319,15 @@ const Drill = ({
           questionsCompleted: 0,
           isDrillCompleted: false,
         })
+          .then((response) => {
+            if (response.error === "gems") {
+              setGemsCount((prev) => Math.max(0, prev - 1))
+              openGemsModal()
+            }
+          })
+          .catch((error) => {
+            console.error("updateStats failed in onContinue:", error)
+          })
       }
     }
   }
