@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import {
@@ -14,6 +13,7 @@ const createUrl = (path: string, url: URL) => new URL(path, url)
 export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
+  const isAdmin = req.auth?.user?.role === "admin"
 
   // Initialize response
   const response = NextResponse.next()
@@ -46,6 +46,34 @@ export default auth((req) => {
   // O(1) lookup for route checks
   const isPublicRoute = publicRoutes.has(nextUrl.pathname)
   const isAuthRoute = authRoutes.has(nextUrl.pathname)
+
+  // Handle admin routes
+  if (nextUrl.pathname.startsWith("/admin")) {
+    if (!isLoggedIn) {
+      const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search)
+      console.warn(
+        "Unauthorized access attempt to admin route (not logged in)",
+        {
+          path: nextUrl.pathname,
+          timestamp: new Date().toISOString(),
+          module: "middleware",
+        }
+      )
+      return NextResponse.redirect(
+        createUrl(`/auth/login?callbackUrl=${callbackUrl}`, nextUrl)
+      )
+    }
+    if (!isAdmin) {
+      console.warn("Unauthorized access attempt to admin route (not admin)", {
+        userId: req.auth?.user?.id,
+        path: nextUrl.pathname,
+        timestamp: new Date().toISOString(),
+        module: "middleware",
+      })
+      return NextResponse.redirect(createUrl("/unauthorized", nextUrl))
+    }
+    return response
+  }
 
   // Handle auth routes
   if (isAuthRoute) {

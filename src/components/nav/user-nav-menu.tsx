@@ -12,7 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/user-avatar"
 import Link from "next/link"
-import { LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu"
+import {
+  LuLayoutDashboard,
+  LuLogOut,
+  LuSettings,
+  LuShield,
+} from "react-icons/lu"
 import { logOut } from "@/app/actions/auth"
 
 interface UserNavMenuProps {
@@ -20,6 +25,7 @@ interface UserNavMenuProps {
     name?: string | null
     email?: string | null
     image?: string | null
+    role?: "admin" | "user" | null
   }
   position?: "top" | "bottom"
 }
@@ -70,6 +76,14 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
           <UserInfo name={user.name} email={user.email} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {user.role === "admin" && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin" className="cursor-pointer">
+              <LuShield className="mr-2 size-4" />
+              Admin
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="cursor-pointer">
             <LuLayoutDashboard className="mr-2 size-4" />

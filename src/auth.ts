@@ -18,6 +18,7 @@ declare module "next-auth" {
     image?: string | null
     birthdate?: string | null
     gender?: (typeof schema.genderEnum.enumValues)[number] | null
+    role?: (typeof schema.roleEnum.enumValues)[number] | null
   }
 
   interface Session {
@@ -28,6 +29,7 @@ declare module "next-auth" {
       image?: string | null
       birthdate?: string | null
       gender?: (typeof schema.genderEnum.enumValues)[number] | null
+      role?: (typeof schema.roleEnum.enumValues)[number] | null
     }
   }
 }
@@ -53,6 +55,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             ? new Date(profile.birthdate).toISOString().split("T")[0]
             : null,
           gender: profile.gender,
+          role: "user",
         }
       },
     }),
@@ -71,6 +74,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: users.image,
             birthdate: users.birthdate,
             gender: users.gender,
+            role: users.role,
           })
           .from(users)
           .where(eq(users.id, user.id))
@@ -85,6 +89,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             ? userData[0].birthdate.toISOString().split("T")[0]
             : null
           session.user.gender = userData[0].gender
+          session.user.role = userData[0].role
         }
       }
       return session

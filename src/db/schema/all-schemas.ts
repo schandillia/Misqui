@@ -14,7 +14,12 @@ import {
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 import app from "@/lib/data/app.json"
-import { brandColorEnum, genderEnum, themeEnum } from "@/db/schema/types"
+import {
+  brandColorEnum,
+  genderEnum,
+  roleEnum,
+  themeEnum,
+} from "@/db/schema/types"
 
 // Courses Table
 export const courses = pgTable(
@@ -96,6 +101,7 @@ export const users = pgTable("users", {
   brandColor: brandColorEnum("brand_color")
     .notNull()
     .default(app.BRAND_COLOR as (typeof brandColorEnum.enumValues)[number]),
+  role: roleEnum("role").notNull().default("user"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 })
