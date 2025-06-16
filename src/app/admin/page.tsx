@@ -2,25 +2,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import brand from "@/lib/data/brand.json"
 import { getCourses } from "@/app/actions/courses"
 import { CoursesManager } from "@/app/admin/components/courses-manager"
+import { Separator } from "@/components/ui/separator"
 
 export default async function AdminPage() {
   const coursesResult = await getCourses()
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
-      <div className="mx-auto max-w-7xl">
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+      <div className="mx-auto">
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+        <div className="flex w-full flex-col items-center bg-white dark:bg-black py-2 md:py-4 lg:py-6">
+          <h1
+            className="mt-2 mb-1 text-center text-2xl font-bold text-neutral-700 sm:text-3xl
+              dark:text-neutral-400"
+          >
+            Admin Dashboard
+          </h1>
+          <p className="text-muted-foreground mb-6 max-w-2xl text-center text-base sm:text-lg">
             Manage {brand.BRAND} content, users, and courses.
           </p>
         </div>
+        <Separator className="mb-10 h-0.5 w-full rounded-full" />
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-6 lg:px-8">
           {/* Courses Management Card */}
-          <Card className="max-w-3xl">
+          <Card
+            className="border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
+              dark:bg-black max-w-xl"
+          >
             <CardHeader>
               <CardTitle className="text-lg font-semibold">
                 Manage Courses
