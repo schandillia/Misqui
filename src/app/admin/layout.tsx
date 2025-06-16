@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: meta.ADMIN.DESCRIPTION,
 }
 
+// This makes the layout dynamically rendered at request time
+export const dynamic = "force-dynamic"
+
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth()
 
