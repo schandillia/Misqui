@@ -66,7 +66,7 @@ export function NameInput({ defaultName }: NameInputProps) {
         }}
         onBlur={handleSubmit}
         onKeyDown={handleKeyDown}
-        className={`w-full rounded-3xl h-10 ${error ? "border-red-500" : ""}`}
+        className={`w-full h-10 ${error ? "border-red-500" : ""}`}
         disabled={isPending}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
