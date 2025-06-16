@@ -18,7 +18,6 @@ import { getSession } from "next-auth/react"
 import { ResultCard } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/result-card"
 import {
   getDrillResultMessage,
-  getDrillTimeCaption,
   getDrillTimeStatus,
 } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 

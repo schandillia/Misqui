@@ -19,7 +19,7 @@ type Course = {
 }
 
 // Define a type for the response
-type ActionResponse<T = any> = {
+type ActionResponse<T> = {
   success: boolean
   data?: T
   error?: {

@@ -50,9 +50,9 @@ export function ConfirmationModal({
               "text-center text-base text-muted-foreground leading-tight mb-4"
             )}
           >
-            Deleting the course "{title}" will permanently remove it and all
-            associated units, drills, questions, and user stats. This action
-            cannot be undone.
+            Deleting the course &ldquo;{title}&rdquo; will permanently remove it
+            and all associated units, drills, questions, and user stats. This
+            action cannot be undone.
           </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <div className="w-full space-y-6 mb-5">
