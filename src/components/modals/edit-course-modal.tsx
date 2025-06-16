@@ -110,7 +110,7 @@ export function CourseModal({
           toast.error(result.error.message)
         }
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error(`Failed to ${mode === "edit" ? "update" : "create"} course`)
     }
   }
