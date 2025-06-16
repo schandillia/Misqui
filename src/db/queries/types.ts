@@ -1,5 +1,4 @@
-// src/queries/types.ts
-export type UnitWithDrills = {
+export type Unit = {
   id: number
   title: string
   description: string
@@ -8,12 +7,16 @@ export type UnitWithDrills = {
   order: number
   createdAt: Date
   updatedAt: Date
+  notes?: string | null
+}
+
+export type UnitWithDrills = Unit & {
   drills: {
     id: number
     title: string
     unitId: number
     order: number
-    drill_number: number
+    drillNumber: number
     isTimed: boolean
     createdAt: Date
     updatedAt: Date

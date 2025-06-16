@@ -3,6 +3,8 @@ import brand from "@/lib/data/brand.json"
 import { getCourses } from "@/app/actions/courses"
 import { CoursesManager } from "@/app/admin/components/courses-manager"
 import { Separator } from "@/components/ui/separator"
+import { UnitsManager } from "@/app/admin/components/units-manager"
+import { DrillsManager } from "@/app/admin/components/drills-manager"
 
 export default async function AdminPage() {
   const coursesResult = await getCourses()
@@ -25,7 +27,7 @@ export default async function AdminPage() {
         <Separator className="mb-10 h-0.5 w-full rounded-full" />
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-6 lg:px-8 pb-10">
           {/* Courses Management Card */}
           <Card
             className="border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
@@ -38,6 +40,36 @@ export default async function AdminPage() {
             </CardHeader>
             <CardContent>
               <CoursesManager coursesResult={coursesResult} />
+            </CardContent>
+          </Card>
+
+          {/* Units Management Card */}
+          <Card
+            className="border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
+              dark:bg-black max-w-xl"
+          >
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Manage Units
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UnitsManager coursesResult={coursesResult} />
+            </CardContent>
+          </Card>
+
+          {/* Drills Management Card */}
+          <Card
+            className="border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
+              dark:bg-black max-w-xl"
+          >
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Manage Drills
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DrillsManager coursesResult={coursesResult} />
             </CardContent>
           </Card>
         </div>

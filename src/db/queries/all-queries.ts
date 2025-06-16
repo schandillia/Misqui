@@ -243,16 +243,17 @@ export const getUnits = cache(async () => {
         title: units.title,
         description: units.description,
         courseId: units.courseId,
-        unitNumber: units.unit_number,
+        unitNumber: units.unitNumber,
         order: units.order,
         createdAt: units.createdAt,
         updatedAt: units.updatedAt,
+        notes: units.notes,
         drills: {
           id: drills.id,
           title: drills.title,
           unitId: drills.unitId,
           order: drills.order,
-          drill_number: drills.drill_number,
+          drillNumber: drills.drillNumber,
           isTimed: drills.isTimed,
           createdAt: drills.createdAt,
           updatedAt: drills.updatedAt,
@@ -293,6 +294,7 @@ export const getUnits = cache(async () => {
             order: row.order,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
+            notes: row.notes,
             drills: [],
             currentDrillId: row.currentDrillId,
             questionsCompleted: row.questionsCompleted,
@@ -467,3 +469,38 @@ export async function getLeaderboard(topN: number = 10) {
     throw error
   }
 }
+
+// Fetch units for a specific course by courseId
+export const getUnitsByCourseId = cache(
+  async (courseId: number, includeNotes: boolean = false) => {
+    logger.info("Fetching units for course", { courseId, includeNotes })
+    try {
+      const data = await db
+        .select({
+          id: units.id,
+          title: units.title,
+          description: units.description,
+          courseId: units.courseId,
+          unitNumber: units.unitNumber,
+          order: units.order,
+          createdAt: units.createdAt,
+          updatedAt: units.updatedAt,
+          ...(includeNotes && { notes: units.notes }), // Conditionally include notes
+        })
+        .from(units)
+        .where(eq(units.courseId, courseId))
+        .orderBy(units.order)
+
+      if (!data.length) {
+        logger.warn("No units found for course", { courseId })
+        return []
+      }
+
+      logger.info("Units fetched for course", { courseId, count: data.length })
+      return data
+    } catch (error) {
+      logger.error("Error fetching units for course", { courseId, error })
+      throw error
+    }
+  }
+)

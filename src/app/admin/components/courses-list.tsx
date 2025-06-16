@@ -28,6 +28,9 @@ type Course = {
 }
 
 export function CoursesList() {
+  const TITLE_PREVIEW = 10
+  const DESCRIPTION_PREVIEW = 25
+
   const { courses, removeCourse, updateCourse, addCourse } = useCourseStore()
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null)
   const [courseToEdit, setCourseToEdit] = useState<Course | null>(null)
@@ -77,25 +80,32 @@ export function CoursesList() {
                   Description
                 </TableHead>
                 <TableHead className="text-left text-sm font-semibold">
-                  Created
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {courses.map((course) => (
-                <TableRow key={course.id} className="hover:bg-muted/50">
-                  <TableCell className="py-2 text-sm">{course.title}</TableCell>
-                  <TableCell className="py-2 text-sm text-muted-foreground">
-                    {course.description}
+                <TableRow key={course.id}>
+                  <TableCell className="py-2 text-sm">
+                    <span
+                      className={`block max-w-[${TITLE_PREVIEW}ch] truncate`}
+                    >
+                      {course.title}
+                    </span>
                   </TableCell>
                   <TableCell className="py-2 text-sm text-muted-foreground">
-                    {new Date(course.createdAt).toLocaleDateString()}
+                    <span
+                      className={`block max-w-[${DESCRIPTION_PREVIEW}ch] truncate`}
+                    >
+                      {course.description}
+                    </span>
                   </TableCell>
                   <TableCell className="py-2 text-sm">
-                    <div className="flex justify-end gap-6">
+                    <div className="flex justify-between gap-6">
                       <Button
                         variant="ghost"
-                        className="hover:bg-transparent p-0"
+                        className="hover:bg-transparent dark:hover:bg-transparent p-0"
                         size="sm"
                         onClick={() => setCourseToEdit(course)}
                       >
@@ -103,7 +113,7 @@ export function CoursesList() {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="hover:bg-transparent p-0"
+                        className="hover:bg-transparent dark:hover:bg-transparent p-0"
                         size="sm"
                         onClick={() => setCourseToDelete(course)}
                       >
@@ -142,6 +152,7 @@ export function CoursesList() {
           onOpenChange={(open) => !open && setCourseToDelete(null)}
           title={courseToDelete.title}
           onConfirm={() => handleDelete(courseToDelete.id)}
+          entityType="course"
         />
       )}
     </>

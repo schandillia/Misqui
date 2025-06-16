@@ -17,6 +17,7 @@ type ConfirmationModalProps = {
   onOpenChange: (open: boolean) => void
   title: string
   onConfirm: () => void | Promise<void>
+  entityType?: "course" | "unit" | "drill"
 }
 
 export function ConfirmationModal({
@@ -24,6 +25,7 @@ export function ConfirmationModal({
   onOpenChange,
   title,
   onConfirm,
+  entityType = "course",
 }: ConfirmationModalProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -35,6 +37,11 @@ export function ConfirmationModal({
       setIsLoading(false)
     }
   }
+
+  const description =
+    entityType === "course"
+      ? `Deleting “${title}” will permanently remove it and all associated units, drills, questions, and user stats.`
+      : `Deleting “${title}” will permanently remove it and any associated drills.`
 
   return (
     <ResponsiveModal open={open} onOpenChange={onOpenChange}>
@@ -50,9 +57,7 @@ export function ConfirmationModal({
               "text-center text-base text-muted-foreground leading-tight mb-4"
             )}
           >
-            Deleting the course &ldquo;{title}&rdquo; will permanently remove it
-            and all associated units, drills, questions, and user stats. This
-            action cannot be undone.
+            {description} This action cannot be undone.
           </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <div className="w-full space-y-6 mb-5">
@@ -64,7 +69,7 @@ export function ConfirmationModal({
                 size="lg"
                 disabled={isLoading}
               >
-                Keep Course
+                Keep {entityType === "course" ? "Course" : "Unit"}
               </Button>
             </ResponsiveModalClose>
             <Button
@@ -74,7 +79,7 @@ export function ConfirmationModal({
               onClick={handleConfirm}
               disabled={isLoading}
             >
-              Remove Course
+              Remove {entityType === "course" ? "Course" : "Unit"}
             </Button>
           </div>
         </div>

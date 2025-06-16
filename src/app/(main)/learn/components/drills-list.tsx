@@ -27,7 +27,7 @@ const DrillsList = ({
   return (
     <div className="mt-9 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {[...drills]
-        .sort((a, b) => a.drill_number - b.drill_number)
+        .sort((a, b) => a.drillNumber - b.drillNumber)
         .map((drill, index) => {
           const isUnlocked =
             currentDrillId !== null && drill.id <= currentDrillId
@@ -63,7 +63,7 @@ const DrillsList = ({
                 isUnlocked={isUnlocked}
                 isCurrent={isCurrent}
                 isTimed={isTimed}
-                drillNumber={drill.drill_number}
+                drillNumber={drill.drillNumber}
                 percentage={percentage}
                 disabled={!isUnlocked}
               />
@@ -73,7 +73,7 @@ const DrillsList = ({
           return isUnlocked ? (
             <Link
               key={drill.id}
-              href={`/drill/${courseId}/${unitNumber}/${drill.drill_number}`}
+              href={`/drill/${courseId}/${unitNumber}/${drill.drillNumber}`}
               className="mb-2"
             >
               {wrappedButton}

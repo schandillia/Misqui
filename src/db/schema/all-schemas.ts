@@ -41,7 +41,7 @@ export const units = pgTable("units", {
   courseId: integer("course_id")
     .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
-  unit_number: integer("unit_number").notNull(),
+  unitNumber: integer("unit_number").notNull(),
   order: integer("order").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -60,13 +60,13 @@ export const drills = pgTable(
       .references(() => units.id, { onDelete: "cascade" })
       .notNull(),
     order: integer("order").notNull(),
-    drill_number: integer("drill_number").notNull(),
+    drillNumber: integer("drill_number").notNull(),
     isTimed: boolean("is_timed").notNull().default(false),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
   (table) => [
-    unique("unit_drill_number_unique").on(table.unitId, table.drill_number),
+    unique("unit_drill_number_unique").on(table.unitId, table.drillNumber),
   ]
 )
 
