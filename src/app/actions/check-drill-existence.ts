@@ -82,8 +82,8 @@ export const checkDrillExistence = cache(
         .where(
           and(
             eq(courses.id, courseId),
-            eq(units.unit_number, unitNumber),
-            eq(drills.drill_number, drillNumber)
+            eq(units.unitNumber, unitNumber),
+            eq(drills.drillNumber, drillNumber)
           )
         )
         .limit(1)
@@ -134,8 +134,8 @@ export const checkDrillExistence = cache(
       // Fetch the unit number and drill number for the user's current drill
       const currentDrillData = await db
         .select({
-          unitNumber: units.unit_number,
-          drillNumber: drills.drill_number,
+          unitNumber: units.unitNumber,
+          drillNumber: drills.drillNumber,
         })
         .from(drills)
         .innerJoin(units, eq(drills.unitId, units.id))
