@@ -108,7 +108,10 @@ export const users = pgTable("users", {
 
 // Stats Table
 export const stats = pgTable("stats", {
-  userId: uuid("user_id").primaryKey().notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique() // Ensure one stats row per user
+    .references(() => users.id, { onDelete: "cascade" }),
   activeCourseId: integer("active_course_id").references(() => courses.id, {
     onDelete: "cascade",
   }),
