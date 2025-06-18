@@ -3,7 +3,7 @@ export type LogMetadata = Record<string, unknown>
 
 export const logger = {
   info: (message: string, meta?: LogMetadata) => {
-    console.log(
+    console.info(
       JSON.stringify({
         level: "INFO",
         timestamp: new Date().toISOString(),

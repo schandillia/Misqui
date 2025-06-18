@@ -8,14 +8,6 @@ import {
 } from "@/routes"
 import { logger } from "@/lib/logger"
 
-// Define session type to match AuthJS v5 structure
-interface Session {
-  user?: {
-    id?: string
-    role?: string
-  }
-}
-
 // Cached URL constructor for performance
 const createUrl = (path: string, url: URL) => new URL(path, url)
 
