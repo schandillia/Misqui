@@ -7,6 +7,7 @@ import {
   publicRoutes,
 } from "@/routes"
 import { logger } from "@/lib/logger"
+import { CSP } from "@/lib/csp"
 
 // Cached URL constructor for performance
 const createUrl = (path: string, url: URL) => new URL(path, url)
@@ -24,20 +25,7 @@ export async function middleware(req: NextRequest) {
   response.headers.set("X-Content-Type-Options", "nosniff")
   response.headers.set("X-Frame-Options", "DENY")
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
-
-  // CSP Configuration
-  const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://js.stripe.com",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
-    "font-src 'self'",
-    "connect-src 'self' https://api.stripe.com",
-    "frame-ancestors 'none'",
-    "form-action 'self'",
-    "upgrade-insecure-requests",
-  ]
-  response.headers.set("Content-Security-Policy", csp.join("; "))
+  response.headers.set("Content-Security-Policy", CSP)
 
   // Early return for API routes
   if (nextUrl.pathname.startsWith(apiRoutes)) {
