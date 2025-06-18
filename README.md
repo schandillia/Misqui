@@ -45,7 +45,7 @@ Misqui is built with modern web technologies, organized by category:
 - **Payments**:
   - Stripe
 - **Logging**:
-  - Winston
+  - custom logger
 - **Markdown Processing**:
   - Marked
 - **Type Safety**:

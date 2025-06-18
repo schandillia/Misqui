@@ -27,7 +27,7 @@ Misqui is an interactive educational platform built with a modern tech stack foc
 - **Hosting**: Vercel
 - **Database**: Neon PostgreSQL
 - **CDN**: Vercel Edge Network
-- **Monitoring**: Winston for logging
+- **Monitoring**: custom logger for logging
 
 ## Database Architecture
 
@@ -197,7 +197,7 @@ graph TD
 
 ### Logging Strategy
 
-- Winston for application logs
+- Custom logger for application logs
 - Error tracking
 - Performance monitoring
 - User activity tracking
