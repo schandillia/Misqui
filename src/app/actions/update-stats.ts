@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { stats, userDrillCompletion, drills, units } from "@/db/schema"
 import { getCourseById } from "@/db/queries"
 import { eq, and, sql, gt, SQL } from "drizzle-orm"
@@ -39,6 +39,8 @@ export const updateStats = async ({
   isCurrent = false,
   scorePercentage = 0,
 }: UpdateStatsInput) => {
+  await initializeDb()
+
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("Unauthorized access attempt in updateStats")
@@ -64,7 +66,7 @@ export const updateStats = async ({
     })
 
     // Fetch current stats
-    const currentStats = await db
+    const currentStats = await db.instance
       .select({
         gems: stats.gems,
         points: stats.points,
@@ -77,7 +79,7 @@ export const updateStats = async ({
       .limit(1)
 
     if (!currentStats[0]) {
-      logger.warn("No stats found for user: %s", userId)
+      logger.warn(`No stats found for user: ${userId}`, { module: "units" })
       throw new Error("User stats not found")
     }
 
@@ -89,7 +91,7 @@ export const updateStats = async ({
 
     // Validate gems
     if (currentGems + gemsEarned < 0) {
-      logger.warn("Insufficient gems for user: %s", userId)
+      logger.warn("Insufficient gems for user: %s", { userId })
       return { error: "gems" }
     }
 
@@ -108,7 +110,9 @@ export const updateStats = async ({
         lastActivity < new Date(todayDate.getTime() - 24 * 60 * 60 * 1000)
       ) {
         newCurrentStreak = 0
-        logger.info("Streak reset to 0 for user: %s due to inactivity", userId)
+        logger.info("Streak reset to 0 for user: %s due to inactivity", {
+          userId,
+        })
       }
 
       // Increment streak if it's the first completion today
@@ -117,15 +121,16 @@ export const updateStats = async ({
         newLastActivityDate = today
         newLongestStreak = Math.max(newCurrentStreak, longestStreak)
         logger.info(
-          "Streak incremented to %d for user: %s",
-          newCurrentStreak,
-          userId
+          `Streak incremented to ${newCurrentStreak} for user: ${userId}`,
+          {
+            module: "units",
+          }
         )
       }
     }
 
     // Update stats table
-    await db
+    await db.instance
       .update(stats)
       .set({
         gems: Math.min(currentGems + gemsEarned, app.GEMS_LIMIT),
@@ -144,7 +149,7 @@ export const updateStats = async ({
       }
 
       // Fetch current questionsCompleted for the drill
-      const currentCompletion = await db
+      const currentCompletion = await db.instance
         .select({
           questionsCompleted: userDrillCompletion.questionsCompleted,
         })
@@ -174,7 +179,7 @@ export const updateStats = async ({
 
       if (shouldAdvanceDrill) {
         // Fetch current drill's unitId
-        const currentDrill = await db
+        const currentDrill = await db.instance
           .select({ unitId: drills.unitId, order: drills.order })
           .from(drills)
           .where(eq(drills.id, drillId))
@@ -187,14 +192,14 @@ export const updateStats = async ({
         })
 
         if (!currentDrill[0]) {
-          logger.warn("Drill not found: %s", drillId)
+          logger.warn("Drill not found: %s", { drillId })
           throw new Error("Drill not found")
         }
 
         const unitId = currentDrill[0].unitId
 
         // Check for next drill in the same unit
-        const nextDrillInUnit = await db
+        const nextDrillInUnit = await db.instance
           .select({ id: drills.id, order: drills.order })
           .from(drills)
           .where(
@@ -216,13 +221,14 @@ export const updateStats = async ({
           updateFields.currentDrillId = nextDrillInUnit[0].id
           updateFields.questionsCompleted = 0
           logger.info(
-            "Advancing to next drill in unit: %s for user: %s",
-            nextDrillInUnit[0].id,
-            userId
+            `Advancing to next drill in unit: ${nextDrillInUnit[0].id} for user: ${userId}`,
+            {
+              module: "units",
+            }
           )
         } else {
           // Check for next unit in the course
-          const currentUnit = await db
+          const currentUnit = await db.instance
             .select({ order: units.order })
             .from(units)
             .where(eq(units.id, unitId))
@@ -234,11 +240,11 @@ export const updateStats = async ({
           })
 
           if (!currentUnit[0]) {
-            logger.warn("Unit not found: %s", unitId)
+            logger.warn("Unit not found: %s", { unitId })
             throw new Error("Unit not found")
           }
 
-          const nextUnit = await db
+          const nextUnit = await db.instance
             .select({ id: units.id, order: units.order })
             .from(units)
             .where(
@@ -258,7 +264,7 @@ export const updateStats = async ({
 
           if (nextUnit[0]) {
             // Find the first drill in the next unit
-            const firstDrillInUnit = await db
+            const firstDrillInUnit = await db.instance
               .select({ id: drills.id, order: drills.order })
               .from(drills)
               .where(eq(drills.unitId, nextUnit[0].id))
@@ -275,24 +281,25 @@ export const updateStats = async ({
               updateFields.currentDrillId = firstDrillInUnit[0].id
               updateFields.questionsCompleted = 0
               logger.info(
-                "Advancing to first drill in next unit: %s for user: %s",
-                firstDrillInUnit[0].id,
-                userId
+                `Advancing to first drill in next unit: ${firstDrillInUnit[0].id} for user: ${userId}`,
+                {
+                  module: "units",
+                }
               )
             } else {
               updateFields.questionsCompleted = 0
               logger.info(
-                "No drills found in next unit: %s for course: %s",
-                nextUnit[0].id,
-                courseId
+                `No drills found in next unit: ${nextUnit[0].id} for course: ${courseId}`,
+                {
+                  module: "units",
+                }
               )
             }
           } else {
             updateFields.questionsCompleted = 0
             logger.info(
-              "No next unit found for course: %s after unit: %s; resetting questions_completed",
-              courseId,
-              unitId
+              `No next unit found for course: ${courseId} after unit: ${unitId}; resetting questions_completed`,
+              { module: "units" }
             )
           }
         }
@@ -311,7 +318,7 @@ export const updateStats = async ({
         updateFields,
       })
 
-      await db
+      await db.instance
         .update(userDrillCompletion)
         .set(updateFields)
         .where(
@@ -329,23 +336,26 @@ export const updateStats = async ({
     revalidatePath("/leaderboard")
 
     logger.info(
-      "Stats updated successfully for user: %s, drill: %s",
-      userId,
-      drillId
+      `Stats updated successfully for user: ${userId}, drill: ${drillId}`,
+      { module: "units" }
     )
+
     return { success: true }
   } catch (error: unknown) {
     logger.error(
-      "Error updating stats for user: %s, drill: %s, error: %O",
-      userId,
-      drillId,
-      error
+      `Error updating stats for user: ${userId}, drill: ${drillId}`,
+      {
+        error,
+        module: "units",
+      }
     )
     throw new Error("Failed to update stats")
   }
 }
 
 export const upsertStat = async (courseId: number) => {
+  await initializeDb()
+
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("Unauthorized access attempt in upsertStat")
@@ -355,21 +365,21 @@ export const upsertStat = async (courseId: number) => {
   const course = await getCourseById(courseId)
 
   if (!course) {
-    logger.warn("Course not found: %s", courseId)
+    logger.warn("Course not found: %s", { courseId })
     throw new Error("Course not found")
   }
 
   if (!course.units.length || !course.units[0].drills.length) {
-    logger.warn("Course has no drills: %s", courseId)
+    logger.warn("Course has no drills: %s", { courseId })
     throw new Error("Course has no drills")
   }
 
-  const existingUserStats = await db.query.stats.findFirst({
+  const existingUserStats = await db.instance.query.stats.findFirst({
     where: (stats, { eq }) => eq(stats.userId, session.user.id),
   })
 
   if (existingUserStats) {
-    await db
+    await db.instance
       .update(stats)
       .set({
         activeCourseId: courseId,
@@ -382,7 +392,7 @@ export const upsertStat = async (courseId: number) => {
     return { success: true }
   }
 
-  await db.insert(stats).values({
+  await db.instance.insert(stats).values({
     userId: session.user.id,
     activeCourseId: courseId,
   })

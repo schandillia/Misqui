@@ -3,6 +3,7 @@
 import { drizzle, NeonHttpDatabase } from "drizzle-orm/neon-http"
 import { neon } from "@neondatabase/serverless"
 import * as schema from "@/db/schema"
+import { logger } from "@/lib/logger"
 
 // Define the database connection string from environment variables
 const connectionString = process.env.AUTH_DRIZZLE_URL
@@ -10,7 +11,7 @@ const connectionString = process.env.AUTH_DRIZZLE_URL
 // Ensure the connection string is set
 if (!connectionString) {
   const errorMsg = "AUTH_DRIZZLE_URL environment variable is not set."
-  console.error(errorMsg)
+  logger.error(errorMsg)
   throw new Error(errorMsg)
 }
 
@@ -35,7 +36,7 @@ async function retry<T>(
         throw new Error("Database connection failed after retries.")
       }
       if (process.env.NODE_ENV !== "production") {
-        console.warn(
+        logger.warn(
           `Database connection attempt ${attempt} failed, retrying in ${delay}ms...`
         )
       }
@@ -46,32 +47,67 @@ async function retry<T>(
   throw new Error("Unexpected error in retry logic")
 }
 
-// Initialize database with retry logic
-let db: NeonHttpDatabase<typeof schema>
+// Initialize database connection lazily
+let dbInstance: NeonHttpDatabase<typeof schema> | null = null
+let initializationPromise: Promise<NeonHttpDatabase<typeof schema>> | null =
+  null
 
-try {
-  const sql = await retry(() => {
-    if (process.env.NODE_ENV !== "production") {
-      console.debug("Attempting to connect to Neon database...")
-    }
-    return Promise.resolve(neon(connectionString))
-  })
-
-  db = drizzle(sql, { schema })
-  if (process.env.NODE_ENV !== "production") {
-    console.info("Successfully connected to Neon database")
+async function initializeDb(): Promise<NeonHttpDatabase<typeof schema>> {
+  if (dbInstance) {
+    return dbInstance
   }
-} catch (err) {
-  const maskedConnectionString = connectionString.replace(/:([^@]+)@/, ":****@")
-  console.error(
-    `Database initialization failed: ${
-      err instanceof Error ? err.message : String(err)
-    }`,
-    {
-      connectionString: maskedConnectionString,
+
+  if (initializationPromise) {
+    return initializationPromise
+  }
+
+  initializationPromise = (async () => {
+    try {
+      const sql = await retry(() => {
+        if (process.env.NODE_ENV !== "production") {
+          logger.debug("Attempting to connect to Neon database...")
+        }
+        return Promise.resolve(neon(connectionString!)) // Non-null assertion
+      })
+
+      dbInstance = drizzle(sql, { schema })
+      if (process.env.NODE_ENV !== "production") {
+        logger.info("Successfully connected to Neon database")
+      }
+      return dbInstance
+    } catch (err) {
+      const maskedConnectionString = connectionString!.replace(
+        /:([^@]+)@/,
+        ":****@"
+      )
+      logger.error(
+        `Database initialization failed: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+        {
+          connectionString: maskedConnectionString,
+        }
+      )
+      throw new Error("Database unavailable")
+    } finally {
+      initializationPromise = null // Reset promise after completion
     }
-  )
-  throw new Error("Database unavailable")
+  })()
+
+  return initializationPromise
 }
 
-export { db }
+// Export db as a getter to handle lazy initialization
+export const db = {
+  get instance() {
+    if (!dbInstance) {
+      throw new Error(
+        "Database not initialized. Ensure initializeDb is awaited before accessing db."
+      )
+    }
+    return dbInstance
+  },
+}
+
+// Export initializeDb for explicit initialization if needed
+export { initializeDb }

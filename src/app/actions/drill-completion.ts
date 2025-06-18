@@ -1,6 +1,6 @@
-// File: app/server-actions/drill-completion.ts
+// app/server-actions/drill-completion.ts
 "use server"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { userDrillCompletion } from "@/db/schema"
 import { logger } from "@/lib/logger"
 
@@ -16,9 +16,10 @@ export const upsertUserDrillCompletion = async (
   drillId: number,
   questionCount: number
 ): Promise<UpsertDrillCompletionResult> => {
+  await initializeDb()
   try {
     // Upsert the record: update if exists, insert if not
-    const result = await db
+    const result = await db.instance
       .insert(userDrillCompletion)
       .values({
         userId,

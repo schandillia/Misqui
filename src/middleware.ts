@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import {
   DEFAULT_LOGIN_REDIRECT,
@@ -6,14 +6,24 @@ import {
   authRoutes,
   publicRoutes,
 } from "@/routes"
+import { logger } from "@/lib/logger"
+
+// Define session type to match AuthJS v5 structure
+interface Session {
+  user?: {
+    id?: string
+    role?: string
+  }
+}
 
 // Cached URL constructor for performance
 const createUrl = (path: string, url: URL) => new URL(path, url)
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { nextUrl } = req
-  const isLoggedIn = !!req.auth
-  const isAdmin = req.auth?.user?.role === "admin"
+  const session = await auth() // Get session from AuthJS
+  const isLoggedIn = !!session
+  const isAdmin = session?.user?.role === "admin"
 
   // Initialize response
   const response = NextResponse.next()
@@ -26,7 +36,6 @@ export default auth((req) => {
   // CSP Configuration
   const csp = [
     "default-src 'self'",
-    // Allow Stripe scripts and connections
     "script-src 'self' 'unsafe-inline' https://js.stripe.com",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
@@ -51,7 +60,7 @@ export default auth((req) => {
   if (nextUrl.pathname.startsWith("/admin")) {
     if (!isLoggedIn) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search)
-      console.warn(
+      logger.warn(
         "Unauthorized access attempt to admin route (not logged in)",
         {
           path: nextUrl.pathname,
@@ -64,8 +73,8 @@ export default auth((req) => {
       )
     }
     if (!isAdmin) {
-      console.warn("Unauthorized access attempt to admin route (not admin)", {
-        userId: req.auth?.user?.id,
+      logger.warn("Unauthorized access attempt to admin route (not admin)", {
+        userId: session?.user?.id,
         path: nextUrl.pathname,
         timestamp: new Date().toISOString(),
         module: "middleware",
@@ -95,7 +104,7 @@ export default auth((req) => {
   }
 
   return response
-})
+}
 
 export const config = {
   matcher: [

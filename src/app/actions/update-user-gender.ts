@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { genderEnum } from "@/db/schema/types"
 import { eq } from "drizzle-orm"
@@ -17,6 +17,8 @@ function isValidGender(
 }
 
 export async function updateUserGender(formData: FormData) {
+  await initializeDb()
+
   const session = await auth()
   if (!session?.user?.id) {
     throw new Error("Unauthorized")
@@ -30,7 +32,7 @@ export async function updateUserGender(formData: FormData) {
     : null
 
   try {
-    await db
+    await db.instance
       .update(users)
       .set({ gender, updatedAt: new Date() })
       .where(eq(users.id, session.user.id))

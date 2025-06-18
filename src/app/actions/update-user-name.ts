@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { nameSchema } from "@/lib/schemas/name"
@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 export async function updateUserName(formData: FormData) {
+  await initializeDb()
   const session = await auth()
   if (!session?.user?.id) {
     throw new Error("Unauthorized")
@@ -19,7 +20,7 @@ export async function updateUserName(formData: FormData) {
   const name = formData.get("name")?.toString()
   try {
     const validatedName = nameSchema.parse(name)
-    await db
+    await db.instance
       .update(users)
       .set({ name: validatedName, updatedAt: new Date() })
       .where(eq(users.id, session.user.id))

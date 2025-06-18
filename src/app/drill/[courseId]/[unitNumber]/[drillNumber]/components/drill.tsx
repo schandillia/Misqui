@@ -20,6 +20,7 @@ import {
   getDrillResultMessage,
   getDrillTimeStatus,
 } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/utils/drill-utils"
+import { logger } from "@/lib/logger"
 
 type Question = {
   id: number
@@ -64,6 +65,7 @@ const Drill = ({
     useQuizAudio()
   const { open: openGemsModal } = useGemsModal()
   const hasPlayedFinishAudio = useRef(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initialPointsRef = useRef(initialPoints)
   const [isUpdatePending, startUpdateTransition] = useTransition()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -333,7 +335,7 @@ const Drill = ({
 
   // Warn if insufficient questions
   if (questions.length < app.QUESTIONS_PER_DRILL && !isTimed && isCurrent) {
-    console.warn("Insufficient questions for drill:", {
+    logger.warn("Insufficient questions for drill:", {
       expected: app.QUESTIONS_PER_DRILL,
       received: questions.length,
     })

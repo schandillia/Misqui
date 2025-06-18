@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { units } from "@/db/schema"
 import { auth } from "@/auth"
 import { logger } from "@/lib/logger"
@@ -27,6 +27,7 @@ type ActionResponse<T> = {
 export async function getUnitsByCourseId(
   courseId: number
 ): Promise<ActionResponse<Unit[]>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -95,8 +96,9 @@ export async function addUnit({
   description: string
   notes?: string | null
 }): Promise<ActionResponse<Unit>> {
+  await initializeDb()
   try {
-    console.log("addUnit called with:", { courseId, title, description, notes })
+    logger.info("addUnit called with:", { courseId, title, description, notes })
 
     const session = await auth()
     if (!session?.user) {
@@ -125,21 +127,21 @@ export async function addUnit({
     }
 
     // Calculate next unit_number and order
-    const lastUnit = await db
+    const lastUnit = await db.instance
       .select({ unit_number: units.unitNumber, order: units.order })
       .from(units)
       .where(eq(units.courseId, courseId))
       .orderBy(desc(units.order))
       .limit(1)
 
-    console.log("lastUnit query result:", lastUnit)
+    logger.info("lastUnit query result:", { lastUnit })
 
     const nextUnitNumber = lastUnit[0]?.unit_number
       ? lastUnit[0].unit_number + 1
       : 1
     const nextOrder = lastUnit[0]?.order ? lastUnit[0].order + 1 : 1
 
-    console.log("Calculated values:", { nextUnitNumber, nextOrder })
+    logger.info("Calculated values:", { nextUnitNumber, nextOrder })
 
     const insertValues = {
       courseId,
@@ -152,21 +154,24 @@ export async function addUnit({
       updatedAt: new Date(),
     }
 
-    console.log("Insert values:", insertValues)
+    logger.info("Insert values:", insertValues)
 
-    const newUnit = await db.insert(units).values(insertValues).returning({
-      id: units.id,
-      title: units.title,
-      description: units.description,
-      courseId: units.courseId,
-      unitNumber: units.unitNumber,
-      order: units.order,
-      createdAt: units.createdAt,
-      updatedAt: units.updatedAt,
-      notes: units.notes,
-    })
+    const newUnit = await db.instance
+      .insert(units)
+      .values(insertValues)
+      .returning({
+        id: units.id,
+        title: units.title,
+        description: units.description,
+        courseId: units.courseId,
+        unitNumber: units.unitNumber,
+        order: units.order,
+        createdAt: units.createdAt,
+        updatedAt: units.updatedAt,
+        notes: units.notes,
+      })
 
-    console.log("Database insert result:", newUnit)
+    logger.info("Database insert result:", { newUnit })
 
     if (!newUnit || newUnit.length === 0) {
       return {
@@ -243,6 +248,7 @@ export async function updateUnit({
   description: string
   notes: string | null
 }): Promise<ActionResponse<Unit>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -258,7 +264,7 @@ export async function updateUnit({
       }
     }
 
-    const updatedUnit = await db
+    const updatedUnit = await db.instance
       .update(units)
       .set({
         title,
@@ -317,6 +323,7 @@ export async function updateUnit({
 export async function deleteUnit(
   unitId: number
 ): Promise<ActionResponse<null>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -332,7 +339,7 @@ export async function deleteUnit(
       }
     }
 
-    await db.delete(units).where(eq(units.id, unitId))
+    await db.instance.delete(units).where(eq(units.id, unitId))
     logger.info("Unit deleted", { unitId })
     return { success: true, data: null }
   } catch (error) {

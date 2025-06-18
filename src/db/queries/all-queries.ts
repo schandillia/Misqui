@@ -1,5 +1,5 @@
 import { cache } from "react"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, and, sql, desc } from "drizzle-orm"
 import {
@@ -21,6 +21,8 @@ const DAY_IN_MS = 86_400_000
 
 // Fetch the current user's subscription status
 export const getUserSubscription = cache(async () => {
+  await initializeDb()
+
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("No authenticated user found for subscription query")
@@ -28,12 +30,14 @@ export const getUserSubscription = cache(async () => {
   }
 
   try {
-    const data = await db.query.userSubscription.findFirst({
+    const data = await db.instance.query.userSubscription.findFirst({
       where: eq(userSubscription.userId, session.user.id),
     })
 
     if (!data) {
-      logger.warn("No subscription found for user: %s", session.user.id)
+      logger.warn(`No subscription found for user: ${session.user.id}`, {
+        module: "queries",
+      })
       return null
     }
 
@@ -47,17 +51,18 @@ export const getUserSubscription = cache(async () => {
       isActive: !!isActive,
     }
   } catch (error) {
-    logger.error(
-      "Error fetching subscription for user %s: %O",
-      session.user.id,
-      error
-    )
+    logger.error(`Error fetching subscription for user: ${session.user.id}`, {
+      error,
+      module: "queries",
+    })
     throw new Error("Failed to fetch user subscription")
   }
 })
 
 // Fetch the current user's sound preference
 export async function getUserSoundPreference() {
+  await initializeDb()
+
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("No authenticated user found for sound preference query")
@@ -65,23 +70,25 @@ export async function getUserSoundPreference() {
   }
 
   try {
-    const result = await db
+    const result = await db.instance
       .select({ soundEnabled: users.soundEnabled })
       .from(users)
       .where(eq(users.id, session.user.id))
       .limit(1)
 
     if (!result.length) {
-      logger.warn("No user found with ID: %s", session.user.id)
+      logger.warn("No user found", { userId: session.user.id })
       return null
     }
 
     return result[0]
   } catch (error) {
     logger.error(
-      "Error fetching sound preference for user %s: %O",
-      session.user.id,
-      error
+      `Error fetching sound preference for user: ${session.user.id}`,
+      {
+        error,
+        module: "queries",
+      }
     )
     throw new Error("Failed to fetch sound preference")
   }
@@ -92,27 +99,35 @@ export async function updateUserSoundSetting(
   userId: string,
   soundEnabled: boolean
 ) {
+  await initializeDb()
   if (typeof soundEnabled !== "boolean") {
     logger.error("Invalid soundEnabled value: %s", soundEnabled)
     throw new Error("Sound preference must be a boolean value")
   }
 
   try {
-    const result = await db
+    const result = await db.instance
       .update(users)
       .set({ soundEnabled, updatedAt: new Date() })
       .where(eq(users.id, userId))
       .returning({ updatedSoundEnabled: users.soundEnabled })
 
     if (!result.length) {
-      logger.warn("No user found with ID: %s for sound setting update", userId)
+      logger.warn("No user found with ID: %s for sound setting update", {
+        userId,
+      })
       throw new Error("User not found")
     }
 
-    logger.info("Updated soundEnabled for user %s to %s", userId, soundEnabled)
+    logger.info(`Updated soundEnabled for user: ${userId} to ${soundEnabled}`, {
+      module: "queries",
+    })
     return result[0]
   } catch (error) {
-    logger.error("Error updating soundEnabled for user %s: %O", userId, error)
+    logger.error(`Error updating soundEnabled for user: ${userId}`, {
+      error,
+      module: "queries",
+    })
     throw new Error("Failed to update sound preference")
   }
 }
@@ -122,27 +137,33 @@ export async function updateUserTheme(
   userId: string,
   theme: (typeof themeEnum.enumValues)[number]
 ) {
+  await initializeDb()
   if (!themeEnum.enumValues.includes(theme)) {
-    logger.error("Invalid theme value: %s", theme)
+    logger.error("Invalid theme value: %s", { theme })
     throw new Error("Invalid theme value")
   }
 
   try {
-    const result = await db
+    const result = await db.instance
       .update(users)
       .set({ theme, updatedAt: new Date() })
       .where(eq(users.id, userId))
       .returning({ updatedTheme: users.theme })
 
     if (!result.length) {
-      logger.warn("No user found with ID: %s for theme update", userId)
+      logger.warn("No user found with ID: %s for theme update", { userId })
       throw new Error("User not found")
     }
 
-    logger.info("Updated theme for user %s to %s", userId, theme)
+    logger.info(`Updated theme for user: ${userId} to ${theme}`, {
+      module: "queries",
+    })
     return result[0]
   } catch (error) {
-    logger.error("Error updating theme for user %s: %O", userId, error)
+    logger.error(`Error updating theme for user: ${userId}`, {
+      error,
+      module: "queries",
+    })
     throw new Error("Failed to update theme")
   }
 }
@@ -152,36 +173,45 @@ export async function updateUserColor(
   userId: string,
   brandColor: (typeof brandColorEnum.enumValues)[number]
 ) {
+  await initializeDb()
   if (!brandColorEnum.enumValues.includes(brandColor)) {
-    logger.error("Invalid brand color value: %s", brandColor)
+    logger.error("Invalid brand color value: %s", { brandColor })
     throw new Error("Invalid brand color value")
   }
 
   try {
-    const result = await db
+    const result = await db.instance
       .update(users)
       .set({ brandColor, updatedAt: new Date() })
       .where(eq(users.id, userId))
       .returning({ updatedBrandColor: users.brandColor })
 
     if (!result.length) {
-      logger.warn("No user found with ID: %s for brand color update", userId)
+      logger.warn("No user found with ID: %s for brand color update", {
+        userId,
+      })
       throw new Error("User not found")
     }
 
-    logger.info("Updated brand color for user %s to %s", userId, brandColor)
+    logger.info(`Updated brand color for user: ${userId} to ${brandColor}`, {
+      module: "queries",
+    })
     return result[0]
   } catch (error) {
-    logger.error("Error updating brand color for user %s: %O", userId, error)
+    logger.error(`Error updating brand color for user: ${userId}`, {
+      error,
+      module: "queries",
+    })
     throw new Error("Failed to update brand color")
   }
 }
 
 // Fetch all courses
 export const getCourses = cache(async () => {
+  await initializeDb()
   logger.info("Fetching all courses")
   try {
-    const allCourses = await db.query.courses.findMany({})
+    const allCourses = await db.instance.query.courses.findMany({})
     logger.info("All courses fetched", { count: allCourses.length })
     return allCourses
   } catch (error) {
@@ -192,9 +222,10 @@ export const getCourses = cache(async () => {
 
 // Fetch a course by ID with related units and drills
 export const getCourseById = cache(async (courseId: number) => {
+  await initializeDb()
   logger.info("Fetching course by ID", { courseId })
   try {
-    const data = await db.query.courses.findFirst({
+    const data = await db.instance.query.courses.findFirst({
       where: eq(courses.id, courseId),
       with: {
         units: {
@@ -221,6 +252,7 @@ export const getCourseById = cache(async (courseId: number) => {
 
 // Fetch all units with related drills and user drill completion, excluding notes
 export const getUnits = cache(async () => {
+  await initializeDb()
   const session = await auth()
   const stats = await getStats()
 
@@ -237,7 +269,7 @@ export const getUnits = cache(async () => {
     userId: session.user.id,
   })
   try {
-    const data = await db
+    const data = await db.instance
       .select({
         id: units.id,
         title: units.title,
@@ -325,7 +357,8 @@ export const getUnits = cache(async () => {
 })
 
 export const getNotes = cache(async (unitId: number) => {
-  const data = await db.query.units.findFirst({
+  await initializeDb()
+  const data = await db.instance.query.units.findFirst({
     where: eq(units.id, unitId),
     columns: {
       notes: true,
@@ -335,13 +368,14 @@ export const getNotes = cache(async (unitId: number) => {
 })
 
 export const getStats = cache(async () => {
+  await initializeDb()
   const session = await auth()
   if (!session?.user?.id) {
     return null
   }
   logger.info("Fetching user stats", { userId: session.user.id })
   try {
-    const data = await db.query.stats.findFirst({
+    const data = await db.instance.query.stats.findFirst({
       where: eq(stats.userId, session.user.id),
       with: {
         activeCourse: true,
@@ -378,6 +412,7 @@ export const getDrillQuestions = cache(
     questionsCompleted: number | null,
     questionsPerDrill: number
   ) => {
+    await initializeDb()
     logger.info("Fetching questions for drill", {
       drillId,
       isTimed,
@@ -397,7 +432,7 @@ export const getDrillQuestions = cache(
       }
 
       // Fetch random questions for the drill
-      const data = await db
+      const data = await db.instance
         .select({
           id: questions.id,
           text: questions.text,
@@ -426,9 +461,10 @@ export const getDrillQuestions = cache(
 )
 
 export const getTopTenUsers = cache(async () => {
+  await initializeDb()
   const session = await auth()
   if (!session?.user?.id) return []
-  const data = await db
+  const data = await db.instance
     .select({
       userId: stats.userId,
       points: stats.points,
@@ -444,9 +480,10 @@ export const getTopTenUsers = cache(async () => {
 })
 
 export async function getLeaderboard(topN: number = 10) {
+  await initializeDb()
   logger.info("Fetching leaderboard", { topN })
   try {
-    const leaderboard = await db
+    const leaderboard = await db.instance
       .select({
         userId: stats.userId,
         points: stats.points,
@@ -473,9 +510,10 @@ export async function getLeaderboard(topN: number = 10) {
 // Fetch units for a specific course by courseId
 export const getUnitsByCourseId = cache(
   async (courseId: number, includeNotes: boolean = false) => {
+    await initializeDb()
     logger.info("Fetching units for course", { courseId, includeNotes })
     try {
-      const data = await db
+      const data = await db.instance
         .select({
           id: units.id,
           title: units.title,

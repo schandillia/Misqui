@@ -1,7 +1,7 @@
-// File: src/app/actions/check-drill-existence.ts
+// src/app/actions/check-drill-existence.ts
 "use server"
 
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { courses, units, drills, stats, userDrillCompletion } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import { logger } from "@/lib/logger"
@@ -22,6 +22,8 @@ export const checkDrillExistence = cache(
     drillNumber: number
   ): Promise<CheckDrillResult> => {
     try {
+      await initializeDb()
+
       logger.info("Checking drill existence", {
         courseId,
         unitNumber,
@@ -45,7 +47,7 @@ export const checkDrillExistence = cache(
       }
 
       // Fetch user's active course from stats table
-      const userStats = await db
+      const userStats = await db.instance
         .select({
           activeCourseId: stats.activeCourseId,
         })
@@ -70,7 +72,7 @@ export const checkDrillExistence = cache(
       }
 
       // Check if drill exists and get its ID
-      const result = await db
+      const result = await db.instance
         .select({
           drillId: drills.id,
           drillTitle: drills.title,
@@ -102,7 +104,7 @@ export const checkDrillExistence = cache(
       const isTimed = result[0].isTimed
 
       // Fetch user's current drill and questions completed
-      const completion = await db
+      const completion = await db.instance
         .select({
           currentDrillId: userDrillCompletion.currentDrillId,
           questionsCompleted: userDrillCompletion.questionsCompleted,
@@ -132,7 +134,7 @@ export const checkDrillExistence = cache(
       }
 
       // Fetch the unit number and drill number for the user's current drill
-      const currentDrillData = await db
+      const currentDrillData = await db.instance
         .select({
           unitNumber: units.unitNumber,
           drillNumber: drills.drillNumber,

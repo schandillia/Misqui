@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import meta from "@/lib/data/meta.json"
 import { bodyFont, headingFont } from "@/lib/fonts"
 import { auth } from "@/auth"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { brandColorEnum, themeEnum, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { AuthProvider } from "@/components/auth/auth-provider"
@@ -27,17 +27,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  await initializeDb()
+
   const session = await auth()
-  // Logging the session data
-  if (session) logger.info("SESSION: %O", session)
+  // Log session only in development for debugging
+  if (session?.user?.id && process.env.NODE_ENV === "development") {
+    logger.debug("User session found", { userId: session.user.id })
+  }
 
   let theme: (typeof themeEnum.enumValues)[number] = "system"
   let brandColor: (typeof brandColorEnum.enumValues)[number] = "violet"
 
   if (session?.user?.id) {
-    logger.info("SESSION.USER.ID: %s", session.user.id)
     try {
-      const [user] = await db
+      const [user] = await db.instance
         .select({ theme: users.theme, brandColor: users.brandColor })
         .from(users)
         .where(eq(users.id, session.user.id))
@@ -47,12 +50,10 @@ export default async function RootLayout({
         brandColor = user.brandColor
       }
     } catch (error) {
-      // Log errors using Winston
-      logger.error("Error fetching user: %O", error)
+      logger.error("Error fetching user", { error, module: "layout" })
     }
-  } else {
-    // Log when no user session is found
-    logger.warn("No user session or ID found.")
+  } else if (process.env.NODE_ENV === "development") {
+    logger.debug("No user session found")
   }
 
   const userSubscription = await getUserSubscription()

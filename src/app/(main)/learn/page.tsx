@@ -5,7 +5,7 @@ import { getStats, getUnits, getUserSubscription } from "@/db/queries"
 import { userDrillCompletion } from "@/db/schema"
 import { redirect } from "next/navigation"
 import { eq, and } from "drizzle-orm"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { upsertUserDrillCompletion } from "@/app/actions/drill-completion"
 import DrillsList from "@/app/(main)/learn/components/drills-list"
 import { UserStats } from "@/app/(main)/components/user-stats"
@@ -14,6 +14,8 @@ import { MissionsCard } from "@/app/(main)/components/missions-card"
 import { UnitWithDrills } from "@/db/queries/types"
 
 const Page = async () => {
+  await initializeDb()
+
   const [userSubscription, stats, units] = await Promise.all([
     getUserSubscription(),
     getStats(),
@@ -34,7 +36,7 @@ const Page = async () => {
   const userId = stats.userId
   if (!userId) redirect("/login")
 
-  const drillCompletion = await db
+  const drillCompletion = await db.instance
     .select({
       currentDrillId: userDrillCompletion.currentDrillId,
       questionsCompleted: userDrillCompletion.questionsCompleted,

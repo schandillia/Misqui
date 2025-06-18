@@ -107,7 +107,7 @@ export function EditUnitModal({
       } else {
         toast.error("Invalid modal configuration")
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error(
         isEditMode ? "Failed to update unit" : "Failed to create unit"
       )

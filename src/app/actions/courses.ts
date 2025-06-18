@@ -2,11 +2,12 @@
 
 import { courses } from "@/db/schema"
 import { z } from "zod"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { courseSchema } from "@/lib/schemas/course"
 import { NeonDbError } from "@neondatabase/serverless"
 import { eq, desc } from "drizzle-orm"
+import { logger } from "@/lib/logger"
 
 // Define Course type based on schema
 type Course = {
@@ -30,6 +31,7 @@ type ActionResponse<T> = {
 
 // Fetch all courses from the database
 export async function getCourses(): Promise<ActionResponse<Course[]>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -45,13 +47,13 @@ export async function getCourses(): Promise<ActionResponse<Course[]>> {
       }
     }
 
-    const allCourses = await db
+    const allCourses = await db.instance
       .select()
       .from(courses)
       .orderBy(desc(courses.updatedAt))
     return { success: true, data: allCourses }
   } catch (error) {
-    console.error("Error fetching courses:", error)
+    logger.error("Error fetching courses", { error })
     return {
       success: false,
       error: { code: 500, message: "Failed to fetch courses" },
@@ -63,6 +65,7 @@ export async function getCourses(): Promise<ActionResponse<Course[]>> {
 export async function createCourse(
   formData: FormData
 ): Promise<ActionResponse<Course>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -84,7 +87,7 @@ export async function createCourse(
       image: formData.get("image"),
     })
 
-    const newCourse = await db
+    const newCourse = await db.instance
       .insert(courses)
       .values({
         title: data.title,
@@ -110,7 +113,7 @@ export async function createCourse(
         },
       }
     }
-    console.error("Error creating course:", error)
+    logger.error("Error creating course", { error })
     return {
       success: false,
       error: { code: 500, message: "Failed to create course" },
@@ -123,6 +126,7 @@ export async function updateCourse(
   courseId: number,
   formData: FormData
 ): Promise<ActionResponse<Course>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -144,7 +148,7 @@ export async function updateCourse(
       image: formData.get("image"),
     })
 
-    const updatedCourse = await db
+    const updatedCourse = await db.instance
       .update(courses)
       .set({
         title: data.title,
@@ -170,7 +174,7 @@ export async function updateCourse(
         error: { code: 400, message: JSON.stringify(error.errors) },
       }
     }
-    console.error("Error updating course:", error)
+    logger.error("Error updating course", { error })
     return {
       success: false,
       error: { code: 500, message: "Failed to update course" },
@@ -182,6 +186,7 @@ export async function updateCourse(
 export async function deleteCourse(
   courseId: number
 ): Promise<ActionResponse<null>> {
+  await initializeDb()
   try {
     const session = await auth()
     if (!session?.user) {
@@ -197,10 +202,10 @@ export async function deleteCourse(
       }
     }
 
-    await db.delete(courses).where(eq(courses.id, courseId))
+    await db.instance.delete(courses).where(eq(courses.id, courseId))
     return { success: true, data: null }
   } catch (error) {
-    console.error("Error deleting course:", error)
+    logger.error("Error deleting course", { error })
     return {
       success: false,
       error: { code: 500, message: "Failed to delete course" },

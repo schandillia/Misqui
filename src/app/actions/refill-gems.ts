@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { getStats } from "@/db/queries"
 import { stats } from "@/db/schema"
 import app from "@/lib/data/app.json"
@@ -8,6 +8,8 @@ import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export const refillGems = async () => {
+  await initializeDb()
+
   const currentUserStats = await getStats()
 
   if (!currentUserStats) throw new Error("User progress not found")
@@ -18,7 +20,7 @@ export const refillGems = async () => {
   if (currentUserStats.points < app.POINTS_TO_REFILL)
     throw new Error("Not enough points")
 
-  await db
+  await db.instance
     .update(stats)
     .set({
       gems: app.GEMS_LIMIT,

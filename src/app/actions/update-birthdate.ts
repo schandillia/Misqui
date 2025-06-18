@@ -2,7 +2,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { db } from "@/db/drizzle"
+import { db, initializeDb } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { birthdateSchema } from "@/lib/schemas/birthdate"
@@ -11,6 +11,8 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 export async function updateBirthdate(formData: FormData) {
+  await initializeDb()
+
   try {
     const session = await auth()
     logger.info(
@@ -24,7 +26,7 @@ export async function updateBirthdate(formData: FormData) {
     // Extract and validate birthdate
     const birthdate = formData.get("birthdate")?.toString()
     const validatedBirthdate = birthdateSchema.parse(birthdate)
-    await db
+    await db.instance
       .update(users)
       .set({ birthdate: validatedBirthdate, updatedAt: new Date() })
       .where(eq(users.id, session.user.id))

@@ -79,7 +79,7 @@ export function UnitsList() {
           setLocalUnits([])
           updateStoreUnits([])
         }
-      } catch (err) {
+      } catch (_err) {
         setError("Failed to fetch units. Please try again.")
         setLocalUnits([])
         updateStoreUnits([])

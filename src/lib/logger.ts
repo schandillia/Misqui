@@ -1,58 +1,47 @@
-import { existsSync, mkdirSync } from "fs"
-import { createLogger, format, transports } from "winston"
-import DailyRotateFile from "winston-daily-rotate-file"
+// src/lib/logger.ts
+export type LogMetadata = Record<string, unknown>
 
-const isProd = process.env.NODE_ENV === "production"
-const isVercel = !!process.env.VERCEL
-
-let logDir = "logs"
-
-// On Vercel, use /tmp for write access
-if (isProd && isVercel) {
-  logDir = "/tmp/logs"
+export const logger = {
+  info: (message: string, meta?: LogMetadata) => {
+    console.log(
+      JSON.stringify({
+        level: "INFO",
+        timestamp: new Date().toISOString(),
+        message,
+        ...meta,
+      })
+    )
+  },
+  error: (message: string, meta?: LogMetadata) => {
+    console.error(
+      JSON.stringify({
+        level: "ERROR",
+        timestamp: new Date().toISOString(),
+        message,
+        ...meta,
+      })
+    )
+  },
+  warn: (message: string, meta?: LogMetadata) => {
+    console.warn(
+      JSON.stringify({
+        level: "WARN",
+        timestamp: new Date().toISOString(),
+        message,
+        ...meta,
+      })
+    )
+  },
+  debug: (message: string, meta?: LogMetadata) => {
+    if (process.env.NODE_ENV === "development") {
+      console.debug(
+        JSON.stringify({
+          level: "DEBUG",
+          timestamp: new Date().toISOString(),
+          message,
+          ...meta,
+        })
+      )
+    }
+  },
 }
-
-// Ensure log directory exists if in prod and not Vercel preview mode
-if (isProd && !existsSync(logDir)) {
-  try {
-    mkdirSync(logDir, { recursive: true })
-  } catch (err) {
-    console.warn("Could not create log directory:", err)
-  }
-}
-
-const logger = createLogger({
-  level: isProd ? "warn" : "debug",
-  format: format.combine(
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.errors({ stack: true }),
-    format.splat(),
-    format.json()
-  ),
-  transports: [
-    new transports.Console({
-      format: format.combine(format.colorize(), format.simple()),
-    }),
-    ...(isProd
-      ? [
-          new DailyRotateFile({
-            filename: `${logDir}/error-%DATE%.log`,
-            datePattern: "YYYY-MM-DD",
-            zippedArchive: true,
-            maxSize: "20m",
-            maxFiles: "14d",
-            level: "error",
-          }),
-          new DailyRotateFile({
-            filename: `${logDir}/combined-%DATE%.log`,
-            datePattern: "YYYY-MM-DD",
-            zippedArchive: true,
-            maxSize: "20m",
-            maxFiles: "14d",
-          }),
-        ]
-      : []),
-  ],
-})
-
-export { logger }
