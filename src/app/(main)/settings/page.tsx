@@ -1,6 +1,5 @@
 import { HeaderSection } from "@/app/(main)/components/header-section"
-import { getUserSubscription } from "@/db/queries"
-import { getStats, getUserSoundPreference } from "@/db/queries/_all-queries"
+import { getStats, getUserData } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import ThemeToggle from "@/components/theme/theme-toggle"
@@ -19,21 +18,20 @@ import { Feed } from "@/app/(main)/components/feed"
 const Page = async () => {
   const sessionData = auth()
   const statsData = getStats()
-  const userSubscriptionData = getUserSubscription()
-  const userSoundPreferenceData = getUserSoundPreference()
+  const userData = getUserData()
 
-  const [session, stats, userSubscription, userSoundPreference] =
-    await Promise.all([
-      sessionData,
-      statsData,
-      userSubscriptionData,
-      userSoundPreferenceData,
-    ])
+  const [session, stats, data] = await Promise.all([
+    sessionData,
+    statsData,
+    userData,
+  ])
 
   if (!stats || !stats.activeCourse) redirect("/courses")
-  if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
+  if (!data) redirect("/")
 
-  const isPro = !!userSubscription?.isActive
+  const { soundEnabled, subscription } = data
+
+  const isPro = !!subscription?.isActive
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -91,9 +89,7 @@ const Page = async () => {
                       Enable sound effects during exercises
                     </p>
                   </div>
-                  <SoundToggle
-                    initialSoundEnabled={userSoundPreference.soundEnabled}
-                  />
+                  <SoundToggle initialSoundEnabled={soundEnabled} />
                 </div>
               </div>
             </SettingsCard>

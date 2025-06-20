@@ -5,7 +5,6 @@ import { db, initializeDb } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { eq } from "drizzle-orm"
-import { soundPreferenceCache } from "@/db/queries/_all-queries"
 
 interface SoundRequest {
   soundEnabled: boolean
@@ -37,16 +36,6 @@ export async function updateSound({ soundEnabled }: SoundRequest) {
       })
       throw new Error("User not found")
     }
-
-    // Invalidate cache for this user's sound preference
-    const cacheKey = `soundPreference:${session.user.id}`
-    soundPreferenceCache.delete(cacheKey)
-    logger.info(
-      `Invalidated sound preference cache for user: ${session.user.id}`,
-      {
-        module: "actions",
-      }
-    )
 
     logger.info(
       `Updated soundEnabled for user: ${session.user.id} to ${soundEnabled}`,

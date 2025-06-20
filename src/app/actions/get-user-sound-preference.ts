@@ -1,11 +1,11 @@
 "use server"
 
-import { getUserSoundPreference } from "@/db/queries/_all-queries"
+import { getUserData } from "@/db/queries"
 import { logger } from "@/lib/logger"
 
 export async function getSoundPreference() {
   try {
-    const preference = await getUserSoundPreference()
+    const preference = await getUserData()
     if (!preference) {
       return { soundEnabled: true } // Default to true if not found
     }
