@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { useQuizAudio } from "@/store/use-quiz-audio"
+import { useQuizAudio } from "@/store/_use-audio"
 
 // Skip tests if running in CI environment
 test.describe("Quiz Audio Store", () => {

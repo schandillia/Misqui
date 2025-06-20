@@ -1,4 +1,3 @@
-import { cache } from "react"
 import { db, initializeDb } from "@/db/drizzle"
 import { auth } from "@/auth"
 import { eq, desc } from "drizzle-orm"

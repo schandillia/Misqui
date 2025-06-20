@@ -1,11 +1,17 @@
 "use client"
 
-import { useState, useEffect, useRef, useTransition, useMemo } from "react"
+import {
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+  useMemo,
+  useCallback,
+} from "react"
 import app from "@/lib/data/app.json"
 import { DrillHeader } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-header"
 import Image from "next/image"
 import { Option } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/option"
-import { useQuizAudio } from "@/store/use-quiz-audio"
 import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
 import { DrillFooter } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-footer"
 import { updateStats } from "@/app/actions/update-stats"
@@ -21,6 +27,12 @@ import {
   getDrillTimeStatus,
 } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 import { logger } from "@/lib/logger"
+
+const AUDIO_FILES = {
+  finish: "/audio/effects/finish.wav",
+  correct: "/audio/effects/correct.wav",
+  incorrect: "/audio/effects/incorrect.wav",
+} as const
 
 type Question = {
   id: number
@@ -61,8 +73,11 @@ const Drill = ({
   courseId,
 }: Props) => {
   const router = useRouter()
-  const { playCorrect, playIncorrect, playFinish, setSoundEnabled } =
-    useQuizAudio()
+  const [soundEnabled, setSoundEnabled] = useState(true) // Default until fetched
+  const [isSoundPreferenceLoaded, setSoundPreferenceLoaded] = useState(false)
+  const finishAudioRef = useRef<HTMLAudioElement | null>(null)
+  const correctAudioRef = useRef<HTMLAudioElement | null>(null)
+  const incorrectAudioRef = useRef<HTMLAudioElement | null>(null)
   const { open: openGemsModal } = useGemsModal()
   const hasPlayedFinishAudio = useRef(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -109,12 +124,71 @@ const Drill = ({
     router.push("/learn")
   }
 
+  // Initialize audio elements
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    finishAudioRef.current = new Audio(AUDIO_FILES.finish)
+    correctAudioRef.current = new Audio(AUDIO_FILES.correct)
+    incorrectAudioRef.current = new Audio(AUDIO_FILES.incorrect)
+    return () => {
+      finishAudioRef.current?.pause()
+      correctAudioRef.current?.pause()
+      incorrectAudioRef.current?.pause()
+    }
+  }, [])
+
+  // Audio playback functions
+  const playAudio = useCallback(
+    (type: keyof typeof AUDIO_FILES) => {
+      if (!soundEnabled || !isSoundPreferenceLoaded) return
+      try {
+        let audio: HTMLAudioElement | null = null
+        switch (type) {
+          case "finish":
+            audio = finishAudioRef.current
+            break
+          case "correct":
+            audio = correctAudioRef.current
+            break
+          case "incorrect":
+            audio = incorrectAudioRef.current
+            break
+        }
+        if (audio) {
+          audio.currentTime = 0
+          audio.play().catch((error) => {
+            console.error(`Error playing ${type} audio:`, error)
+          })
+        }
+      } catch (error) {
+        console.error(`Error in playAudio for ${type}:`, error)
+      }
+    },
+    [
+      soundEnabled,
+      isSoundPreferenceLoaded,
+      finishAudioRef,
+      correctAudioRef,
+      incorrectAudioRef,
+    ]
+  )
+
+  const playFinish = useCallback(() => playAudio("finish"), [playAudio])
+  const playCorrect = useCallback(() => playAudio("correct"), [playAudio])
+  const playIncorrect = useCallback(() => playAudio("incorrect"), [playAudio])
+
   // Fetch sound preference
   useEffect(() => {
-    getSoundPreference().then(({ soundEnabled }) => {
-      setSoundEnabled(soundEnabled)
-    })
-  }, [setSoundEnabled])
+    getSoundPreference()
+      .then(({ soundEnabled }) => {
+        setSoundEnabled(soundEnabled)
+        setSoundPreferenceLoaded(true)
+      })
+      .catch((error) => {
+        console.error("Failed to fetch sound preference:", error)
+        setSoundPreferenceLoaded(true) // Allow interaction on error
+      })
+  }, [])
 
   // Timer effect for elapsed time
   useEffect(() => {
@@ -201,7 +275,7 @@ const Drill = ({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (status !== "none" || serverPending) return
+      if (status !== "none" || serverPending || !isSoundPreferenceLoaded) return
       const key = parseInt(e.key)
       if (key >= 1 && key <= 4) {
         e.preventDefault()
@@ -211,7 +285,7 @@ const Drill = ({
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [status, serverPending])
+  }, [status, serverPending, isSoundPreferenceLoaded])
 
   const totalQuestions = app.QUESTIONS_PER_DRILL
   const progressValue =
@@ -219,7 +293,7 @@ const Drill = ({
   const currentQuestion = questions[currentQuestionIndex]
 
   const onSelect = (option: number) => {
-    if (status !== "none" || serverPending) return
+    if (status !== "none" || serverPending || !isSoundPreferenceLoaded) return
     setSelectedOption(option)
   }
 
@@ -512,7 +586,10 @@ const Drill = ({
                             : "none"
                       }
                       disabled={
-                        status !== "none" || serverPending || isUpdatePending
+                        !isSoundPreferenceLoaded ||
+                        status !== "none" ||
+                        serverPending ||
+                        isUpdatePending
                       }
                       onSelect={() => onSelect(optionNum)}
                       audio={null}
@@ -526,8 +603,9 @@ const Drill = ({
       </div>
       <DrillFooter
         disabled={
-          status === "none" &&
-          (!selectedOption || serverPending || isUpdatePending)
+          !isSoundPreferenceLoaded ||
+          (status === "none" &&
+            (!selectedOption || serverPending || isUpdatePending))
         }
         isTimed={isTimed}
         status={status}
