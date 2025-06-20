@@ -5,8 +5,6 @@ import { eq, and, sql, desc } from "drizzle-orm"
 import {
   users,
   userSubscription,
-  themeEnum,
-  brandColorEnum,
   courses,
   stats,
   units,
@@ -16,8 +14,15 @@ import {
 } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { UnitWithDrills } from "@/db/queries/types"
+import app from "@/lib/data/app.json"
 
 const DAY_IN_MS = 86_400_000
+
+// Cache store for manual invalidation
+export const soundPreferenceCache = new Map<
+  string,
+  { soundEnabled: boolean } | null
+>()
 
 // Fetch the current user's subscription status
 export const getUserSubscription = cache(async () => {
@@ -60,13 +65,21 @@ export const getUserSubscription = cache(async () => {
 })
 
 // Fetch the current user's sound preference
-export async function getUserSoundPreference() {
+export const getUserSoundPreference = cache(async () => {
   await initializeDb()
 
   const session = await auth()
   if (!session?.user?.id) {
     logger.warn("No authenticated user found for sound preference query")
     return null
+  }
+
+  const cacheKey = `soundPreference:${session.user.id}`
+  if (soundPreferenceCache.has(cacheKey)) {
+    logger.info("Returning cached sound preference", {
+      userId: session.user.id,
+    })
+    return soundPreferenceCache.get(cacheKey)
   }
 
   try {
@@ -81,6 +94,10 @@ export async function getUserSoundPreference() {
       return null
     }
 
+    soundPreferenceCache.set(cacheKey, result[0])
+    logger.info("Sound preference fetched and cached", {
+      userId: session.user.id,
+    })
     return result[0]
   } catch (error) {
     logger.error(
@@ -92,119 +109,7 @@ export async function getUserSoundPreference() {
     )
     throw new Error("Failed to fetch sound preference")
   }
-}
-
-// Update the sound setting for a given user
-export async function updateUserSoundSetting(
-  userId: string,
-  soundEnabled: boolean
-) {
-  await initializeDb()
-  if (typeof soundEnabled !== "boolean") {
-    logger.error("Invalid soundEnabled value: %s", soundEnabled)
-    throw new Error("Sound preference must be a boolean value")
-  }
-
-  try {
-    const result = await db.instance
-      .update(users)
-      .set({ soundEnabled, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning({ updatedSoundEnabled: users.soundEnabled })
-
-    if (!result.length) {
-      logger.warn("No user found with ID: %s for sound setting update", {
-        userId,
-      })
-      throw new Error("User not found")
-    }
-
-    logger.info(`Updated soundEnabled for user: ${userId} to ${soundEnabled}`, {
-      module: "queries",
-    })
-    return result[0]
-  } catch (error) {
-    logger.error(`Error updating soundEnabled for user: ${userId}`, {
-      error,
-      module: "queries",
-    })
-    throw new Error("Failed to update sound preference")
-  }
-}
-
-// Update the theme for a given user
-export async function updateUserTheme(
-  userId: string,
-  theme: (typeof themeEnum.enumValues)[number]
-) {
-  await initializeDb()
-  if (!themeEnum.enumValues.includes(theme)) {
-    logger.error("Invalid theme value: %s", { theme })
-    throw new Error("Invalid theme value")
-  }
-
-  try {
-    const result = await db.instance
-      .update(users)
-      .set({ theme, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning({ updatedTheme: users.theme })
-
-    if (!result.length) {
-      logger.warn("No user found with ID: %s for theme update", { userId })
-      throw new Error("User not found")
-    }
-
-    logger.info(`Updated theme for user: ${userId} to ${theme}`, {
-      module: "queries",
-    })
-    return result[0]
-  } catch (error) {
-    logger.error(`Error updating theme for user: ${userId}`, {
-      error,
-      module: "queries",
-    })
-    throw new Error("Failed to update theme")
-  }
-}
-
-// Update the brand color for a given user
-export async function updateUserColor(
-  userId: string,
-  brandColor: (typeof brandColorEnum.enumValues)[number]
-) {
-  await initializeDb()
-  if (!brandColorEnum.enumValues.includes(brandColor)) {
-    logger.error("Invalid brand color value: %s", { brandColor })
-    throw new Error("Invalid brand color value")
-  }
-
-  try {
-    const result = await db.instance
-      .update(users)
-      .set({ brandColor, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning({ updatedBrandColor: users.brandColor })
-
-    if (!result.length) {
-      logger.warn("No user found with ID: %s for brand color update", {
-        userId,
-      })
-      throw new Error("User not found")
-    }
-
-    logger.info(`Updated brand color for user: ${userId} to ${brandColor}`, {
-      module: "queries",
-    })
-    return result[0]
-  } catch (error) {
-    logger.error(`Error updating brand color for user: ${userId}`, {
-      error,
-      module: "queries",
-    })
-    throw new Error("Failed to update brand color")
-  }
-}
+})
 
 // Fetch all courses
 export const getCourses = cache(async () => {
@@ -460,52 +365,50 @@ export const getDrillQuestions = cache(
   }
 )
 
-export const getTopTenUsers = cache(async () => {
-  await initializeDb()
-  const session = await auth()
-  if (!session?.user?.id) return []
-  const data = await db.instance
-    .select({
-      userId: stats.userId,
-      points: stats.points,
-      name: users.name,
-      image: users.image,
-    })
-    .from(stats)
-    .innerJoin(users, eq(stats.userId, users.id))
-    .orderBy(desc(stats.points))
-    .limit(10)
+// Fetch leaderboard data
+export const getLeaderboard = cache(
+  async (
+    options: { topN?: number; requireAuth?: boolean } = {
+      topN: app.LEADERBOARD_COUNT,
+      requireAuth: false,
+    }
+  ) => {
+    await initializeDb()
+    const { topN = app.LEADERBOARD_COUNT, requireAuth = false } = options
+    logger.info("Fetching leaderboard", { topN, requireAuth })
 
-  return data
-})
-
-export async function getLeaderboard(topN: number = 10) {
-  await initializeDb()
-  logger.info("Fetching leaderboard", { topN })
-  try {
-    const leaderboard = await db.instance
-      .select({
-        userId: stats.userId,
-        points: stats.points,
-        name: users.name,
-        image: users.image,
-      })
-      .from(stats)
-      .innerJoin(users, eq(stats.userId, users.id))
-      .orderBy(desc(stats.points))
-      .limit(topN)
-
-    if (!leaderboard || leaderboard.length === 0) {
-      logger.warn("No leaderboard data found")
+    const session = await auth()
+    if (requireAuth && !session?.user?.id) {
+      logger.warn("No authenticated user found for leaderboard query")
       return []
     }
-    logger.info("Leaderboard fetched", { count: leaderboard.length })
-    return leaderboard
-  } catch (error) {
-    logger.error("Error fetching leaderboard", { error })
-    throw error
+
+    try {
+      const leaderboard = await db.instance
+        .select({
+          userId: stats.userId,
+          points: stats.points,
+          name: users.name,
+          image: users.image,
+        })
+        .from(stats)
+        .innerJoin(users, eq(stats.userId, users.id))
+        .orderBy(desc(stats.points))
+        .limit(topN)
+
+      if (!leaderboard || leaderboard.length === 0) {
+        logger.warn("No leaderboard data found")
+        return []
+      }
+
+      logger.info("Leaderboard fetched", { count: leaderboard.length })
+      return leaderboard
+    } catch (error) {
+      logger.error("Error fetching leaderboard", { error })
+      throw error
+    }
   }
-}
+)
 
 // Fetch units for a specific course by courseId
 export const getUnitsByCourseId = cache(

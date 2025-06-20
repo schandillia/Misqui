@@ -1,6 +1,6 @@
 import { HeaderSection } from "@/app/(main)/components/header-section"
 import { getUserSubscription } from "@/db/queries"
-import { getStats, getUserSoundPreference } from "@/db/queries/all-queries"
+import { getStats, getUserSoundPreference } from "@/db/queries/_all-queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import ThemeToggle from "@/components/theme/theme-toggle"

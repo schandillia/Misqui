@@ -1,6 +1,6 @@
 "use server"
 
-import { getUserSoundPreference } from "@/db/queries/all-queries"
+import { getUserSoundPreference } from "@/db/queries/_all-queries"
 import { logger } from "@/lib/logger"
 
 export async function getSoundPreference() {

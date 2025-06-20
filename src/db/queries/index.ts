@@ -1,1 +1,5 @@
-export * from "@/db/queries/all-queries"
+export * from "@/db/queries/user-queries"
+export * from "@/db/queries/course-queries"
+export * from "@/db/queries/unit-queries"
+export * from "@/db/queries/stats-queries"
+export * from "@/db/queries/question-queries"

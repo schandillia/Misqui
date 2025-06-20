@@ -5,13 +5,13 @@ import { PromoCard } from "@/app/(main)/components/promo-card"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { UserStats } from "@/app/(main)/components/user-stats"
 import { UserAvatar } from "@/components/user-avatar"
-import { getStats, getTopTenUsers, getUserSubscription } from "@/db/queries"
+import { getLeaderboard, getStats, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 
 const Page = async () => {
   const userStatsData = getStats()
   const userSubscriptionData = getUserSubscription()
-  const leaderboardData = getTopTenUsers()
+  const leaderboardData = getLeaderboard()
 
   const [userStats, userSubscription, leaderboard] = await Promise.all([
     userStatsData,
