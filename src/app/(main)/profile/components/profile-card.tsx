@@ -1,10 +1,10 @@
 import { UserAvatar } from "@/components/user-avatar"
-import { NameInput } from "@/app/(main)/settings/components/name-input"
-import { SettingsCard } from "@/app/(main)/settings/components/settings-card"
+import { NameInput } from "@/app/(main)/profile/components/name-input"
 import { LiaUserEditSolid } from "react-icons/lia"
 import { Session } from "next-auth"
-import { GenderSelect } from "@/app/(main)/settings/components/gender-select"
-import { BirthdateSelection } from "@/app/(main)/settings/components/birthdate-selection"
+import { GenderSelect } from "@/app/(main)/profile/components/gender-select"
+import { BirthdateSelection } from "@/app/(main)/profile/components/birthdate-selection"
+import { FeedCard } from "@/components/feed-card"
 
 type ProfileCardProps = {
   session: Session | null
@@ -12,7 +12,7 @@ type ProfileCardProps = {
 
 export function ProfileCard({ session }: ProfileCardProps) {
   return (
-    <SettingsCard title="Profile">
+    <FeedCard title="Profile">
       <div className="space-y-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
           {/* Avatar */}
@@ -50,6 +50,6 @@ export function ProfileCard({ session }: ProfileCardProps) {
           </div>
         </div>
       </div>
-    </SettingsCard>
+    </FeedCard>
   )
 }

@@ -8,6 +8,8 @@ import { getStats, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { logger } from "@/lib/logger"
+import { ProfileCard } from "@/app/(main)/profile/components/profile-card"
+import { CourseCompletionCard } from "@/app/(main)/profile/components/course-completion-card"
 
 const Page = async () => {
   const session = await auth()
@@ -60,12 +62,17 @@ const Page = async () => {
       <Feed>
         <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
-            imageSrc={session?.user.image ?? "/images/mascots/mascot.svg"}
+            imageSrc="/images/mascots/mascot.svg"
             imageAlt="Profile"
             title="Profile"
             description="View and manage your profile"
           />
-          profile
+
+          <div className="w-full space-y-6 lg:space-y-8">
+            {/* Profile Information */}
+            <ProfileCard session={session} />
+            <CourseCompletionCard session={session} />
+          </div>
         </div>
       </Feed>
     </div>

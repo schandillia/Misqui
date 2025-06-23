@@ -6,9 +6,7 @@ import { auth } from "@/auth"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import ColorSwitcher from "@/components/theme/color-switcher"
 import { SoundToggle } from "@/components/sound-toggle"
-import { ProfileCard } from "@/app/(main)/settings/components/profile-card"
 import { Label } from "@/components/ui/label"
-import { SettingsCard } from "@/app/(main)/settings/components/settings-card"
 import { Button } from "@/components/ui/button"
 import { SubscriptionButton } from "@/components/subscription-button"
 import { UserStats } from "@/app/(main)/components/user-stats"
@@ -17,6 +15,7 @@ import { RightColumn } from "@/app/(main)/components/right-column"
 import { Feed } from "@/app/(main)/components/feed"
 import { logger } from "@/lib/logger"
 import { MissionsCard } from "@/app/(main)/components/missions-card"
+import { FeedCard } from "@/components/feed-card"
 
 const Page = async () => {
   const session = await auth()
@@ -90,11 +89,8 @@ const Page = async () => {
           />
 
           <div className="w-full space-y-6 lg:space-y-8">
-            {/* Profile Information */}
-            <ProfileCard session={session} />
-
             {/* Preferences */}
-            <SettingsCard title="Preferences">
+            <FeedCard title="Preferences">
               <div className="space-y-6">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                   <div>
@@ -128,10 +124,10 @@ const Page = async () => {
                   />
                 </div>
               </div>
-            </SettingsCard>
+            </FeedCard>
 
             {/* Subscription Management */}
-            <SettingsCard title="Subscription">
+            <FeedCard title="Subscription">
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <p className="font-medium">Current Plan</p>
@@ -147,10 +143,10 @@ const Page = async () => {
                   nonProLabel="Upgrade to Pro"
                 />
               </div>
-            </SettingsCard>
+            </FeedCard>
 
             {/* Account Security */}
-            <SettingsCard title="Account Security">
+            <FeedCard title="Account Security">
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <Label>Connected Account</Label>
@@ -160,10 +156,10 @@ const Page = async () => {
                   Manage
                 </Button>
               </div>
-            </SettingsCard>
+            </FeedCard>
 
             {/* Data & Privacy */}
-            <SettingsCard title="Data & Privacy">
+            <FeedCard title="Data & Privacy">
               <div className="space-y-4">
                 <Button variant="ghost" className="w-full">
                   Export Data
@@ -172,7 +168,7 @@ const Page = async () => {
                   Delete Account
                 </Button>
               </div>
-            </SettingsCard>
+            </FeedCard>
           </div>
         </div>
       </Feed>

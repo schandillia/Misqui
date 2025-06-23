@@ -19,6 +19,7 @@ export const courses = pgTable(
     title: text("title").notNull(),
     description: text("description").notNull(),
     image: text("image").notNull(),
+    badge: text("badge").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   },
