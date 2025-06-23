@@ -9,22 +9,41 @@ import { UserStats } from "@/app/(main)/components/user-stats"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { PromoCard } from "@/app/(main)/components/promo-card"
 import { auth } from "@/auth"
+import { logger } from "@/lib/logger"
 
 const missions = app.MISSIONS
 
 const Page = async () => {
   const session = await auth()
-  const userStatsData = getStats()
-  const userSubscriptionData = session?.user?.id
-    ? getUserSubscription(session.user.id)
-    : null
+  const userId = session?.user?.id
 
   const [userStats, userSubscription] = await Promise.all([
-    userStatsData,
-    userSubscriptionData,
+    getStats().catch((error) => {
+      logger.error("Error fetching stats", {
+        error,
+        userId,
+        module: "missions",
+      })
+      return null
+    }),
+    getUserSubscription(userId).catch((error) => {
+      logger.error("Error fetching subscription", {
+        error,
+        userId,
+        module: "missions",
+      })
+      return null
+    }),
   ])
 
-  if (!userStats || !userStats.activeCourse) redirect("/courses")
+  if (!userStats) {
+    logger.warn("Missing required data for missions page", {
+      userId,
+      hasStats: !!userStats,
+      module: "missions",
+    })
+    redirect("/")
+  }
 
   const isPro = !!userSubscription?.isActive
 

@@ -54,8 +54,15 @@ const Page = async () => {
     }),
   ])
 
-  if (!stats || !stats.activeCourse) redirect("/courses")
-  if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
+  if (!userSoundPreference || !stats) {
+    logger.warn("Missing required data for settings page", {
+      userId,
+      hasStats: !!stats,
+      hasSoundPreference: !!userSoundPreference,
+      module: "settings",
+    })
+    redirect("/")
+  }
 
   const isPro = !!userSubscription?.isActive
 

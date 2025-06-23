@@ -8,22 +8,47 @@ import { UserAvatar } from "@/components/user-avatar"
 import { getStats, getLeaderboard, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
+import { logger } from "@/lib/logger"
 
 const Page = async () => {
   const session = await auth()
-  const userStatsData = getStats()
-  const userSubscriptionData = session?.user?.id
-    ? getUserSubscription(session.user.id)
-    : null
-  const leaderboardData = getLeaderboard()
+  const userId = session?.user?.id
 
   const [userStats, userSubscription, leaderboard] = await Promise.all([
-    userStatsData,
-    userSubscriptionData,
-    leaderboardData,
+    getStats().catch((error) => {
+      logger.error("Error fetching stats", {
+        error,
+        userId,
+        module: "leaderboard",
+      })
+      return null
+    }),
+    getUserSubscription(userId).catch((error) => {
+      logger.error("Error fetching subscription", {
+        error,
+        userId,
+        module: "leaderboard",
+      })
+      return null
+    }),
+    getLeaderboard().catch((error) => {
+      logger.error("Error fetching subscription", {
+        error,
+        userId,
+        module: "leaderboard",
+      })
+      return null
+    }),
   ])
 
-  if (!userStats || !userStats.activeCourse) redirect("/courses")
+  if (!userStats || !leaderboard) {
+    logger.warn("Missing required data for leaderboard page", {
+      userId,
+      hasStats: !!userStats,
+      module: "leaderboard",
+    })
+    redirect("/")
+  }
 
   const isPro = !!userSubscription?.isActive
 

@@ -8,21 +8,39 @@ import { RightColumn } from "@/app/(main)/components/right-column"
 import { Feed } from "@/app/(main)/components/feed"
 import { MissionsCard } from "@/app/(main)/components/missions-card"
 import { auth } from "@/auth"
+import { logger } from "@/lib/logger"
 
 const Page = async () => {
   const session = await auth()
-
-  const userStatsData = getStats()
-  const userSubscriptionData = session?.user?.id
-    ? getUserSubscription(session.user.id)
-    : null
+  const userId = session?.user?.id
 
   const [userStats, userSubscription] = await Promise.all([
-    userStatsData,
-    userSubscriptionData,
+    getStats().catch((error) => {
+      logger.error("Error fetching stats", {
+        error,
+        userId,
+        module: "store",
+      })
+      return null
+    }),
+    getUserSubscription(userId).catch((error) => {
+      logger.error("Error fetching subscription", {
+        error,
+        userId,
+        module: "store",
+      })
+      return null
+    }),
   ])
 
-  if (!userStats || !userStats.activeCourse) redirect("/courses")
+  if (!userStats) {
+    logger.warn("Missing required data for store page", {
+      userId,
+      hasStats: !!userStats,
+      module: "store",
+    })
+    redirect("/")
+  }
 
   const isPro = !!userSubscription?.isActive
 

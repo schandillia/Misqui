@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 type Props = {
-  activeCourse: typeof courses.$inferSelect
+  activeCourse?: typeof courses.$inferSelect | null
   gems: number
   points: number
   hasActiveSubscription: boolean
@@ -29,8 +29,8 @@ export const UserStats = ({
     <div className="flex w-full items-center justify-between gap-x-2">
       <Link href="/courses">
         <Image
-          src={activeCourse.image}
-          alt={activeCourse.title}
+          src={activeCourse?.image ?? "/images/icons/no-course.svg"}
+          alt={activeCourse?.title ?? "No enrollment"}
           className="rounded-md border"
           width={32}
           height={32}
