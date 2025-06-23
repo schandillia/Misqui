@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { db, initializeDb } from "@/db/drizzle"
-import { stats, users } from "@/db/schema"
+import { stats } from "@/db/schema"
 import { logger } from "@/lib/logger"
 import { eq } from "drizzle-orm"
 import { cache } from "react"

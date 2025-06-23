@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Confetti from "react-confetti"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -38,12 +37,12 @@ const CourseCompletion = ({ courseTitle }: CourseCompletionProps) => {
             width={32}
           />
           <CardTitle className="text-3xl font-bold dark:text-neutral-300">
-            Congratulations!
+            Woo-hoo!
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-6">
-            You've successfully completed the course!
+            {courseTitle} is in the bag!
           </p>
           <Button asChild variant="primary">
             <a href="/courses" className="flex items-center">

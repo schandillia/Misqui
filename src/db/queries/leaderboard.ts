@@ -1,9 +1,8 @@
 import { auth } from "@/auth"
 import { db, initializeDb } from "@/db/drizzle"
-import { questions, stats, users } from "@/db/schema"
+import { stats, users } from "@/db/schema"
 import { logger } from "@/lib/logger"
-import { desc, eq, sql } from "drizzle-orm"
-import { cache } from "react"
+import { desc, eq } from "drizzle-orm"
 import app from "@/lib/data/app.json"
 
 export async function getLeaderboard(topN: number = app.LEADERBOARD_LENGTH) {
