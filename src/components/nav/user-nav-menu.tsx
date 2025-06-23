@@ -15,6 +15,7 @@ import Link from "next/link"
 import { LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu"
 import { GrUserAdmin } from "react-icons/gr"
 import { logOut } from "@/app/actions/auth"
+import { FaRegUser } from "react-icons/fa6"
 
 interface UserNavMenuProps {
   user: {
@@ -72,6 +73,12 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
           <UserInfo name={user.name} email={user.email} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="cursor-pointer">
+            <FaRegUser className="mr-2 size-4" />
+            Profile
+          </Link>
+        </DropdownMenuItem>
         {user.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin" className="cursor-pointer">

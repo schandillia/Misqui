@@ -24,7 +24,7 @@ const Page = async () => {
       return null
     }),
     getUserSubscription(userId).catch((error) => {
-      logger.error("Error fetching subscription", {
+      logger.error("Error fetching leaderboard", {
         error,
         userId,
         module: "leaderboard",

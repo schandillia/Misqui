@@ -3,6 +3,10 @@
     "TITLE": "Misqui: Fun Skill Learning for Kids—Chess, Math, Logic & More",
     "DESCRIPTION": "Misqui makes learning fun for kids. Explore engaging modules in math, logic, chess, English, and more—tailored for young learners with gamified progression."
   },
+  "PROFILE": {
+    "TITLE": "Your Profile | Misqui",
+    "DESCRIPTION": "View and manage your learning profile, track your progress, customize your experience, and keep everything in sync—all in one place."
+  },
   "ADMIN": {
     "TITLE": "Admin Panel | Misqui",
     "DESCRIPTION": "Manage courses, drills, user data, and platform content with powerful tools designed for administrators and content managers. Secure, efficient, and built for control."
