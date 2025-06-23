@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { Switch } from "@/components/ui/switch"
 import { updateSound } from "@/app/actions/update-sound"
+import { logger } from "@/lib/logger"
 
 interface SoundToggleProps {
   initialSoundEnabled: boolean
@@ -20,7 +21,7 @@ export function SoundToggle({ initialSoundEnabled }: SoundToggleProps) {
         setSoundEnabled(newValue)
       } catch (error) {
         // Silently handle error to avoid user disruption
-        console.error("Failed to update sound preference:", error)
+        logger.error("Failed to update sound preference:", { error })
       }
     })
   }

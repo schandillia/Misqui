@@ -8,12 +8,16 @@ import { Feed } from "@/app/(main)/components/feed"
 import { UserStats } from "@/app/(main)/components/user-stats"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { PromoCard } from "@/app/(main)/components/promo-card"
+import { auth } from "@/auth"
 
 const missions = app.MISSIONS
 
 const Page = async () => {
+  const session = await auth()
   const userStatsData = getStats()
-  const userSubscriptionData = getUserSubscription()
+  const userSubscriptionData = session?.user?.id
+    ? getUserSubscription(session.user.id)
+    : null
 
   const [userStats, userSubscription] = await Promise.all([
     userStatsData,

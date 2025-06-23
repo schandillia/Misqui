@@ -1,8 +1,11 @@
+import { logger } from "@/lib/logger"
 import { create } from "zustand"
 
-type QuizAudioState = {
+type DrillAudioState = {
   soundEnabled: boolean
+  soundPreferenceLoaded: boolean
   setSoundEnabled: (enabled: boolean) => void
+  setSoundPreferenceLoaded: () => void
   playFinish: () => void
   playCorrect: () => void
   playIncorrect: () => void
@@ -37,22 +40,45 @@ const getAudio = (type: keyof typeof AUDIO_FILES): HTMLAudioElement => {
   }
 }
 
-export const useQuizAudio = create<QuizAudioState>((set, get) => {
+export const useDrillAudio = create<DrillAudioState>((set, get) => {
   const playAudio = (type: keyof typeof AUDIO_FILES) => {
     try {
-      if (typeof window === "undefined" || !get().soundEnabled) return
-
+      if (
+        typeof window === "undefined" ||
+        !get().soundEnabled ||
+        !get().soundPreferenceLoaded
+      ) {
+        logger.info(
+          `Skipped playing ${type} audio: soundEnabled=${get().soundEnabled}, soundPreferenceLoaded=${get().soundPreferenceLoaded}`,
+          { module: "drill-audio" }
+        )
+        return
+      }
+      logger.info(`Playing ${type} audio`, { module: "drill-audio" })
       const audio = getAudio(type)
       audio.currentTime = 0
       audio.play()
     } catch (error) {
-      console.error(`Error playing ${type} audio:`, error)
+      logger.error(`Error playing ${type} audio`, {
+        error,
+        module: "drill-audio",
+      })
     }
   }
 
   return {
-    soundEnabled: true, // Default until fetched
-    setSoundEnabled: (enabled: boolean) => set({ soundEnabled: enabled }),
+    soundEnabled: true,
+    soundPreferenceLoaded: false,
+    setSoundEnabled: (enabled: boolean) => {
+      logger.info(`Setting soundEnabled to ${enabled}`, {
+        module: "drill-audio",
+      })
+      set({ soundEnabled: enabled })
+    },
+    setSoundPreferenceLoaded: () => {
+      logger.info("Sound preference loaded", { module: "drill-audio" })
+      set({ soundPreferenceLoaded: true })
+    },
     playFinish: () => playAudio("finish"),
     playCorrect: () => playAudio("correct"),
     playIncorrect: () => playAudio("incorrect"),

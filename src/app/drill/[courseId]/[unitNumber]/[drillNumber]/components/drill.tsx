@@ -5,7 +5,6 @@ import app from "@/lib/data/app.json"
 import { DrillHeader } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-header"
 import Image from "next/image"
 import { Option } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/option"
-import { useQuizAudio } from "@/store/use-quiz-audio"
 import { getSoundPreference } from "@/app/actions/get-user-sound-preference"
 import { DrillFooter } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill-footer"
 import { updateStats } from "@/app/actions/update-stats"
@@ -21,6 +20,7 @@ import {
   getDrillTimeStatus,
 } from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/utils/drill-utils"
 import { logger } from "@/lib/logger"
+import { useDrillAudio } from "@/store/use-drill-audio"
 
 type Question = {
   id: number
@@ -61,8 +61,13 @@ const Drill = ({
   courseId,
 }: Props) => {
   const router = useRouter()
-  const { playCorrect, playIncorrect, playFinish, setSoundEnabled } =
-    useQuizAudio()
+  const {
+    playCorrect,
+    playIncorrect,
+    playFinish,
+    setSoundEnabled,
+    setSoundPreferenceLoaded,
+  } = useDrillAudio()
   const { open: openGemsModal } = useGemsModal()
   const hasPlayedFinishAudio = useRef(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -111,10 +116,23 @@ const Drill = ({
 
   // Fetch sound preference
   useEffect(() => {
-    getSoundPreference().then(({ soundEnabled }) => {
-      setSoundEnabled(soundEnabled)
-    })
-  }, [setSoundEnabled])
+    getSoundPreference()
+      .then(({ soundEnabled }) => {
+        logger.info(`Fetched sound preference: ${soundEnabled}`, {
+          module: "drill",
+        })
+        setSoundEnabled(soundEnabled)
+        setSoundPreferenceLoaded()
+      })
+      .catch((error) => {
+        logger.error("Error fetching sound preference in Drill", {
+          error,
+          module: "drill",
+        })
+        setSoundEnabled(true)
+        setSoundPreferenceLoaded()
+      })
+  }, [setSoundEnabled, setSoundPreferenceLoaded])
 
   // Timer effect for elapsed time
   useEffect(() => {
@@ -304,6 +322,7 @@ const Drill = ({
         gemsEarned: isCurrent ? 0 : 1,
         questionsCompleted: 1,
         isDrillCompleted: false,
+        isCurrent,
       })
     } else {
       playIncorrect()

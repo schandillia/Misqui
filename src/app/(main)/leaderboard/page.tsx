@@ -5,13 +5,17 @@ import { PromoCard } from "@/app/(main)/components/promo-card"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { UserStats } from "@/app/(main)/components/user-stats"
 import { UserAvatar } from "@/components/user-avatar"
-import { getStats, getTopTenUsers, getUserSubscription } from "@/db/queries"
+import { getStats, getLeaderboard, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
+import { auth } from "@/auth"
 
 const Page = async () => {
+  const session = await auth()
   const userStatsData = getStats()
-  const userSubscriptionData = getUserSubscription()
-  const leaderboardData = getTopTenUsers()
+  const userSubscriptionData = session?.user?.id
+    ? getUserSubscription(session.user.id)
+    : null
+  const leaderboardData = getLeaderboard()
 
   const [userStats, userSubscription, leaderboard] = await Promise.all([
     userStatsData,

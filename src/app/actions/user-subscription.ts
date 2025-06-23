@@ -41,7 +41,7 @@ export async function createStripeUrl(): Promise<ActionResponse<string>> {
     }
 
     const userId = session.user.id
-    const userSubscription = await getUserSubscription()
+    const userSubscription = userId ? await getUserSubscription(userId) : null
 
     if (userSubscription && userSubscription.stripeCustomerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({

@@ -21,7 +21,6 @@ type UpdateStatsInput = {
   scorePercentage?: number
 }
 
-// Type for the updateFields object
 type UserDrillCompletionUpdateFields = {
   updatedAt: Date
   currentDrillId?: number
@@ -51,7 +50,6 @@ export const updateStats = async ({
   const today = new Date().toISOString().split("T")[0]
 
   try {
-    // Log input for debugging
     logger.info("updateStats called:", {
       userId,
       drillId,
@@ -65,7 +63,6 @@ export const updateStats = async ({
       scorePercentage,
     })
 
-    // Fetch current stats
     const currentStats = await db.instance
       .select({
         gems: stats.gems,
@@ -89,13 +86,11 @@ export const updateStats = async ({
     const longestStreak = currentStats[0].longestStreak
     const lastActivityDate = currentStats[0].lastActivityDate
 
-    // Validate gems
     if (currentGems + gemsEarned < 0) {
-      logger.warn("Insufficient gems for user: %s", { userId })
+      logger.warn(`Insufficient gems for user: ${userId}`, { module: "units" })
       return { error: "gems" }
     }
 
-    // Calculate streak updates
     let newCurrentStreak = currentStreak
     let newLongestStreak = longestStreak
     let newLastActivityDate = lastActivityDate
@@ -104,18 +99,16 @@ export const updateStats = async ({
       const lastActivity = lastActivityDate ? new Date(lastActivityDate) : null
       const todayDate = new Date(today)
 
-      // Check if streak should be reset (more than one day since last activity)
       if (
         lastActivity &&
         lastActivity < new Date(todayDate.getTime() - 24 * 60 * 60 * 1000)
       ) {
         newCurrentStreak = 0
-        logger.info("Streak reset to 0 for user: %s due to inactivity", {
-          userId,
+        logger.info(`Streak reset to 0 for user: ${userId} due to inactivity`, {
+          module: "units",
         })
       }
 
-      // Increment streak if it's the first completion today
       if (!lastActivityDate || lastActivityDate !== today) {
         newCurrentStreak += 1
         newLastActivityDate = today
@@ -129,8 +122,7 @@ export const updateStats = async ({
       }
     }
 
-    // Update stats table
-    await db.instance
+    const statsResult = await db.instance
       .update(stats)
       .set({
         gems: Math.min(currentGems + gemsEarned, app.GEMS_LIMIT),
@@ -141,32 +133,59 @@ export const updateStats = async ({
         updatedAt: new Date(),
       })
       .where(eq(stats.userId, userId))
+    logger.info(
+      `Updated ${statsResult.rowCount} rows in stats for user: ${userId}`,
+      {
+        module: "units",
+      }
+    )
 
-    // Update user_drill_completion table
-    if (questionsCompleted >= 0) {
+    if (isCurrent && questionsCompleted >= 0) {
       const updateFields: UserDrillCompletionUpdateFields = {
         updatedAt: new Date(),
       }
 
-      // Fetch current questionsCompleted for the drill
       const currentCompletion = await db.instance
         .select({
           questionsCompleted: userDrillCompletion.questionsCompleted,
+          currentDrillId: userDrillCompletion.currentDrillId,
         })
         .from(userDrillCompletion)
         .where(
           and(
             eq(userDrillCompletion.userId, userId),
-            eq(userDrillCompletion.courseId, courseId),
-            eq(userDrillCompletion.currentDrillId, drillId)
+            eq(userDrillCompletion.courseId, courseId)
           )
         )
         .limit(1)
 
+      if (!currentCompletion[0]) {
+        await db.instance.insert(userDrillCompletion).values({
+          userId,
+          courseId,
+          currentDrillId: drillId,
+          questionsCompleted: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        logger.info(
+          `Created user_drill_completion record for user: ${userId}, course: ${courseId}, drill: ${drillId}`,
+          { module: "units" }
+        )
+      }
+
       const currentQuestionsCompleted =
         currentCompletion[0]?.questionsCompleted || 0
+      const currentDrillIdInDb = currentCompletion[0]?.currentDrillId || drillId
 
-      // Determine if drill should be advanced
+      if (currentDrillIdInDb !== drillId) {
+        updateFields.currentDrillId = drillId
+        logger.info(
+          `Updating currentDrillId to ${drillId} for user: ${userId}, course: ${courseId}`,
+          { module: "units" }
+        )
+      }
+
       const shouldAdvanceDrill =
         (!isTimed &&
           (isDrillCompleted ||
@@ -178,7 +197,6 @@ export const updateStats = async ({
           isDrillCompleted)
 
       if (shouldAdvanceDrill) {
-        // Fetch current drill's unitId
         const currentDrill = await db.instance
           .select({ unitId: drills.unitId, order: drills.order })
           .from(drills)
@@ -192,13 +210,12 @@ export const updateStats = async ({
         })
 
         if (!currentDrill[0]) {
-          logger.warn("Drill not found: %s", { drillId })
+          logger.warn(`Drill not found: ${drillId}`, { module: "units" })
           throw new Error("Drill not found")
         }
 
         const unitId = currentDrill[0].unitId
 
-        // Check for next drill in the same unit
         const nextDrillInUnit = await db.instance
           .select({ id: drills.id, order: drills.order })
           .from(drills)
@@ -222,12 +239,9 @@ export const updateStats = async ({
           updateFields.questionsCompleted = 0
           logger.info(
             `Advancing to next drill in unit: ${nextDrillInUnit[0].id} for user: ${userId}`,
-            {
-              module: "units",
-            }
+            { module: "units" }
           )
         } else {
-          // Check for next unit in the course
           const currentUnit = await db.instance
             .select({ order: units.order })
             .from(units)
@@ -240,7 +254,7 @@ export const updateStats = async ({
           })
 
           if (!currentUnit[0]) {
-            logger.warn("Unit not found: %s", { unitId })
+            logger.warn(`Unit not found: ${unitId}`, { module: "units" })
             throw new Error("Unit not found")
           }
 
@@ -263,7 +277,6 @@ export const updateStats = async ({
           })
 
           if (nextUnit[0]) {
-            // Find the first drill in the next unit
             const firstDrillInUnit = await db.instance
               .select({ id: drills.id, order: drills.order })
               .from(drills)
@@ -282,32 +295,26 @@ export const updateStats = async ({
               updateFields.questionsCompleted = 0
               logger.info(
                 `Advancing to first drill in next unit: ${firstDrillInUnit[0].id} for user: ${userId}`,
-                {
-                  module: "units",
-                }
+                { module: "units" }
               )
             } else {
               updateFields.questionsCompleted = 0
               logger.info(
                 `No drills found in next unit: ${nextUnit[0].id} for course: ${courseId}`,
-                {
-                  module: "units",
-                }
+                { module: "units" }
               )
             }
           } else {
-            updateFields.questionsCompleted = 0
+            updateFields.questionsCompleted = app.QUESTIONS_PER_DRILL
             logger.info(
-              `No next unit found for course: ${courseId} after unit: ${unitId}; resetting questions_completed`,
+              `No next unit found for course: ${courseId} after unit: ${unitId}; resetting questions`,
               { module: "units" }
             )
           }
         }
       } else if (!isTimed && questionsCompleted > 0) {
-        // For non-timed drills, increment questions_completed if not completed
         updateFields.questionsCompleted = sql`${userDrillCompletion.questionsCompleted} + ${questionsCompleted}`
       } else if (isTimed && isCurrent) {
-        // For timed drills, reset questionsCompleted to 0 since we don't track progress
         updateFields.questionsCompleted = 0
       }
 
@@ -315,29 +322,53 @@ export const updateStats = async ({
         userId,
         courseId,
         drillId,
-        updateFields,
+        updateFields: {
+          updatedAt: updateFields.updatedAt,
+          currentDrillId: updateFields.currentDrillId,
+          questionsCompleted: updateFields.questionsCompleted
+            ? String(updateFields.questionsCompleted)
+            : undefined,
+        },
       })
 
-      await db.instance
+      const result = await db.instance
         .update(userDrillCompletion)
         .set(updateFields)
         .where(
           and(
             eq(userDrillCompletion.userId, userId),
-            eq(userDrillCompletion.courseId, courseId),
-            eq(userDrillCompletion.currentDrillId, drillId)
+            eq(userDrillCompletion.courseId, courseId)
           )
         )
+        .returning({ updatedId: userDrillCompletion.userId })
+
+      logger.info(`Updated user_drill_completion result:`, {
+        userId,
+        courseId,
+        drillId,
+        rowCount: result.length,
+        updatedId: result[0]?.updatedId,
+        module: "units",
+      })
+
+      if (result.length === 0) {
+        logger.warn(
+          `No rows updated in user_drill_completion for user: ${userId}, course: ${courseId}`,
+          { module: "units" }
+        )
+        throw new Error("No user drill completion record found to update")
+      }
     }
 
-    // Revalidate relevant paths, excluding drill page
     revalidatePath("/learn")
     revalidatePath("/store")
     revalidatePath("/leaderboard")
 
     logger.info(
       `Stats updated successfully for user: ${userId}, drill: ${drillId}`,
-      { module: "units" }
+      {
+        module: "units",
+      }
     )
 
     return { success: true }
@@ -345,11 +376,14 @@ export const updateStats = async ({
     logger.error(
       `Error updating stats for user: ${userId}, drill: ${drillId}`,
       {
-        error,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
         module: "units",
       }
     )
-    throw new Error("Failed to update stats")
+    throw new Error(
+      `Failed to update stats: ${error instanceof Error ? error.message : String(error)}`
+    )
   }
 }
 
@@ -362,20 +396,24 @@ export const upsertStat = async (courseId: number) => {
     throw new Error("Unauthorized")
   }
 
+  const userId = session.user.id
   const course = await getCourseById(courseId)
 
   if (!course) {
-    logger.warn("Course not found: %s", { courseId })
+    logger.warn(`Course not found: ${courseId}`)
     throw new Error("Course not found")
   }
 
   if (!course.units.length || !course.units[0].drills.length) {
-    logger.warn("Course has no drills: %s", { courseId })
+    logger.warn(`Course has no drills: ${courseId}`)
     throw new Error("Course has no drills")
   }
 
+  const firstDrillId = course.units[0].drills[0].id
+
+  // Update stats
   const existingUserStats = await db.instance.query.stats.findFirst({
-    where: (stats, { eq }) => eq(stats.userId, session.user.id),
+    where: (stats, { eq }) => eq(stats.userId, userId),
   })
 
   if (existingUserStats) {
@@ -385,17 +423,47 @@ export const upsertStat = async (courseId: number) => {
         activeCourseId: courseId,
         updatedAt: new Date(),
       })
-      .where(eq(stats.userId, session.user.id))
-
-    revalidatePath("/learn")
-    revalidatePath("/courses")
-    return { success: true }
+      .where(eq(stats.userId, userId))
+  } else {
+    await db.instance.insert(stats).values({
+      userId,
+      activeCourseId: courseId,
+    })
   }
 
-  await db.instance.insert(stats).values({
-    userId: session.user.id,
-    activeCourseId: courseId,
-  })
+  // Update user_drill_completion only if no record exists
+  const existingCompletion = await db.instance
+    .select()
+    .from(userDrillCompletion)
+    .where(
+      and(
+        eq(userDrillCompletion.userId, userId),
+        eq(userDrillCompletion.courseId, courseId)
+      )
+    )
+    .limit(1)
+
+  if (!existingCompletion[0]) {
+    await db.instance.insert(userDrillCompletion).values({
+      userId,
+      courseId,
+      currentDrillId: firstDrillId,
+      questionsCompleted: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    logger.info(
+      `Initialized user_drill_completion for user: ${userId}, course: ${courseId}, drill: ${firstDrillId}`,
+      {
+        module: "courses",
+      }
+    )
+  } else {
+    logger.info(
+      `Existing user_drill_completion found for user: ${userId}, course: ${courseId}, drill: ${existingCompletion[0].currentDrillId}, questionsCompleted: ${existingCompletion[0].questionsCompleted}`,
+      { module: "courses" }
+    )
+  }
 
   revalidatePath("/learn")
   revalidatePath("/courses")

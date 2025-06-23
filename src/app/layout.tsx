@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { ExitModal } from "@/components/modals/exit-modal"
 import { PracticeModal } from "@/components/modals/practice-modal"
 import { ThemeProvider } from "@/components/theme/theme-provider"
-import { getUserSubscription } from "@/db/queries"
+import { getUserPreferences, getUserSubscription } from "@/db/queries"
 import { Toaster } from "react-hot-toast"
 import { InsufficientGemsModal } from "@/components/modals/insufficient-gems-modal"
 
@@ -33,31 +33,33 @@ export default async function RootLayout({
   // Log session only in development for debugging
   if (session?.user?.id && process.env.NODE_ENV === "development") {
     logger.debug("User session found", { userId: session.user.id })
-  }
-
-  let theme: (typeof themeEnum.enumValues)[number] = "system"
-  let brandColor: (typeof brandColorEnum.enumValues)[number] = "violet"
-
-  if (session?.user?.id) {
-    try {
-      const [user] = await db.instance
-        .select({ theme: users.theme, brandColor: users.brandColor })
-        .from(users)
-        .where(eq(users.id, session.user.id))
-        .limit(1)
-      if (user) {
-        theme = user.theme
-        brandColor = user.brandColor
-      }
-    } catch (error) {
-      logger.error("Error fetching user", { error, module: "layout" })
-    }
   } else if (process.env.NODE_ENV === "development") {
     logger.debug("No user session found")
   }
 
-  const userSubscription = await getUserSubscription()
-  const isPro = !!userSubscription?.isActive
+  let theme: (typeof themeEnum.enumValues)[number] = "system"
+  let brandColor: (typeof brandColorEnum.enumValues)[number] = "violet"
+  let isPro = false
+
+  if (session?.user?.id) {
+    try {
+      const [user, userSubscription] = await Promise.all([
+        getUserPreferences(session.user.id),
+        getUserSubscription(session.user.id),
+      ])
+      if (user) {
+        theme = user.theme ?? "system"
+        brandColor = user.brandColor ?? "violet"
+      }
+      isPro = !!userSubscription?.isActive
+    } catch (error) {
+      logger.error("Error fetching user data in RootLayout", {
+        error,
+        userId: session.user.id,
+        module: "layout",
+      })
+    }
+  }
 
   return (
     <html

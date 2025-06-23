@@ -14,7 +14,7 @@ export const SettingsCard = ({
   className,
 }: SettingsCardProps) => {
   return (
-    <Card className={cn("", className)}>
+    <Card className={cn("dark:bg-black", className)}>
       <CardHeader className="pb-4">
         <CardTitle className="text-2xl font-bold tracking-tight">
           {title}

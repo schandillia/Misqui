@@ -7,10 +7,15 @@ import { PromoCard } from "@/app/(main)/components/promo-card"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { Feed } from "@/app/(main)/components/feed"
 import { MissionsCard } from "@/app/(main)/components/missions-card"
+import { auth } from "@/auth"
 
 const Page = async () => {
+  const session = await auth()
+
   const userStatsData = getStats()
-  const userSubscriptionData = getUserSubscription()
+  const userSubscriptionData = session?.user?.id
+    ? getUserSubscription(session.user.id)
+    : null
 
   const [userStats, userSubscription] = await Promise.all([
     userStatsData,

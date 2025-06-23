@@ -4,6 +4,7 @@ import { getDrillQuestions, getUserSubscription, getStats } from "@/db/queries"
 import app from "@/lib/data/app.json"
 import { logger } from "@/lib/logger"
 import Drill from "@/app/drill/[courseId]/[unitNumber]/[drillNumber]/components/drill"
+import { auth } from "@/auth"
 
 type Props = {
   params: Promise<{
@@ -14,6 +15,7 @@ type Props = {
 }
 
 const Page = async ({ params }: Props) => {
+  const session = await auth()
   // Await params before accessing properties
   const { courseId, unitNumber, drillNumber } = await params
 
@@ -75,12 +77,18 @@ const Page = async ({ params }: Props) => {
   })
 
   // Fetch user-specific data
-  const userSubscriptionData = await getUserSubscription()
-  const userStats = await getStats()
+  const userSubscriptionData = session?.user?.id
+    ? getUserSubscription(session.user.id)
+    : null
+  const userStatsData = getStats()
+  const [userSubscription, userStats] = await Promise.all([
+    userSubscriptionData,
+    userStatsData,
+  ])
 
   const initialGemsCount = userStats?.gems ?? 0
   const initialPoints = userStats?.points ?? 0
-  const isPro = userSubscriptionData?.isActive ?? false
+  const isPro = userSubscription?.isActive ?? false
 
   return (
     <div className="container mx-auto p-4">

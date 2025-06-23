@@ -6,7 +6,7 @@ import { useOptimistic, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { PiMoonStars, PiSun } from "react-icons/pi"
 import { LuComputer } from "react-icons/lu"
-import { updateThemeAction } from "@/app/actions/update-theme"
+import { updateTheme } from "@/app/actions/update-theme"
 import { themeEnum } from "@/db/schema"
 
 interface ThemeToggleProps {
@@ -45,7 +45,7 @@ export default function ThemeToggle({ type = "default" }: ThemeToggleProps) {
 
       // Background server update
       try {
-        await updateThemeAction({
+        await updateTheme({
           theme: newTheme as (typeof themeEnum.enumValues)[number],
         })
       } catch (error: unknown) {

@@ -57,7 +57,7 @@ export const NotesModal = ({
                 variant="primary"
                 className="button-shine-effect flex-1"
               >
-                <Link href={firstDrillUrl}>Quiz</Link>
+                <Link href={firstDrillUrl}>Drill</Link>
               </Button>
             )}
           </div>

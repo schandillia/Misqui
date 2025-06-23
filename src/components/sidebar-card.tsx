@@ -12,7 +12,8 @@ export function SidebarCard({
   return (
     <Card
       className={cn(
-        "border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800",
+        `border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
+        dark:bg-black`,
         className
       )}
       {...props}

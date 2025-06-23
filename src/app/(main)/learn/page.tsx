@@ -12,14 +12,24 @@ import { UserStats } from "@/app/(main)/components/user-stats"
 import { PromoCard } from "@/app/(main)/components/promo-card"
 import { MissionsCard } from "@/app/(main)/components/missions-card"
 import { UnitWithDrills } from "@/db/queries/types"
+import { auth } from "@/auth"
+import app from "@/lib/data/app.json"
+import CourseCompletion from "@/app/(main)/learn/components/course-completion"
 
 const Page = async () => {
   await initializeDb()
+  const session = await auth()
+
+  const userSubscriptionData = session?.user?.id
+    ? getUserSubscription(session.user.id)
+    : null
+  const userStatsData = getStats()
+  const unitsData = getUnits()
 
   const [userSubscription, stats, units] = await Promise.all([
-    getUserSubscription(),
-    getStats(),
-    getUnits(),
+    userSubscriptionData,
+    userStatsData,
+    unitsData,
   ])
 
   const isPro = !!userSubscription?.isActive
@@ -61,6 +71,11 @@ const Page = async () => {
       drillId,
       questionsCompleted
     )
+
+  // Check if course is completed based on questionsCompleted
+  if (updatedQuestionsCompleted === app.QUESTIONS_PER_DRILL) {
+    return <CourseCompletion courseTitle={activeCourse.title} />
+  }
 
   const currentUnit = units.find((unit: UnitWithDrills) =>
     unit.drills.some((drill) => drill.id === currentDrillId)

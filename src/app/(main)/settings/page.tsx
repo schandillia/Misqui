@@ -1,6 +1,6 @@
 import { HeaderSection } from "@/app/(main)/components/header-section"
 import { getUserSubscription } from "@/db/queries"
-import { getStats, getUserSoundPreference } from "@/db/queries/all-queries"
+import { getStats, getUserSoundPreference } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import ThemeToggle from "@/components/theme/theme-toggle"
@@ -15,20 +15,44 @@ import { UserStats } from "@/app/(main)/components/user-stats"
 import { PromoCard } from "@/app/(main)/components/promo-card"
 import { RightColumn } from "@/app/(main)/components/right-column"
 import { Feed } from "@/app/(main)/components/feed"
+import { logger } from "@/lib/logger"
+import { MissionsCard } from "@/app/(main)/components/missions-card"
 
 const Page = async () => {
-  const sessionData = auth()
-  const statsData = getStats()
-  const userSubscriptionData = getUserSubscription()
-  const userSoundPreferenceData = getUserSoundPreference()
+  const session = await auth()
+  const userId = session?.user?.id
 
-  const [session, stats, userSubscription, userSoundPreference] =
-    await Promise.all([
-      sessionData,
-      statsData,
-      userSubscriptionData,
-      userSoundPreferenceData,
-    ])
+  if (!userId) {
+    logger.warn("No authenticated user found for settings page")
+    redirect("/")
+  }
+
+  const [stats, userSubscription, userSoundPreference] = await Promise.all([
+    getStats().catch((error) => {
+      logger.error("Error fetching stats", {
+        error,
+        userId,
+        module: "settings",
+      })
+      return null
+    }),
+    getUserSubscription(userId).catch((error) => {
+      logger.error("Error fetching subscription", {
+        error,
+        userId,
+        module: "settings",
+      })
+      return null
+    }),
+    getUserSoundPreference().catch((error) => {
+      logger.error("Error fetching sound preference", {
+        error,
+        userId,
+        module: "settings",
+      })
+      return null
+    }),
+  ])
 
   if (!stats || !stats.activeCourse) redirect("/courses")
   if (!userSoundPreference) redirect("/") // Redirect if sound preference is not found
@@ -47,6 +71,7 @@ const Page = async () => {
           lastActivityDate={stats.lastActivityDate}
         />
         {!isPro && <PromoCard />}
+        <MissionsCard points={stats.points} />
       </RightColumn>
       <Feed>
         <div className="flex w-full flex-col items-center">
