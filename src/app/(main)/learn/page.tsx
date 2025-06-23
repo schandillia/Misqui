@@ -74,7 +74,12 @@ const Page = async () => {
 
   // Check if course is completed based on questionsCompleted
   if (updatedQuestionsCompleted === app.QUESTIONS_PER_DRILL) {
-    return <CourseCompletion courseTitle={activeCourse.title} />
+    return (
+      <CourseCompletion
+        courseTitle={activeCourse.title}
+        courseId={activeCourse.id}
+      />
+    )
   }
 
   const currentUnit = units.find((unit: UnitWithDrills) =>

@@ -2,7 +2,13 @@
 
 import { auth } from "@/auth"
 import { db, initializeDb } from "@/db/drizzle"
-import { stats, userDrillCompletion, drills, units } from "@/db/schema"
+import {
+  stats,
+  userDrillCompletion,
+  drills,
+  units,
+  userCourseCompletion,
+} from "@/db/schema"
 import { getCourseById } from "@/db/queries"
 import { eq, and, sql, gt, SQL } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
@@ -308,6 +314,16 @@ export const updateStats = async ({
             updateFields.questionsCompleted = app.QUESTIONS_PER_DRILL
             logger.info(
               `No next unit found for course: ${courseId} after unit: ${unitId}; resetting questions`,
+              { module: "units" }
+            )
+
+            // Insert course completion record
+            await db.instance.insert(userCourseCompletion).values({
+              userId,
+              courseId,
+            })
+            logger.info(
+              `Inserted user_course_completion record for user: ${userId}, course: ${courseId}`,
               { module: "units" }
             )
           }

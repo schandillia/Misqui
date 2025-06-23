@@ -92,6 +92,19 @@ export const userDrillCompletion = pgTable(
   (table) => [primaryKey({ columns: [table.userId, table.courseId] })]
 )
 
+// User Course Completion Table
+export const userCourseCompletion = pgTable("user_course_completion", {
+  id: serial("id").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  courseId: integer("course_id")
+    .notNull()
+    .references(() => courses.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+})
+
 // Relations
 export const statsRelations = relations(stats, ({ one }) => ({
   activeCourse: one(courses, {
@@ -133,6 +146,20 @@ export const userDrillCompletionRelations = relations(
     currentDrill: one(drills, {
       fields: [userDrillCompletion.currentDrillId],
       references: [drills.id],
+    }),
+  })
+)
+
+export const userCourseCompletionRelations = relations(
+  userCourseCompletion,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userCourseCompletion.userId],
+      references: [users.id],
+    }),
+    course: one(courses, {
+      fields: [userCourseCompletion.courseId],
+      references: [courses.id],
     }),
   })
 )
