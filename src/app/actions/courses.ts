@@ -85,6 +85,7 @@ export async function createCourse(
       title: formData.get("title"),
       description: formData.get("description"),
       image: formData.get("image"),
+      badge: formData.get("image"),
     })
 
     const newCourse = await db.instance
@@ -93,6 +94,7 @@ export async function createCourse(
         title: data.title,
         description: data.description,
         image: data.image,
+        badge: data.image,
       })
       .returning()
 
