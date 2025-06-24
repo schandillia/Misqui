@@ -21,7 +21,7 @@ export function ProfileCard({ session }: ProfileCardProps) {
               <UserAvatar
                 name={session?.user?.name}
                 image={session?.user?.image}
-                className="size-16 transition-transform group-hover:scale-105"
+                className="size-34 transition-transform group-hover:scale-105"
               />
               <div
                 className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0
