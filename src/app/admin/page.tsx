@@ -5,6 +5,8 @@ import { CoursesManager } from "@/app/admin/components/courses-manager"
 import { Separator } from "@/components/ui/separator"
 import { UnitsManager } from "@/app/admin/components/units-manager"
 import { DrillsManager } from "@/app/admin/components/drills-manager"
+import { Uploader } from "@/app/admin/components/uploader"
+import { cn } from "@/lib/utils"
 
 export default async function AdminPage() {
   const coursesResult = await getCourses()
@@ -28,6 +30,16 @@ export default async function AdminPage() {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-6 lg:px-8 pb-10">
+          {/* Courses Management Card */}
+          <Card
+            className="border-1 p-8 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
+              dark:bg-black max-w-xl"
+          >
+            <CardContent className="h-full w-full p-0">
+              <Uploader />
+            </CardContent>
+          </Card>
+
           {/* Courses Management Card */}
           <Card
             className="border-1 p-4 shadow-lg shadow-neutral-300 dark:border-2 dark:shadow-neutral-800
