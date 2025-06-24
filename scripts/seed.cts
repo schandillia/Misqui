@@ -45,18 +45,21 @@ const main = async () => {
         title: "Chess",
         description: "Learn the basics of chess.",
         image: "/images/icons/chess-icon.svg",
+        badge: "/images/icons/chess-icon.svg",
       },
       {
         id: 2,
         title: "Sudoku",
         description: "Learn the basics of sudoku.",
         image: "/images/icons/sudoku-icon.svg",
+        badge: "/images/icons/sudoku-icon.svg",
       },
       {
         id: 3,
         title: "Math",
         description: "Learn the basics of math.",
         image: "/images/icons/math-icon.svg",
+        badge: "/images/icons/math-icon.svg",
       },
     ])
     logger.debug("Inserted courses")
