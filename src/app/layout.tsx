@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import meta from "@/lib/data/meta.json"
 import { bodyFont, headingFont } from "@/lib/fonts"
 import { auth } from "@/auth"
-import { db, initializeDb } from "@/db/drizzle"
 import { brandColorEnum, themeEnum } from "@/db/schema"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { logger } from "@/lib/logger"
@@ -26,8 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  await initializeDb()
-
   const session = await auth()
   // Log session only in development for debugging
   if (session?.user?.id && process.env.NODE_ENV === "development") {

@@ -14,7 +14,7 @@ const Loading = () => (
             <Skeleton className="h-8 w-12" />
           </div>
           {/* Promo skeleton */}
-          <div className="space-y-4 rounded-xl border-2 p-4">
+          <div className="space-y-4 rounded-3xl border-2 p-4">
             <div className="mb-2 flex items-center gap-x-2">
               <Skeleton className="size-6" />
               <Skeleton className="h-6 w-32" />
