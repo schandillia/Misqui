@@ -8,7 +8,7 @@ import { getStats, getUserSubscription } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { logger } from "@/lib/logger"
-import { ProfileCard } from "@/app/(main)/profile/components/profile-card"
+import { CourseCompletionCard } from "@/app/(main)/dashboard/components/course-completion-card"
 
 const Page = async () => {
   const session = await auth()
@@ -61,15 +61,14 @@ const Page = async () => {
       <Feed>
         <div className="flex w-full cursor-default flex-col items-center">
           <HeaderSection
-            imageSrc="/images/mascots/mascot.svg"
-            imageAlt="Profile"
-            title="Profile"
-            description="View and manage your profile"
+            imageSrc="/images/icons/dashboard.svg"
+            imageAlt="Dashboard"
+            title="Dashboard"
+            description="Your own personal hall of fame"
           />
 
           <div className="w-full space-y-6 lg:space-y-8">
-            {/* Profile Information */}
-            <ProfileCard session={session} />
+            <CourseCompletionCard session={session} />
           </div>
         </div>
       </Feed>

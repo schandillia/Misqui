@@ -7,6 +7,10 @@
     "TITLE": "Your Profile | Misqui",
     "DESCRIPTION": "View and manage your learning profile, track your progress, customize your experience, and keep everything in sync—all in one place."
   },
+  "DASHBOARD": {
+    "TITLE": "Dashboard | Misqui",
+    "DESCRIPTION": "View your courses, badges, streaks, and achievements in one central place. Stay motivated, track your goals, and celebrate your learning journey with Misqui."
+  },
   "ADMIN": {
     "TITLE": "Admin Panel | Misqui",
     "DESCRIPTION": "Manage courses, drills, user data, and platform content with powerful tools designed for administrators and content managers. Secure, efficient, and built for control."
