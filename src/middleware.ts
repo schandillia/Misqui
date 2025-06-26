@@ -37,11 +37,14 @@ export async function middleware(req: NextRequest) {
   const isAuthRoute = authRoutes.has(nextUrl.pathname)
 
   // Handle admin routes
-  if (nextUrl.pathname.startsWith("/admin")) {
+  if (
+    nextUrl.pathname.startsWith("/admin") ||
+    nextUrl.pathname.startsWith("/studio")
+  ) {
     if (!isLoggedIn) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search)
       logger.warn(
-        "Unauthorized access attempt to admin route (not logged in)",
+        "Unauthorized access attempt to admin/studio route (not logged in)",
         {
           path: nextUrl.pathname,
           timestamp: new Date().toISOString(),
@@ -53,12 +56,15 @@ export async function middleware(req: NextRequest) {
       )
     }
     if (!isAdmin) {
-      logger.warn("Unauthorized access attempt to admin route (not admin)", {
-        userId: session?.user?.id,
-        path: nextUrl.pathname,
-        timestamp: new Date().toISOString(),
-        module: "middleware",
-      })
+      logger.warn(
+        "Unauthorized access attempt to restricted route (not admin)",
+        {
+          userId: session?.user?.id,
+          path: nextUrl.pathname,
+          timestamp: new Date().toISOString(),
+          module: "middleware",
+        }
+      )
       return NextResponse.redirect(createUrl("/unauthorized", nextUrl))
     }
     return response

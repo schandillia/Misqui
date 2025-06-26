@@ -15,6 +15,10 @@
     "TITLE": "Admin Panel | Misqui",
     "DESCRIPTION": "Manage courses, drills, user data, and platform content with powerful tools designed for administrators and content managers. Secure, efficient, and built for control."
   },
+  "STUDIO": {
+    "TITLE": "Content Studio | Misqui",
+    "DESCRIPTION": "Manage courses, drills, user data, and platform content with powerful tools designed for administrators and content managers. Secure, efficient, and built for control."
+  },
   "LEARN": {
     "TITLE": "Your Learning Dashboard | Misqui",
     "DESCRIPTION": "Track progress, pick up where you left off, and explore new challenges—all in your personalized Misqui dashboard."

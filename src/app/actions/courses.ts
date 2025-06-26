@@ -15,6 +15,7 @@ type Course = {
   title: string
   description: string
   image: string
+  badge: string
   createdAt: Date
   updatedAt: Date
 }
@@ -50,7 +51,7 @@ export async function getCourses(): Promise<ActionResponse<Course[]>> {
     const allCourses = await db.instance
       .select()
       .from(courses)
-      .orderBy(desc(courses.updatedAt))
+      .orderBy(desc(courses.id))
     return { success: true, data: allCourses }
   } catch (error) {
     logger.error("Error fetching courses", { error })
@@ -85,7 +86,7 @@ export async function createCourse(
       title: formData.get("title"),
       description: formData.get("description"),
       image: formData.get("image"),
-      badge: formData.get("image"),
+      badge: formData.get("badge"),
     })
 
     const newCourse = await db.instance
@@ -94,7 +95,7 @@ export async function createCourse(
         title: data.title,
         description: data.description,
         image: data.image,
-        badge: data.image,
+        badge: data.badge,
       })
       .returning()
 
@@ -148,6 +149,7 @@ export async function updateCourse(
       title: formData.get("title"),
       description: formData.get("description"),
       image: formData.get("image"),
+      badge: formData.get("badge"),
     })
 
     const updatedCourse = await db.instance
@@ -156,6 +158,7 @@ export async function updateCourse(
         title: data.title,
         description: data.description,
         image: data.image,
+        badge: data.badge,
         updatedAt: new Date(),
       })
       .where(eq(courses.id, courseId))

@@ -6,20 +6,24 @@ type Course = {
   title: string
   description: string
   image: string
+  badge: string
   createdAt: Date
   updatedAt: Date
 }
 
 type CourseState = {
   courses: Course[]
+  editingCourse: Course | undefined
   setCourses: (courses: Course[]) => void
   addCourse: (course: Course) => void
   updateCourse: (updatedCourse: Course) => void
   removeCourse: (courseId: number) => void
+  setEditingCourse: (course: Course | undefined) => void
 }
 
 export const useCourseStore = create<CourseState>((set) => ({
   courses: [],
+  editingCourse: undefined,
   setCourses: (courses) => set({ courses }),
   addCourse: (course) =>
     set((state) => ({ courses: [course, ...state.courses] })),
@@ -33,4 +37,5 @@ export const useCourseStore = create<CourseState>((set) => ({
     set((state) => ({
       courses: state.courses.filter((course) => course.id !== courseId),
     })),
+  setEditingCourse: (course) => set({ editingCourse: course }),
 }))

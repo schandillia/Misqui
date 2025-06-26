@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator"
 import { UnitsManager } from "@/app/admin/components/units-manager"
 import { DrillsManager } from "@/app/admin/components/drills-manager"
 import { Uploader } from "@/app/admin/components/uploader"
-import { cn } from "@/lib/utils"
 
 export default async function AdminPage() {
   const coursesResult = await getCourses()
