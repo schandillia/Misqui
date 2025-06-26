@@ -81,9 +81,9 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user, position = "top" }) => {
         </DropdownMenuItem>
         {user.role === "admin" && (
           <DropdownMenuItem asChild>
-            <Link href="/admin" className="cursor-pointer">
+            <Link href="/studio" className="cursor-pointer">
               <GrUserAdmin className="mr-2 size-4" />
-              Admin
+              Studio
             </Link>
           </DropdownMenuItem>
         )}
