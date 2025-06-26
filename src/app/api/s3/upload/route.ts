@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     const { file: validatedFile } = validation.data
     const buffer = Buffer.from(await validatedFile.arrayBuffer())
-    const uniqueKey = `static/${uuidv4()}-${validatedFile.name}`
+    const uniqueKey = `s/${uuidv4()}-${validatedFile.name}`
     const url = await uploadFile(buffer, uniqueKey, validatedFile.type)
 
     return NextResponse.json(
