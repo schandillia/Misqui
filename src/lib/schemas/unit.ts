@@ -11,6 +11,6 @@ export const unitSchema = z.object({
     .max(500, "Description must be 500 characters or less"),
   notes: z
     .string()
-    .max(3000, "Notes must be 2000 characters or less")
+    .max(3000, "Notes must be 3,000 characters or less")
     .optional(),
 })
