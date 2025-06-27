@@ -2,9 +2,9 @@
 
 import { Input } from "@/components/ui/input"
 import { svgUploadSchema } from "@/lib/schemas/svg-upload"
-import { z } from "zod"
 import toast from "react-hot-toast"
 import { useState, useRef, useEffect } from "react"
+import app from "@/lib/data/app.json"
 
 interface FileUploaderProps {
   onUploadSuccess?: (url: string) => void
@@ -39,7 +39,7 @@ export default function FileUploader({
       const result = await response.json()
 
       if (response.ok && result.url) {
-        const cloudfrontDomain = `https://${process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME}`
+        const cloudfrontDomain = `https://${app.CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME}`
         const s3Url = new URL(result.url)
         const cloudfrontUrl = `${cloudfrontDomain}${s3Url.pathname}`
         toast.success(result.message, { id: "upload" })
