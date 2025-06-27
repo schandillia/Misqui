@@ -5,21 +5,28 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 })
 
+// Validate environment variable at build time
+const cloudfrontDomain =
+  process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME
+if (!cloudfrontDomain) {
+  throw new Error(
+    "NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME is not defined in .env.local"
+  )
+}
+
 const nextConfig: NextConfig = {
   // Optimize for Lambda@Edge and Vercel deployment
   output: "standalone", // Compatible with both Lambda@Edge and Vercel
   // Enable Edge runtime for App Router routes (set per-route for control)
   experimental: {
-    // Global Edge runtime is experimental; prefer per-route config
     // runtime: "edge",
   },
-  // Image optimization (temporary wildcard until S3/Vercel storage setup)
+  // Image optimization
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME!, // Specific CloudFront domain
-        // If deploying on Vercel, replace with Vercel (e.g., *.vercel.app) domains
+        hostname: cloudfrontDomain, // Use validated environment variable
       },
     ],
   },
@@ -29,9 +36,7 @@ const nextConfig: NextConfig = {
   },
   // Define environment variables for build and Edge runtime
   env: {
-    // Client-side variable
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "",
-    // Server-side variables for Edge runtime (set in Lambda or Vercel config)
     AUTH_SECRET: process.env.AUTH_SECRET || "",
     AUTH_URL: process.env.AUTH_URL || "",
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID || "",

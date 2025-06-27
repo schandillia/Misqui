@@ -9,6 +9,6 @@ export const courseSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters")
     .max(500, "Description must be less than 500 characters"),
-  image: z.string().url("Image must be a valid URL"),
-  badge: z.string().url("Image must be a valid URL"),
+  image: z.string().url("Must upload an SVG image"),
+  badge: z.string().url("Must upload an SVG image"),
 })
