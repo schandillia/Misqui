@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import app from "@/lib/data/app.json"
 
 // Import the bundle analyzer
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
@@ -6,13 +7,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 })
 
 // Validate environment variable at build time
-const cloudfrontDomain =
-  process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME
-if (!cloudfrontDomain) {
-  throw new Error(
-    "NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME is not defined in .env"
-  )
-}
+const cloudfrontDomain = app.CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME
 
 const nextConfig: NextConfig = {
   // Optimize for Lambda@Edge and Vercel deployment
