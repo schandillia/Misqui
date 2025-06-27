@@ -42,13 +42,13 @@ function SelectTrigger({
         focus-visible:ring-ring/50 aria-invalid:ring-destructive/20
         dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive
         dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between
-        gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap
+        gap-2 rounded-3xl border bg-transparent px-3 py-2 text-sm whitespace-nowrap
         shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]
         disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9
         data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1
         *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center
         *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0
-        [&_svg:not([class*='size-'])]:size-4`,
+        [&_svg:not([class*='size-'])]:size-4 cursor-pointer`,
         className
       )}
       {...props}
@@ -80,7 +80,7 @@ function SelectContent({
           data-[side=top]:slide-in-from-bottom-2 relative z-50
           max-h-(--radix-select-content-available-height) min-w-[8rem]
           origin-(--radix-select-content-transform-origin) overflow-x-hidden
-          overflow-y-auto rounded-md border shadow-md`,
+          overflow-y-auto rounded-3xl border shadow-md`,
           position === "popper" &&
             `data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1
             data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1`,
@@ -130,7 +130,7 @@ function SelectItem({
       className={cn(
         `focus:bg-brand-100/50 dark:focus:bg-brand-900/40 focus:text-accent-foreground
         [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full
-        cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm
+        cursor-pointer items-center gap-2 rounded-3xl py-1.5 pr-8 pl-2 text-sm
         outline-hidden select-none data-[disabled]:pointer-events-none
         data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0
         [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex

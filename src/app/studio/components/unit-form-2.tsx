@@ -19,25 +19,22 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Card } from "@/components/ui/card"
-import FileUploader from "@/components/file-uploader"
 import { Input } from "@/components/ui/input"
 
 type Course = {
   id: number
   title: string
   description: string
-  image: string
-  badge: string
   createdAt: Date
   updatedAt: Date
 }
 
-interface CourseFormProps {
+interface UnitFormProps {
   course?: Course
   onSuccess?: () => void
 }
 
-type CourseFormData = z.infer<typeof courseSchema>
+type UnitFormData = z.infer<typeof courseSchema>
 
 function SubmitButton({
   isEditing,
@@ -61,7 +58,7 @@ function SubmitButton({
         </>
       ) : (
         <>
-          <Plus className="size-5" />
+          <Plus className="size-4" />
           Add Course
         </>
       )}
@@ -69,32 +66,28 @@ function SubmitButton({
   )
 }
 
-export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
+export const UnitForm = ({ course, onSuccess }: UnitFormProps) => {
   const { updateCourse: updateStoreCourse, addCourse } = useCourseStore()
   const [isLoading, setIsLoading] = useState(false)
-  const form = useForm<CourseFormData>({
+  const form = useForm<UnitFormData>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       title: course?.title || "",
       description: course?.description || "",
-      image: course?.image || "",
-      badge: course?.badge || "",
     },
   })
 
-  const { control, handleSubmit, reset, setValue } = form
+  const { control, handleSubmit, reset } = form
 
   useEffect(() => {
     logger.debug("Course prop changed", { course })
     reset({
       title: course?.title || "",
       description: course?.description || "",
-      image: course?.image || "",
-      badge: course?.badge || "",
     })
   }, [course, reset])
 
-  const onSubmit = async (data: CourseFormData) => {
+  const onSubmit = async (data: UnitFormData) => {
     logger.debug("Form submitted", { data })
     setIsLoading(true)
 
@@ -102,8 +95,6 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
       const formData = new FormData()
       formData.append("title", data.title)
       formData.append("description", data.description)
-      formData.append("image", data.image)
-      formData.append("badge", data.badge)
 
       let result
       if (course && course.id) {
@@ -152,11 +143,11 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold">Title</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="Enter course title"
+                        placeholder="Enter unit title"
                         disabled={isLoading}
                         {...field}
                       />
@@ -165,46 +156,6 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                   </FormItem>
                 )}
               />
-
-              {/* Image & Badge side-by-side */}
-              <div className="flex flex-col gap-4 md:flex-row">
-                <FormField
-                  control={control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="font-semibold">
-                        Course Image
-                      </FormLabel>
-                      <FormControl>
-                        <FileUploader
-                          onUploadSuccess={(url) => setValue("image", url)}
-                          initialUrl={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="badge"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="font-semibold">
-                        Badge Image
-                      </FormLabel>
-                      <FormControl>
-                        <FileUploader
-                          onUploadSuccess={(url) => setValue("badge", url)}
-                          initialUrl={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </div>
 
             {/* Right column: Description */}
@@ -214,10 +165,10 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold">Description</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter course description"
+                        placeholder="Enter unit description"
                         rows={6}
                         className="resize-none h-34"
                         disabled={isLoading}

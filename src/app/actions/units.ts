@@ -54,7 +54,7 @@ export async function getUnitsByCourseId(
       order: unit.order,
       createdAt: unit.createdAt,
       updatedAt: unit.updatedAt,
-      notes: unit.notes ?? null, // Ensure null for undefined
+      notes: unit.notes ?? null,
     }))
 
     const sortedUnits = unitsData.sort((a, b) => b.order - a.order)
