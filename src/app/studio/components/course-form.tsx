@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Plus, Save } from "lucide-react"
@@ -20,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Card } from "@/components/ui/card"
+import FileUploader from "@/components/file-uploader"
 
 type Course = {
   id: number
@@ -81,7 +81,7 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
     },
   })
 
-  const { control, handleSubmit, reset } = form
+  const { control, handleSubmit, reset, setValue } = form
 
   useEffect(() => {
     logger.debug("Course prop changed", { course })
@@ -153,9 +153,15 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input
+                      <input
+                        type="text"
                         placeholder="Enter course title"
                         disabled={isLoading}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+                          ring-offset-background file:border-0 file:bg-transparent file:text-sm
+                          file:font-medium placeholder:text-muted-foreground focus-visible:outline-none
+                          focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                          disabled:cursor-not-allowed disabled:opacity-50"
                         {...field}
                       />
                     </FormControl>
@@ -171,12 +177,11 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                   name="image"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Image URL</FormLabel>
+                      <FormLabel>Course Image</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter image URL"
-                          disabled={isLoading}
-                          {...field}
+                        <FileUploader
+                          onUploadSuccess={(url) => setValue("image", url)}
+                          initialUrl={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -188,12 +193,11 @@ export const CourseForm = ({ course, onSuccess }: CourseFormProps) => {
                   name="badge"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Badge URL</FormLabel>
+                      <FormLabel>Badge Image</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter badge URL"
-                          disabled={isLoading}
-                          {...field}
+                        <FileUploader
+                          onUploadSuccess={(url) => setValue("badge", url)}
+                          initialUrl={field.value}
                         />
                       </FormControl>
                       <FormMessage />

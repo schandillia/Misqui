@@ -4,12 +4,27 @@ import { Input } from "@/components/ui/input"
 import { svgUploadSchema } from "@/lib/schemas/svg-upload"
 import { z } from "zod"
 import toast from "react-hot-toast"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
-export default function FileUploader() {
-  const [inputMode, setInputMode] = useState<"file" | "url">("file")
-  const [fileUrl, setFileUrl] = useState<string>("")
+interface FileUploaderProps {
+  onUploadSuccess?: (url: string) => void
+  initialUrl?: string
+}
+
+export default function FileUploader({
+  onUploadSuccess,
+  initialUrl = "",
+}: FileUploaderProps) {
+  const [inputMode, setInputMode] = useState<"file" | "url">(
+    initialUrl ? "url" : "file"
+  )
+  const [fileUrl, setFileUrl] = useState<string>(initialUrl)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setInputMode(initialUrl ? "url" : "file")
+    setFileUrl(initialUrl)
+  }, [initialUrl])
 
   const onSubmitFile = async (file: File) => {
     const formData = new FormData()
@@ -29,6 +44,7 @@ export default function FileUploader() {
         const cloudfrontUrl = `${cloudfrontDomain}${s3Url.pathname}`
         toast.success(result.message, { id: "upload" })
         setFileUrl(cloudfrontUrl)
+        onUploadSuccess?.(cloudfrontUrl)
         setInputMode("url")
         if (fileInputRef.current) {
           fileInputRef.current.value = ""
@@ -36,12 +52,14 @@ export default function FileUploader() {
       } else {
         toast.error(result.error || "Upload failed", { id: "upload" })
         setFileUrl("")
+        onUploadSuccess?.("")
         setInputMode("file")
       }
     } catch (error) {
       toast.error("Upload failed", { id: "upload" })
       console.error("Upload error:", error)
       setFileUrl("")
+      onUploadSuccess?.("")
       setInputMode("file")
     }
   }
@@ -57,6 +75,7 @@ export default function FileUploader() {
           id: "upload",
         })
         setFileUrl("")
+        onUploadSuccess?.("")
         setInputMode("file")
         if (fileInputRef.current) {
           fileInputRef.current.value = ""
@@ -68,6 +87,7 @@ export default function FileUploader() {
   const handleReset = () => {
     setInputMode("file")
     setFileUrl("")
+    onUploadSuccess?.("")
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }

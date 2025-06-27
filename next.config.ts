@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**", // TODO: Replace with S3 (e.g., your-s3-bucket.s3.amazonaws.com) or Vercel (e.g., *.vercel.app) domains
+        hostname: process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME!, // Specific CloudFront domain
+        // If deploying on Vercel, replace with Vercel (e.g., *.vercel.app) domains
       },
     ],
   },
