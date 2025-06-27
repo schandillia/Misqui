@@ -10,7 +10,7 @@ const cloudfrontDomain =
   process.env.NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME
 if (!cloudfrontDomain) {
   throw new Error(
-    "NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME is not defined in .env.local"
+    "NEXT_PUBLIC_CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME is not defined in .env"
   )
 }
 
