@@ -1,10 +1,9 @@
-import UploadForm from "@/app/studio/drills/components/upload-form"
+import FileUploader from "@/app/studio/drills/components/file-uploader"
 
 export default function Home() {
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Upload SVG to S3</h1>
-      <UploadForm />
+      <FileUploader />
     </div>
   )
 }
