@@ -30,7 +30,7 @@ type Course = {
 
 export function CoursesTable() {
   const TITLE_PREVIEW = 10
-  const DESCRIPTION_PREVIEW = 25
+  const DESCRIPTION_PREVIEW = 30
 
   const { courses, removeCourse, setEditingCourse } = useCourseStore()
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null)
@@ -64,16 +64,20 @@ export function CoursesTable() {
     <>
       {courses.length > 0 ? (
         <div className="overflow-x-auto px-5">
-          <Table>
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px] text-sm font-semibold">
                   ID
                 </TableHead>
-                <TableHead className="text-left text-sm font-semibold">
+                <TableHead
+                  className={`w-[${TITLE_PREVIEW}ch] text-left text-sm font-semibold`}
+                >
                   Title
                 </TableHead>
-                <TableHead className="text-left text-sm font-semibold">
+                <TableHead
+                  className={`w-[${DESCRIPTION_PREVIEW}ch] text-left text-sm font-semibold`}
+                >
                   Description
                 </TableHead>
                 <TableHead className="text-left text-sm font-semibold">

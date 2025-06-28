@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Select,
   SelectContent,
@@ -8,7 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import { UnitForm } from "@/app/studio/components/unit-form"
+import { UnitTable } from "@/app/studio/components/unit-table"
+import { useUnitStore } from "@/store/use-units"
+import type { Unit } from "@/db/queries/types"
 
 // Define Course type to match courses.ts
 type Course = {
@@ -33,10 +37,22 @@ type ActionResponse<T> = {
 
 interface UnitsManagerProps {
   coursesResult: ActionResponse<Course[]>
+  unitsResult: ActionResponse<Unit[]>
 }
 
-export const UnitsManager = ({ coursesResult }: UnitsManagerProps) => {
+export const UnitsManager = ({
+  coursesResult,
+  unitsResult,
+}: UnitsManagerProps) => {
   const [selectedCourse, setSelectedCourse] = useState<string>("")
+  const { setUnits } = useUnitStore()
+
+  // Initialize units store with server-fetched units
+  useEffect(() => {
+    if (unitsResult.success && unitsResult.data) {
+      setUnits(unitsResult.data)
+    }
+  }, [unitsResult, setUnits])
 
   if (!coursesResult.success && coursesResult.error) {
     return (
@@ -71,6 +87,8 @@ export const UnitsManager = ({ coursesResult }: UnitsManagerProps) => {
       </Select>
 
       <UnitForm selectedCourse={selectedCourseObj} />
+      <Separator className="my-6" />
+      <UnitTable courseId={selectedCourseObj?.id} />
     </>
   )
 }

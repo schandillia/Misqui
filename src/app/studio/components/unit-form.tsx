@@ -12,15 +12,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Plus } from "lucide-react"
+import { Plus, Save } from "lucide-react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { unitSchema } from "@/lib/schemas/unit"
-import { addUnit } from "@/app/actions/units"
+import { addUnit, updateUnit } from "@/app/actions/units"
 import { toast } from "react-hot-toast"
+import { useUnitStore } from "@/store/use-units"
+import { useEffect } from "react"
+import type { Unit } from "@/db/queries/index"
 
-// Define Course type to match courses.ts
 type Course = {
   id: number
   title: string
@@ -31,11 +33,27 @@ type Course = {
   updatedAt: Date
 }
 
+type ActionResponse<T> = {
+  success: boolean
+  data?: T
+  error?: {
+    code: number
+    message: string
+    details?: string
+  }
+}
+
 interface UnitFormProps {
   selectedCourse?: Course
 }
 
 export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
+  const {
+    editingUnit,
+    addUnit: addUnitToStore,
+    updateUnit: updateUnitStore,
+    setEditingUnit,
+  } = useUnitStore()
   const form = useForm<z.infer<typeof unitSchema>>({
     resolver: zodResolver(unitSchema),
     defaultValues: {
@@ -45,8 +63,24 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
     },
   })
 
-  const { isSubmitting } = form.formState
+  const {
+    formState: { isSubmitting },
+    reset,
+  } = form
   const isFormDisabled = !selectedCourse || isSubmitting
+
+  // Populate form with editingUnit data when it changes
+  useEffect(() => {
+    if (editingUnit) {
+      reset({
+        title: editingUnit.title,
+        description: editingUnit.description,
+        notes: editingUnit.notes || "",
+      })
+    } else {
+      reset({ title: "", description: "", notes: "" })
+    }
+  }, [editingUnit, reset])
 
   const onSubmit = async (data: z.infer<typeof unitSchema>) => {
     if (!selectedCourse) {
@@ -54,22 +88,40 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
       return
     }
 
-    const result = await addUnit({
-      courseId: selectedCourse.id,
-      title: data.title,
-      description: data.description,
-      notes: data.notes || null,
-    })
-
-    if (result.success && result.data) {
-      toast.success("Unit added successfully!")
-      form.reset({
-        title: "",
-        description: "",
-        notes: "",
+    if (editingUnit) {
+      // Update existing unit
+      const result: ActionResponse<Unit> = await updateUnit({
+        id: editingUnit.id,
+        courseId: selectedCourse.id,
+        title: data.title,
+        description: data.description,
+        notes: data.notes || null,
       })
+
+      if (result.success && result.data) {
+        toast.success("Unit updated successfully!")
+        updateUnitStore(result.data)
+        setEditingUnit(undefined)
+        reset({ title: "", description: "", notes: "" })
+      } else {
+        toast.error(result.error?.message || "Failed to update unit")
+      }
     } else {
-      toast.error(result.error?.message || "Failed to add unit")
+      // Add new unit
+      const result: ActionResponse<Unit> = await addUnit({
+        courseId: selectedCourse.id,
+        title: data.title,
+        description: data.description,
+        notes: data.notes || null,
+      })
+
+      if (result.success && result.data) {
+        toast.success("Unit added successfully!")
+        addUnitToStore(result.data)
+        reset({ title: "", description: "", notes: "" })
+      } else {
+        toast.error(result.error?.message || "Failed to add unit")
+      }
     }
   }
 
@@ -78,9 +130,7 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
       <div className="p-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Title and Description Sections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Section: Course Title and Unit Title */}
               <div className="space-y-6">
                 <FormItem>
                   <FormLabel className="font-semibold">Course Title</FormLabel>
@@ -111,8 +161,6 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
                   )}
                 />
               </div>
-
-              {/* Right Section: Description */}
               <FormField
                 control={form.control}
                 name="description"
@@ -132,8 +180,6 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
                 )}
               />
             </div>
-
-            {/* Full-Width Notes Field */}
             <FormField
               control={form.control}
               name="notes"
@@ -152,7 +198,6 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
                 </FormItem>
               )}
             />
-
             <div className="flex justify-center">
               <Button
                 variant="primary"
@@ -161,8 +206,17 @@ export const UnitForm = ({ selectedCourse }: UnitFormProps) => {
                 className="gap-2"
                 disabled={isFormDisabled}
               >
-                <Plus className="size-5" />
-                Add Unit
+                {editingUnit ? (
+                  <>
+                    <Save className="size-5" />
+                    Update Unit
+                  </>
+                ) : (
+                  <>
+                    <Plus className="size-5" />
+                    Add Unit
+                  </>
+                )}
               </Button>
             </div>
           </form>
