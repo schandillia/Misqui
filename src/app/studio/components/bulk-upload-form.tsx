@@ -154,7 +154,7 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
 
   return (
     <Card className="m-6 mt-3 dark:bg-black">
-      <div className="p-5">
+      <div className="px-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-6">
