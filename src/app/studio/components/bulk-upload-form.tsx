@@ -14,9 +14,10 @@ import {
 import { Plus } from "lucide-react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, UseFormReturn } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { unitSchemaCSV } from "@/lib/schemas/unit"
+import { bulkAddUnits } from "@/app/actions/units"
 
 type Course = {
   id: number
@@ -86,7 +87,7 @@ const bulkUnitSchema = z.object({
 })
 
 // Reference to form for setting errors in refine
-let form: any
+let form: UseFormReturn<z.infer<typeof bulkUnitSchema>>
 
 export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
   form = useForm<z.infer<typeof bulkUnitSchema>>({
@@ -117,7 +118,7 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
           return { title, description }
         })
 
-      // Validate each unit against unitSchema
+      // Validate each unit against unitSchemaCSV
       for (let i = 0; i < units.length; i++) {
         const result = unitSchemaCSV.safeParse(units[i])
         if (!result.success) {
@@ -129,9 +130,23 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
         }
       }
 
-      // If validation passes, show success message and reset form
-      toast.success(`Validated ${units.length} units successfully!`)
-      reset({ units: "" })
+      // Call server action to validate and insert units
+      if (!selectedCourse) {
+        toast.error("No course selected")
+        return
+      }
+
+      const result = await bulkAddUnits({
+        courseId: selectedCourse.id,
+        units,
+      })
+
+      if (result.success && result.data) {
+        toast.success(`Added ${result.data.length} units successfully!`)
+        reset({ units: "" })
+      } else {
+        toast.error(result.error?.message || "Failed to add units")
+      }
     } catch (error) {
       toast.error("Invalid unit data format")
     }
@@ -160,8 +175,9 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
                     <FormControl>
                       <Textarea
                         placeholder={`Paste pipe-delimited data here (title|description, one per line, no header row), e.g.:
-Unit 1 Title|Unit 1 Description
-Unit 2 Title|Unit 2 Description`}
+Place Value|Understand and compare multi-digit numbers using place value
+Fractions|Explore fractions as parts of a whole and on a number line
+Geometry|Identify shapes, angles, lines, and symmetry in two-dimensional figures`}
                         {...field}
                         className="min-h-[200px] text-base resize-none"
                         disabled={isFormDisabled}

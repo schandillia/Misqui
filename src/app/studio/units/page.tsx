@@ -30,7 +30,7 @@ const Page = async () => {
         .flatMap((result) => result.data!)
 
       unitsResult = { success: true, data: allUnits }
-    } catch (error) {
+    } catch (_error) {
       unitsResult = {
         success: false,
         error: { code: 500, message: "Failed to fetch units" },

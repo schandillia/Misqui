@@ -110,7 +110,7 @@ export const UnitsManager = ({
               transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(${activeIndex * 38}px)` }}
           />
-          {UPLOAD_MODES.map(({ name, icon: Icon, label }, index) => (
+          {UPLOAD_MODES.map(({ name, icon: Icon, label }) => (
             <Button
               key={name}
               variant="ghost"
