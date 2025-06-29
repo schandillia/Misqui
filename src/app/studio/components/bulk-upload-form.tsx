@@ -18,6 +18,8 @@ import { useForm, UseFormReturn } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { unitSchemaCSV } from "@/lib/schemas/unit"
 import { bulkAddUnits } from "@/app/actions/units"
+import { useUnitStore } from "@/store/use-units"
+import type { Unit } from "@/db/queries"
 
 type Course = {
   id: number
@@ -104,6 +106,8 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
   } = form
   const isFormDisabled = !selectedCourse || isSubmitting
 
+  const { addUnit } = useUnitStore()
+
   const onSubmit = async (data: z.infer<typeof bulkUnitSchema>) => {
     try {
       // Parse CSV into array of units
@@ -142,6 +146,8 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
       })
 
       if (result.success && result.data) {
+        // Update Zustand store with all new units
+        result.data.forEach((unit: Unit) => addUnit(unit))
         toast.success(`Added ${result.data.length} units successfully!`)
         reset({ units: "" })
       } else {

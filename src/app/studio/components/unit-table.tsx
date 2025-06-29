@@ -118,7 +118,7 @@ export function UnitTable({ courseId }: UnitTableProps) {
                     className={`block max-w-[${NOTES_PREVIEW}ch] truncate overflow-hidden text-ellipsis
                     whitespace-nowrap`}
                   >
-                    {unit.notes || "No notes"}
+                    {unit.notes || "No notes provided"}
                   </span>
                 </TableCell>
                 <TableCell className="py-2 text-sm">

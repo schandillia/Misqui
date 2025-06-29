@@ -21,7 +21,7 @@ import { addUnit, updateUnit } from "@/app/actions/units"
 import { toast } from "react-hot-toast"
 import { useUnitStore } from "@/store/use-units"
 import { useEffect } from "react"
-import type { Unit } from "@/db/queries/index"
+import type { Unit } from "@/db/queries"
 
 type Course = {
   id: number
