@@ -22,6 +22,10 @@ const sidebarItems = [
     href: "/studio/units",
   },
   {
+    label: "Notes",
+    href: "/studio/notes",
+  },
+  {
     label: "Drills",
     href: "/studio/drills",
   },
