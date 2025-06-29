@@ -16,12 +16,9 @@ import { Plus } from "lucide-react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-
-// Define Drill type based on drills schema (UI-only fields)
-type Drill = {
-  title: string
-  isTimed: boolean
-}
+import { toast } from "react-hot-toast"
+import { addDrill } from "@/app/actions/drills"
+import { drillSchema } from "@/lib/schemas/drill"
 
 // Define PartialUnit type to match courses.ts selective fields
 type PartialUnit = {
@@ -32,12 +29,6 @@ type PartialUnit = {
   unitNumber: number
   order: number
 }
-
-// Zod schema for drill form validation
-const drillSchema = z.object({
-  title: z.string().min(1, "Drill title is required"),
-  isTimed: z.boolean(),
-})
 
 interface DrillFormProps {
   selectedUnit?: PartialUnit
@@ -54,12 +45,28 @@ export const DrillForm = ({ selectedUnit }: DrillFormProps) => {
 
   const {
     formState: { isSubmitting },
+    reset,
   } = form
   const isFormDisabled = !selectedUnit || isSubmitting
 
   const onSubmit = async (data: z.infer<typeof drillSchema>) => {
-    // Placeholder for future submit logic
-    console.log("Drill form submitted:", data)
+    if (!selectedUnit) {
+      toast.error("No unit selected")
+      return
+    }
+
+    const result = await addDrill({
+      unitId: selectedUnit.id,
+      title: data.title,
+      isTimed: data.isTimed,
+    })
+
+    if (result.success && result.data) {
+      toast.success("Drill added successfully!")
+      reset({ title: "", isTimed: false })
+    } else {
+      toast.error(result.error?.message || "Failed to add drill")
+    }
   }
 
   return (
@@ -108,7 +115,7 @@ export const DrillForm = ({ selectedUnit }: DrillFormProps) => {
                       />
                     </FormControl>
                     <FormLabel htmlFor="isTimed" className="font-semibold">
-                      Timed Drill
+                      Timed
                     </FormLabel>
                     <FormMessage />
                   </FormItem>
