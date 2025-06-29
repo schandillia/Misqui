@@ -4,9 +4,9 @@ import { z } from "zod"
 export const drillSchema = z.object({
   title: z
     .string()
+    .nonempty("Title is required")
     .min(3, "Title must be at least 3 characters")
-    .max(100, "Title must be 100 characters or less")
-    .nonempty("Title is required"),
+    .max(100, "Title must be 100 characters or less"),
   isTimed: z.boolean(),
 })
 
