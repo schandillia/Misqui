@@ -147,7 +147,7 @@ export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
       } else {
         toast.error(result.error?.message || "Failed to add units")
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Invalid unit data format")
     }
   }
