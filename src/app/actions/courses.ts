@@ -1,6 +1,6 @@
 "use server"
 
-import { courses } from "@/db/schema"
+import { courses, units } from "@/db/schema"
 import { z } from "zod"
 import { db, initializeDb } from "@/db/drizzle"
 import { auth } from "@/auth"
@@ -27,6 +27,87 @@ type ActionResponse<T> = {
   error?: {
     code: number
     message: string
+    details?: string
+  }
+}
+
+// Fetch all courses with their units from the database
+export async function getCoursesWithUnits(): Promise<ActionResponse<Course[]>> {
+  await initializeDb()
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return {
+        success: false,
+        error: { code: 401, message: "Unauthorized: Please log in" },
+      }
+    }
+    if (session.user.role !== "admin") {
+      return {
+        success: false,
+        error: { code: 403, message: "Forbidden: Admin access required" },
+      }
+    }
+
+    // Fetch all course fields
+    const allCourses = await db.instance
+      .select({
+        id: courses.id,
+        title: courses.title,
+        description: courses.description,
+        image: courses.image,
+        badge: courses.badge,
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+      })
+      .from(courses)
+      .orderBy(desc(courses.id))
+
+    // Fetch selected unit fields
+    const allUnits = await db.instance
+      .select({
+        id: units.id,
+        title: units.title,
+        description: units.description,
+        courseId: units.courseId,
+        unitNumber: units.unitNumber,
+        order: units.order,
+      })
+      .from(units)
+      .orderBy(desc(units.order))
+
+    // Map units to their respective courses
+    const coursesWithUnits: Course[] = allCourses.map((course) => ({
+      ...course,
+      units: allUnits
+        .filter((unit) => unit.courseId === course.id)
+        .map((unit) => ({
+          id: unit.id,
+          title: unit.title,
+          description: unit.description,
+          courseId: unit.courseId,
+          unitNumber: unit.unitNumber,
+          order: unit.order,
+        })),
+    }))
+
+    return { success: true, data: coursesWithUnits }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    const errorStack = error instanceof Error ? error.stack : undefined
+    logger.error("Error fetching courses with units", {
+      message: errorMessage,
+      stack: errorStack,
+    })
+    return {
+      success: false,
+      error: {
+        code: 500,
+        message: "Failed to fetch courses and units",
+        details: errorStack,
+      },
+    }
   }
 }
 
