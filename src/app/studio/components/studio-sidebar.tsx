@@ -29,6 +29,10 @@ const sidebarItems = [
     label: "Drills",
     href: "/studio/drills",
   },
+  {
+    label: "Questions",
+    href: "/studio/questions",
+  },
 ]
 
 export const StudioSidebar = async ({ className }: Props) => {
