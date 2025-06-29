@@ -6,6 +6,8 @@ import { auth } from "@/auth"
 import { logger } from "@/lib/logger"
 import { eq, desc } from "drizzle-orm"
 import { NeonDbError } from "@neondatabase/serverless"
+import { z } from "zod"
+import { drillSchema } from "@/lib/schemas/drill"
 
 // Define Drill type based on drills schema
 type Drill = {
@@ -32,6 +34,11 @@ type ActionResponse<T> = {
     details?: string
   }
 }
+
+// Extend drillSchema for server-side validation to include unitId
+const drillServerSchema = drillSchema.extend({
+  unitId: z.number().int().positive("Unit ID must be a positive integer"),
+})
 
 // Server action to add a new drill
 export async function addDrill({
@@ -61,13 +68,19 @@ export async function addDrill({
       }
     }
 
-    // Validate required fields
-    if (!unitId || !title) {
+    // Validate input with Zod
+    const result = drillServerSchema.safeParse({ unitId, title, isTimed })
+    if (!result.success) {
+      logger.error("Validation failed for addDrill", {
+        unitId,
+        errors: result.error.errors,
+      })
       return {
         success: false,
         error: {
           code: 400,
-          message: "Missing required fields: unitId and title are required",
+          message: "Invalid input data",
+          details: result.error.errors.map((e) => e.message).join("; "),
         },
       }
     }
@@ -203,6 +216,24 @@ export async function updateDrill({
       return {
         success: false,
         error: { code: 403, message: "Forbidden: Admin access required" },
+      }
+    }
+
+    // Validate input with Zod
+    const result = drillServerSchema.safeParse({ unitId, title, isTimed })
+    if (!result.success) {
+      logger.error("Validation failed for updateDrill", {
+        unitId,
+        id,
+        errors: result.error.errors,
+      })
+      return {
+        success: false,
+        error: {
+          code: 400,
+          message: "Invalid input data",
+          details: result.error.errors.map((e) => e.message).join("; "),
+        },
       }
     }
 
