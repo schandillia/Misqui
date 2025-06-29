@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UnitForm } from "@/app/studio/components/unit-form"
+import { DrillForm } from "@/app/studio/components/drill-form"
 import { UnitTable } from "@/app/studio/components/unit-table"
 import { useUnitStore } from "@/store/use-units"
 import { BulkUploadForm } from "@/app/studio/components/bulk-upload-form"
@@ -92,9 +92,12 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
     return <div className="p-6">No courses available.</div>
   }
 
-  // Find the selected course object based on the ID
+  // Find the selected course and unit objects based on the ID
   const selectedCourseObj = coursesResult.data.find(
     (course) => course.id.toString() === selectedCourse
+  )
+  const selectedUnitObj = units.find(
+    (unit) => unit.id.toString() === selectedUnit
   )
 
   return (
@@ -144,7 +147,7 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
       </div>
 
       <TabsContent value="single">
-        <UnitForm selectedCourse={selectedCourseObj} />
+        <DrillForm selectedUnit={selectedUnitObj} />
       </TabsContent>
       <TabsContent value="bulk">
         <BulkUploadForm selectedCourse={selectedCourseObj} />
