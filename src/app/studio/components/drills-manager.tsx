@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { DrillForm } from "@/app/studio/components/drill-form"
 import { DrillTable } from "@/app/studio/components/drill-table"
-import { BulkUploadForm } from "@/app/studio/components/bulk-upload-form"
+import { BulkUnitsUploadForm } from "@/app/studio/components/bulk-units-upload-form"
 import { useDrillStore } from "@/store/use-drills"
 import { useUnitStore } from "@/store/use-units"
 import { getDrillsByUnitId } from "@/app/actions/drills"
@@ -156,7 +156,7 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
         <DrillForm selectedUnit={selectedUnitObj} />
       </TabsContent>
       <TabsContent value="bulk">
-        <BulkUploadForm selectedCourse={selectedCourseObj} />
+        <BulkUnitsUploadForm selectedCourse={selectedCourseObj} />
       </TabsContent>
 
       <Separator className="my-6" />

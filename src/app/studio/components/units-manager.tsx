@@ -14,7 +14,7 @@ import { UnitForm } from "@/app/studio/components/unit-form"
 import { UnitTable } from "@/app/studio/components/unit-table"
 import { useUnitStore } from "@/store/use-units"
 import type { Unit } from "@/db/queries/types"
-import { BulkUploadForm } from "@/app/studio/components/bulk-upload-form"
+import { BulkUnitsUploadForm } from "@/app/studio/components/bulk-units-upload-form"
 import { FaDatabase, FaFileCsv } from "react-icons/fa6"
 
 // Define Course type to match courses.ts
@@ -107,7 +107,7 @@ export const UnitsManager = ({
         <UnitForm selectedCourse={selectedCourseObj} />
       </TabsContent>
       <TabsContent value="bulk">
-        <BulkUploadForm selectedCourse={selectedCourseObj} />
+        <BulkUnitsUploadForm selectedCourse={selectedCourseObj} />
       </TabsContent>
 
       <Separator className="my-6" />

@@ -31,7 +31,7 @@ type Course = {
   updatedAt: Date
 }
 
-interface BulkUploadFormProps {
+interface BulkUnitsUploadFormProps {
   selectedCourse?: Course
 }
 
@@ -91,7 +91,9 @@ const bulkUnitSchema = z.object({
 // Reference to form for setting errors in refine
 let form: UseFormReturn<z.infer<typeof bulkUnitSchema>>
 
-export const BulkUploadForm = ({ selectedCourse }: BulkUploadFormProps) => {
+export const BulkUnitsUploadForm = ({
+  selectedCourse,
+}: BulkUnitsUploadFormProps) => {
   form = useForm<z.infer<typeof bulkUnitSchema>>({
     resolver: zodResolver(bulkUnitSchema),
     defaultValues: {
