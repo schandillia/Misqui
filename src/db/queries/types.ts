@@ -10,17 +10,19 @@ export type Unit = {
   notes?: string | null
 }
 
+export type Drill = {
+  id: number
+  title: string
+  unitId: number
+  order: number
+  drillNumber: number
+  isTimed: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
 export type UnitWithDrills = Unit & {
-  drills: {
-    id: number
-    title: string
-    unitId: number
-    order: number
-    drillNumber: number
-    isTimed: boolean
-    createdAt: Date
-    updatedAt: Date
-  }[]
+  drills: Drill[]
   currentDrillId: number | null
   questionsCompleted: number | null
 }

@@ -16,7 +16,7 @@ import { deleteUnit } from "@/app/actions/units"
 import toast from "react-hot-toast"
 import { ConfirmationModal } from "@/components/modals/confirmation-modal"
 import { logger } from "@/lib/logger"
-import type { Unit } from "@/db/queries/index"
+import type { Unit } from "@/db/queries"
 
 interface UnitTableProps {
   courseId?: number

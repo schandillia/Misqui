@@ -40,6 +40,67 @@ const drillServerSchema = drillSchema.extend({
   unitId: z.number().int().positive("Unit ID must be a positive integer"),
 })
 
+// Server action to fetch drills by unit ID
+export async function getDrillsByUnitId(
+  unitId: number
+): Promise<ActionResponse<Drill[]>> {
+  await initializeDb()
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return {
+        success: false,
+        error: { code: 401, message: "Unauthorized: Please log in" },
+      }
+    }
+    if (session.user.role !== "admin") {
+      return {
+        success: false,
+        error: { code: 403, message: "Forbidden: Admin access required" },
+      }
+    }
+
+    const fetchedDrills = await db.instance
+      .select({
+        id: drills.id,
+        title: drills.title,
+        unitId: drills.unitId,
+        order: drills.order,
+        drillNumber: drills.drillNumber,
+        isTimed: drills.isTimed,
+        createdAt: drills.createdAt,
+        updatedAt: drills.updatedAt,
+      })
+      .from(drills)
+      .where(eq(drills.unitId, unitId))
+      .orderBy(desc(drills.order))
+
+    logger.info("Drills fetched", { unitId, count: fetchedDrills.length })
+    return { success: true, data: fetchedDrills }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    const errorStack = error instanceof Error ? error.stack : undefined
+    console.error("Error fetching drills:", {
+      message: errorMessage,
+      stack: errorStack,
+    })
+    logger.error("Error fetching drills", {
+      unitId,
+      message: errorMessage,
+      stack: errorStack,
+    })
+    return {
+      success: false,
+      error: {
+        code: 500,
+        message: "Failed to fetch drills",
+        details: errorStack,
+      },
+    }
+  }
+}
+
 // Server action to add a new drill
 export async function addDrill({
   unitId,

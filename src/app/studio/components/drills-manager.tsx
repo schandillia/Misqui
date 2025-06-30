@@ -9,23 +9,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { DrillForm } from "@/app/studio/components/drill-form"
-import { UnitTable } from "@/app/studio/components/unit-table"
-import { useUnitStore } from "@/store/use-units"
+import { DrillTable } from "@/app/studio/components/drill-table"
 import { BulkUploadForm } from "@/app/studio/components/bulk-upload-form"
+import { useDrillStore } from "@/store/use-drills"
+import { useUnitStore } from "@/store/use-units"
+import { getDrillsByUnitId } from "@/app/actions/drills"
 import { FaDatabase, FaFileCsv } from "react-icons/fa6"
-import type { Unit as FullUnit } from "@/db/queries/types"
-
-// Define PartialUnit type to match courses.ts selective fields
-type PartialUnit = {
-  id: number
-  title: string
-  description: string
-  courseId: number
-  unitNumber: number
-  order: number
-}
+import type { Unit } from "@/db/queries"
 
 // Define Course type to match courses.ts
 type Course = {
@@ -36,7 +28,7 @@ type Course = {
   badge: string
   createdAt: Date
   updatedAt: Date
-  units?: PartialUnit[]
+  units?: Unit[]
 }
 
 // Define ActionResponse type to match courses.ts
@@ -57,10 +49,11 @@ interface DrillsManagerProps {
 export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
   const [selectedCourse, setSelectedCourse] = useState<string>("")
   const [selectedUnit, setSelectedUnit] = useState<string>("")
-  const [units, setUnits] = useState<PartialUnit[]>([])
+  const [units, setUnits] = useState<Unit[]>([])
   const { setUnits: setStoreUnits } = useUnitStore()
+  const { setDrills } = useDrillStore()
 
-  // Initialize units store and update units when selectedCourse changes
+  // Initialize units and drills stores when selectedCourse or selectedUnit changes
   useEffect(() => {
     if (coursesResult.success && coursesResult.data) {
       const selectedCourseObj = coursesResult.data.find(
@@ -68,8 +61,7 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
       )
       const newUnits = selectedCourseObj?.units || []
       setUnits(newUnits)
-      // Cast to FullUnit for store compatibility, assuming store expects full Unit type
-      setStoreUnits(newUnits as FullUnit[])
+      setStoreUnits(newUnits)
       if (!selectedCourse || newUnits.length === 0) {
         setSelectedUnit("")
       }
@@ -79,6 +71,20 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
       setSelectedUnit("")
     }
   }, [coursesResult, selectedCourse, setStoreUnits])
+
+  useEffect(() => {
+    if (selectedUnit) {
+      getDrillsByUnitId(Number(selectedUnit)).then((result) => {
+        if (result.success && result.data) {
+          setDrills(result.data)
+        } else {
+          setDrills([])
+        }
+      })
+    } else {
+      setDrills([])
+    }
+  }, [selectedUnit, setDrills])
 
   if (!coursesResult.success && coursesResult.error) {
     return (
@@ -125,7 +131,7 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
             <SelectValue placeholder="Select a unit" />
           </SelectTrigger>
           <SelectContent>
-            {units.map((unit: PartialUnit) => (
+            {units.map((unit: Unit) => (
               <SelectItem key={unit.id} value={unit.id.toString()}>
                 {unit.title}
               </SelectItem>
@@ -154,7 +160,7 @@ export const DrillsManager = ({ coursesResult }: DrillsManagerProps) => {
       </TabsContent>
 
       <Separator className="my-6" />
-      <UnitTable courseId={selectedCourseObj?.id} />
+      <DrillTable unitId={selectedUnitObj?.id} />
     </Tabs>
   )
 }

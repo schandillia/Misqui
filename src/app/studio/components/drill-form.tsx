@@ -12,13 +12,16 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Plus } from "lucide-react"
+import { Plus, Save } from "lucide-react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { addDrill } from "@/app/actions/drills"
+import { addDrill, updateDrill } from "@/app/actions/drills"
+import { useDrillStore } from "@/store/use-drills"
 import { drillSchema } from "@/lib/schemas/drill"
+import type { Drill } from "@/db/queries"
+import { useEffect } from "react"
 
 // Define PartialUnit type to match courses.ts selective fields
 type PartialUnit = {
@@ -35,6 +38,13 @@ interface DrillFormProps {
 }
 
 export const DrillForm = ({ selectedUnit }: DrillFormProps) => {
+  const {
+    editingDrill,
+    addDrill: addDrillToStore,
+    updateDrill: updateDrillInStore,
+    setEditingDrill,
+  } = useDrillStore()
+
   const form = useForm<z.infer<typeof drillSchema>>({
     resolver: zodResolver(drillSchema),
     defaultValues: {
@@ -49,23 +59,52 @@ export const DrillForm = ({ selectedUnit }: DrillFormProps) => {
   } = form
   const isFormDisabled = !selectedUnit || isSubmitting
 
+  // Reset form when editingDrill changes
+  useEffect(() => {
+    reset({
+      title: editingDrill?.title || "",
+      isTimed: editingDrill?.isTimed || false,
+    })
+  }, [editingDrill, reset])
+
   const onSubmit = async (data: z.infer<typeof drillSchema>) => {
     if (!selectedUnit) {
       toast.error("No unit selected")
       return
     }
 
-    const result = await addDrill({
-      unitId: selectedUnit.id,
-      title: data.title,
-      isTimed: data.isTimed,
-    })
+    if (editingDrill) {
+      // Update existing drill
+      const result = await updateDrill({
+        id: editingDrill.id,
+        unitId: selectedUnit.id,
+        title: data.title,
+        isTimed: data.isTimed,
+      })
 
-    if (result.success && result.data) {
-      toast.success("Drill added successfully!")
-      reset({ title: "", isTimed: false })
+      if (result.success && result.data) {
+        toast.success("Drill updated successfully!")
+        updateDrillInStore(result.data)
+        setEditingDrill(undefined)
+        reset({ title: "", isTimed: false })
+      } else {
+        toast.error(result.error?.message || "Failed to update drill")
+      }
     } else {
-      toast.error(result.error?.message || "Failed to add drill")
+      // Add new drill
+      const result = await addDrill({
+        unitId: selectedUnit.id,
+        title: data.title,
+        isTimed: data.isTimed,
+      })
+
+      if (result.success && result.data) {
+        toast.success("Drill added successfully!")
+        addDrillToStore(result.data)
+        reset({ title: "", isTimed: false })
+      } else {
+        toast.error(result.error?.message || "Failed to add drill")
+      }
     }
   }
 
@@ -130,8 +169,17 @@ export const DrillForm = ({ selectedUnit }: DrillFormProps) => {
                 className="gap-2"
                 disabled={isFormDisabled}
               >
-                <Plus className="size-5" />
-                Add Drill
+                {editingDrill ? (
+                  <>
+                    <Save className="size-5" />
+                    Update Drill
+                  </>
+                ) : (
+                  <>
+                    <Plus className="size-5" />
+                    Add Drill
+                  </>
+                )}
               </Button>
             </div>
           </form>
